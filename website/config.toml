@@ -1,7 +1,7 @@
 baseURL = "https://helloworld.aworkshop.io"
 languageCode = "en-us"
 defaultContentLanguage = "en"
-title = "Hello World Workshop"
+title = "Amazon EMR Workshop"
 theme = "learn"
 uglyurls = true
 sectionPagesMenu = "main"
@@ -11,8 +11,8 @@ pygmentsStyle = "monokai"
 [params]
 themeVariant = "mine"
 showVisitedLinks = false
-description = "Hello World Workshop"
-disableSearch = true
+description = "Amazon EMR Workshop"
+disableSearch = false
 disableAssetsBusting = true
 disableLanguageSwitchingButton = true
 disableShortcutsTitle = true

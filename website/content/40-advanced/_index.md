@@ -1,6 +1,6 @@
 +++
-title = "Congrats!"
-weight = 70
+title = "Advanced Level"
+weight = 40
 chapter = true
 +++
 
