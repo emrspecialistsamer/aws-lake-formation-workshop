@@ -1,7 +1,7 @@
 +++
-title = "Module 1"
+title = "Intermediate Level"
 chapter = true
-weight = 20
+weight = 30
 +++
 
 # Module 1
