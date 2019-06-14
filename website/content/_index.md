@@ -1,11 +1,11 @@
 +++
-title="Amazon EMR Workshop"
+title="AWS Lake Formation Workshop"
 chapter=true
 weight=1
 +++
 
-<center><h2> Amazon EMR Workshop </h2></center>
-![](./images/emr-logo.png)
+<center><h2> AWS Lake Formation Workshop </h2></center>
+![](./images/lf-logo.png)
 
-In this workshop, we will explore multiple ways to use applications that run on Amazon EMR, how to configure them for Amazon EMR and learn some EMR best practices.
+In this workshop, we will explore how to use AWS Lake Formation to build, secure, and manage data lake on AWS.
 

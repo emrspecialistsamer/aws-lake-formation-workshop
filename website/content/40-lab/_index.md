@@ -1,5 +1,5 @@
 +++
-title = "Advanced Level"
+title = "Labs"
 weight = 40
 chapter = true
 +++

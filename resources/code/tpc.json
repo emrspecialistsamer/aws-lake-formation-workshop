@@ -1,0 +1,259 @@
+{
+  "Description": "CloudFormation template for creating an Lake Formation workshop resources",
+  "Mappings": {
+    "SubnetConfig": {
+      "VPC": {
+        "CIDR": "10.0.0.0/16"
+      },
+      "PublicOne": {
+        "CIDR": "10.0.0.0/24"
+      },
+      "PublicTwo": {
+        "CIDR": "10.0.1.0/24"
+      },
+      "Private": {
+        "CIDR": "10.0.2.0/24"
+      }
+    }
+  },
+  "Parameters": {
+    "DBMasterUser": {
+      "Type": "String",
+      "Default": "admin",
+      "Description": "Master username for TPC database."
+    },
+    "DBMasterPassword": {
+      "Type": "String",
+      "Default": "BigData26!",
+      "Description": "Master password for TPC database."
+    }
+  },
+  "Resources": {
+    "LakeFormationVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": { "Fn::FindInMap" : [ "SubnetConfig", "VPC", "CIDR"] },
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "PrivateSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": { "Fn::FindInMap" : [ "SubnetConfig", "Private", "CIDR"] },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select" : [ 1, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "PublicSubnetOne": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": { "Fn::FindInMap" : [ "SubnetConfig", "PublicOne", "CIDR"] },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select" : [ 0, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "PublicSubnetTwo": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": { "Fn::FindInMap" : [ "SubnetConfig", "PublicTwo", "CIDR"] },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select" : [ 1, { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "VPCGatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "InternetGatewayRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "InternetGatewayRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "VPCGatewayAttachment",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      },
+    },
+    "PublicSubnetOneRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnetOne"
+        }
+      }
+    },
+    "PublicSubnetTwoRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnetTwo"
+        }
+      }
+    },
+    "NATGatewayAttachment": {
+      "Type": "AWS::EC2::EIP",
+      "DependsOn": "VPCGatewayAttachment",
+      "Properties": {
+        "Domain": "LakeFormationVPC",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "NATGateway": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "SubnetId": { "Ref": "PublicSubnetOne" },
+        "AllocationId": {
+          "Fn::GetAtt": [ "NATGatewayAttachment", "AllocationId" ]
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      },
+    },
+    "NATGatewayRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "NATGatewayRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "NATGatewayRouteTable"
+        },
+        "NatGatewayId": {
+          "Ref": "NATGateway"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Lake Formation VPC"
+          }
+        ]
+      }
+    },
+    "PrivateSubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "NATGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PrivateSubnet"
+        }
+      }
+    }
+  }
+}
