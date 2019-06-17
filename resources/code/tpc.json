@@ -91,7 +91,7 @@
       "DeletionPolicy": "Delete",
       "Properties": {
         "DBInstanceClass": "db.r5.large",
-        "DBInstanceIdentifier": "tpc-database1",
+        "DBInstanceIdentifier": "tpc-database",
         "AllocatedStorage": "100",
         "DBSubnetGroupName": {
           "Ref": "RDSSubnetGroup"
@@ -615,7 +615,7 @@
         ]
       }
     },
-    "ListS3BucketsInstanceProfile": {
+    "EC2InstanceProfile": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
         "Path": "/",
@@ -630,10 +630,9 @@
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "InstanceType": "t2.small",
-        "KeyName": "dev-virginia",
         "ImageId": "ami-0c6b1d09930fac512",
         "IamInstanceProfile": {
-          "Ref": "ListS3BucketsInstanceProfile"
+          "Ref": "EC2InstanceProfile"
         },
         "NetworkInterfaces": [
           {
@@ -657,10 +656,8 @@
                 "#!/bin/bash -ex\n",
                 "sudo yum -y install mysql\n",
                 "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup . --debug\n",
-                "mysql -v -h ", { "Fn::GetAtt": [ "TPCDatabase", "Endpoint.Address" ] },
-                " -u ",{ "Ref": "DBMasterUser"}," -p'",{ "Ref": "DBMasterPassword"},"' -e \"create database tpc;\"\n",
-                "gunzip < tpc.backup | mysql -v -h ", { "Fn::GetAtt": [ "TPCDatabase", "Endpoint.Address" ] },
-                " -u ",{ "Ref": "DBMasterUser"}," -p'",{ "Ref": "DBMasterPassword"},"' tpc",
+                "gunzip < tpc.backup | mysql -h ", { "Fn::GetAtt": [ "TPCDatabase", "Endpoint.Address" ] },
+                " -u ",{ "Ref": "DBMasterUser"}," -p'",{ "Ref": "DBMasterPassword"},"'",
                 "\n"
               ]
             ]

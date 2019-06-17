@@ -1,6 +1,6 @@
 +++
 title = "Sign Up for AWS"
-weight = 201
+weight = 301
 chapter = true
 +++
 

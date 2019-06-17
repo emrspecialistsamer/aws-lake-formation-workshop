@@ -1,7 +1,7 @@
 +++
 title = "Prerequisites"
 chapter = true
-weight = 20
+weight = 30
 +++
 
 
@@ -9,7 +9,7 @@ weight = 20
 
 <div style="text-align: justify">
 
-In this exercise, you configure the required AWS resources using AWS CloudFormation, and then you create the data lake in Lake Formation.
+Before starting this AWS Lake Formation tutorial, you need to create the required AWS resources.In this exercise, you configure the required AWS resources using AWS CloudFormation, and then you create the data lake in Lake Formation.
 </br></br>
 If you've already signed up for Amazon Web Services (AWS), you can start using Lake Formation immediately. You can use this Lake Formation tutorial to complete the steps to create a data lake.
 </br></br>
