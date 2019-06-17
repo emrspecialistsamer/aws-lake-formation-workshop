@@ -92,6 +92,7 @@
       "Properties": {
         "DBInstanceClass": "db.r5.large",
         "DBInstanceIdentifier": "tpc-database1",
+        "AllocatedStorage": "100",
         "DBSubnetGroupName": {
           "Ref": "RDSSubnetGroup"
         },
@@ -103,13 +104,15 @@
         "MasterUserPassword": {
           "Ref": "DBMasterPassword"
         },
-        "DBSnapshotIdentifier": "arn:aws:rds:us-east-1:145744019422:snapshot:tpc",
         "BackupRetentionPeriod": "0",
         "StorageType": "gp2",
         "AllowMajorVersionUpgrade": false,
-        "VPCSecurityGroups": [{
-          "Ref": "RDSSecurityGroup"
-        }]
+        "VPCSecurityGroups": [
+          {
+            "Ref": "RDSSecurityGroup"
+          }
+        ],
+        "PubliclyAccessible": true
       }
     },
     "LakeFormationVPC": {
@@ -398,14 +401,14 @@
           "Name": "TPCGlueConnector",
           "ConnectionType": "JDBC",
           "PhysicalConnectionRequirements": {
-            "AvailabilityZone" : {
+            "AvailabilityZone": {
               "Fn::Select": [
-              0,
-              {
-                "Fn::GetAZs": {
-                  "Ref": "AWS::Region"
+                0,
+                {
+                  "Fn::GetAZs": {
+                    "Ref": "AWS::Region"
+                  }
                 }
-              }
               ]
             },
             "SecurityGroupIdList": [
@@ -464,37 +467,37 @@
         "ManagedPolicyArns": [
           "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
         ],
-        "Policies":[
+        "Policies": [
           {
-            "PolicyName":"LF-Data-Lake-Storage-Policy",
-            "PolicyDocument":{
-              "Version":"2012-10-17",
-              "Statement":[
+            "PolicyName": "LF-Data-Lake-Storage-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
                 {
-                  "Effect":"Allow",
-                  "Action":[
+                  "Effect": "Allow",
+                  "Action": [
                     "s3:*"
                   ],
-                  "Resource":[
+                  "Resource": [
                     {
-                      "Fn::Join":[
+                      "Fn::Join": [
                         "",
                         [
                           "arn:aws:s3:::",
                           {
-                            "Ref":"DataLakeBucket"
+                            "Ref": "DataLakeBucket"
                           },
                           "/*"
                         ]
                       ]
                     },
                     {
-                      "Fn::Join":[
+                      "Fn::Join": [
                         "",
                         [
                           "arn:aws:s3:::",
                           {
-                            "Ref":"DataLakeBucket"
+                            "Ref": "DataLakeBucket"
                           }
                         ]
                       ]
@@ -508,77 +511,169 @@
         "RoleName": "LF-GlueServiceRole"
       }
     },
-    "DataLakeBucket":{
-      "Type":"AWS::S3::Bucket",
-      "Properties":{
-        "BucketName":{
-          "Fn::Join":[
+    "DataLakeBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
             "-",
             [
               "lf-data-lake-bucket",
               {
-                "Ref":"AWS::AccountId"
+                "Ref": "AWS::AccountId"
               }
             ]
           ]
         }
       }
     },
-    "AdminUser":{
-      "Type" : "AWS::IAM::User",
-      "Properties" : {
-        "Path" : "/",
-        "LoginProfile" : {
-          "Password" : { "Ref" : "SampleUserPassword" },
-          "PasswordResetRequired" : false
+    "AdminUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "SampleUserPassword"
+          },
+          "PasswordResetRequired": false
         },
         "ManagedPolicyArns": [
           "arn:aws:iam::aws:policy/AdministratorAccess"
         ],
-        "UserName" : "admin"
+        "UserName": "admin"
       }
     },
-    "DeveloperUser":{
-      "Type" : "AWS::IAM::User",
-      "Properties" : {
-        "Path" : "/",
-        "LoginProfile" : {
-          "Password" : { "Ref" : "SampleUserPassword" },
-          "PasswordResetRequired" : false
+    "DeveloperUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "SampleUserPassword"
+          },
+          "PasswordResetRequired": false
         },
         "ManagedPolicyArns": [
           "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
         ],
-        "UserName" : "developer"
+        "UserName": "developer"
       }
     },
-    "CampaignManagerUser":{
-      "Type" : "AWS::IAM::User",
-      "Properties" : {
-        "Path" : "/",
-        "LoginProfile" : {
-          "Password" : { "Ref" : "SampleUserPassword" },
-          "PasswordResetRequired" : false
+    "CampaignManagerUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "SampleUserPassword"
+          },
+          "PasswordResetRequired": false
         },
         "ManagedPolicyArns": [
           "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
         ],
-        "UserName" : "campaign-manager"
+        "UserName": "campaign-manager"
       }
     },
-    "BusinessAnalystUser":{
-      "Type" : "AWS::IAM::User",
-      "Properties" : {
-        "Path" : "/",
-        "LoginProfile" : {
-          "Password" : { "Ref" : "SampleUserPassword" },
-          "PasswordResetRequired" : false
+    "BusinessAnalystUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "SampleUserPassword"
+          },
+          "PasswordResetRequired": false
         },
         "ManagedPolicyArns": [
           "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
         ],
-        "UserName" : "business-analyst"
+        "UserName": "business-analyst"
       }
+    },
+    "EC2Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "RoleName": "EC2Role",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AdministratorAccess"
+        ]
+      }
+    },
+    "ListS3BucketsInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "EC2Role"
+          }
+        ]
+      }
+    },
+    "BackUpRestoreInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceType": "t2.small",
+        "KeyName": "dev-virginia",
+        "ImageId": "ami-0c6b1d09930fac512",
+        "IamInstanceProfile": {
+          "Ref": "ListS3BucketsInstanceProfile"
+        },
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [
+              {
+                "Ref": "RDSSecurityGroup"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "PublicSubnetOne"
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -ex\n",
+                "sudo yum -y install mysql\n",
+                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup . --debug\n",
+                "mysql -v -h ", { "Fn::GetAtt": [ "TPCDatabase", "Endpoint.Address" ] },
+                " -u ",{ "Ref": "DBMasterUser"}," -p'",{ "Ref": "DBMasterPassword"},"' -e \"create database tpc;\"\n",
+                "gunzip < tpc.backup | mysql -v -h ", { "Fn::GetAtt": [ "TPCDatabase", "Endpoint.Address" ] },
+                " -u ",{ "Ref": "DBMasterUser"}," -p'",{ "Ref": "DBMasterPassword"},"' tpc",
+                "\n"
+              ]
+            ]
+          }
+        },
+        "Tags" : [ {
+          "Key" : "Name",
+          "Value" : "EC2-DB-Loader"
+        } ]
+      },
+      "DependsOn": [
+        "TPCDatabase"
+      ]
     }
   }
 }
