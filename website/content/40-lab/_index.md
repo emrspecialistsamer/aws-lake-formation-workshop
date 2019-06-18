@@ -1,5 +1,5 @@
 +++
-title = "Intermediate Level"
+title = "Exercises"
 weight = 40
 chapter = true
 +++

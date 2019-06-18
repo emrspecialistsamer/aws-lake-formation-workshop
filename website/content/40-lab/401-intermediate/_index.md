@@ -1,6 +1,5 @@
 +++
-title = "Intermediate Level Workshop"
+title = "Intermediate Level"
 chapter = true
 weight = 401
-autoNav = true
 +++
