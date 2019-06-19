@@ -13,7 +13,7 @@ weight = 4011
         <li>First, you use the Lake Formation console to designate a data lake administrator to allow access to any Lake
             Formation resource. Click on the <b>Add administrators</b> button to create administrator for your Data
             Lake.
-            <img src="/images/welcometolf.png" style="margin:15px 0px"/></li>
+            <img src="/images/welcometolf.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Select <b>admin</b> IAM user from the drop down list. For the rest of workshop, this user will be considered as a data lake administrator and will have full access to data lake.</li>
         <li>Log out from the Lake Formation console.</li>
     </ol>
