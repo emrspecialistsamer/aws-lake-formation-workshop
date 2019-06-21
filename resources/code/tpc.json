@@ -1,0 +1,676 @@
+{
+  "Description": "CloudFormation template for creating an Lake Formation workshop resources",
+  "Mappings": {
+    "SubnetConfig": {
+      "VPC": {
+        "CIDR": "10.0.0.0/16"
+      },
+      "PublicOne": {
+        "CIDR": "10.0.0.0/24"
+      },
+      "PublicTwo": {
+        "CIDR": "10.0.1.0/24"
+      },
+      "Private": {
+        "CIDR": "10.0.2.0/24"
+      }
+    }
+  },
+  "Parameters": {
+    "DBMasterUser": {
+      "Type": "String",
+      "Default": "admin",
+      "Description": "Master username for TPC database."
+    },
+    "DBMasterPassword": {
+      "Type": "String",
+      "Default": "BigData26!",
+      "Description": "Master password for TPC database."
+    },
+    "SampleUserPassword": {
+      "Type": "String",
+      "Default": "Password1!",
+      "Description": "Password for all test users."
+    }
+  },
+  "Resources": {
+    "RDSSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security Group for RDS",
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-RDS-SecGroup"
+          }
+        ]
+      }
+    },
+    "SelfIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "DependsOn": "RDSSecurityGroup",
+      "Properties": {
+        "GroupId": {
+          "Ref": "RDSSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Ref": "RDSSecurityGroup"
+        }
+      }
+    },
+    "RDSSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "RDS Subnet Group using subnets from 2 AZs",
+        "SubnetIds": [
+          {
+            "Ref": "PublicSubnetOne"
+          },
+          {
+            "Ref": "PublicSubnetTwo"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-RDS-SubnetGroup"
+          }
+        ]
+      }
+    },
+    "TPCDatabase": {
+      "Type": "AWS::RDS::DBInstance",
+      "DependsOn": [
+        "RDSSubnetGroup",
+        "RDSSecurityGroup"
+      ],
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "DBInstanceClass": "db.r5.large",
+        "DBInstanceIdentifier": "tpc-database",
+        "AllocatedStorage": "100",
+        "DBSubnetGroupName": {
+          "Ref": "RDSSubnetGroup"
+        },
+        "Engine": "MySQL",
+        "EngineVersion": "5.7.22",
+        "MasterUsername": {
+          "Ref": "DBMasterUser"
+        },
+        "MasterUserPassword": {
+          "Ref": "DBMasterPassword"
+        },
+        "BackupRetentionPeriod": "0",
+        "StorageType": "gp2",
+        "AllowMajorVersionUpgrade": false,
+        "VPCSecurityGroups": [
+          {
+            "Ref": "RDSSecurityGroup"
+          }
+        ],
+        "PubliclyAccessible": true
+      }
+    },
+    "LakeFormationVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "VPC",
+            "CIDR"
+          ]
+        },
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-VPC"
+          }
+        ]
+      }
+    },
+    "PrivateSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "Private",
+            "CIDR"
+          ]
+        },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": {
+                "Ref": "AWS::Region"
+              }
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-PrivateSubnet"
+          }
+        ]
+      }
+    },
+    "PublicSubnetOne": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "PublicOne",
+            "CIDR"
+          ]
+        },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": {
+                "Ref": "AWS::Region"
+              }
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-PublicSubnetTwo"
+          }
+        ]
+      }
+    },
+    "PublicSubnetTwo": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "PublicTwo",
+            "CIDR"
+          ]
+        },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": {
+                "Ref": "AWS::Region"
+              }
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-PublicSubnetTwo"
+          }
+        ]
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-IG"
+          }
+        ]
+      }
+    },
+    "VPCGatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "InternetGatewayRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        }
+      }
+    },
+    "InternetGatewayRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "VPCGatewayAttachment",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "PublicSubnetOneRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnetOne"
+        }
+      }
+    },
+    "PublicSubnetTwoRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnetTwo"
+        }
+      }
+    },
+    "NATGatewayAttachment": {
+      "Type": "AWS::EC2::EIP",
+      "DependsOn": "VPCGatewayAttachment",
+      "Properties": {
+        "Domain": "LakeFormationVPC"
+      }
+    },
+    "NATGateway": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PublicSubnetOne"
+        },
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "NATGatewayAttachment",
+            "AllocationId"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-NAT-Gateway"
+          }
+        ]
+      }
+    },
+    "NATGatewayRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-NAT-RouteTable"
+          }
+        ]
+      }
+    },
+    "NATGatewayRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "NATGatewayRouteTable"
+        },
+        "NatGatewayId": {
+          "Ref": "NATGateway"
+        }
+      }
+    },
+    "PrivateSubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "NATGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PrivateSubnet"
+        }
+      }
+    },
+    "S3Endpoint": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "*",
+              "Principal": "*",
+              "Resource": "*"
+            }
+          ]
+        },
+        "RouteTableIds": [
+          {
+            "Ref": "NATGatewayRouteTable"
+          },
+          {
+            "Ref": "InternetGatewayRouteTable"
+          }
+        ],
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.s3"
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        }
+      }
+    },
+    "TPCGlueConnector": {
+      "Type": "AWS::Glue::Connection",
+      "Properties": {
+        "CatalogId": {
+          "Ref": "AWS::AccountId"
+        },
+        "ConnectionInput": {
+          "Name": "TPCGlueConnector",
+          "ConnectionType": "JDBC",
+          "PhysicalConnectionRequirements": {
+            "AvailabilityZone": {
+              "Fn::Select": [
+                0,
+                {
+                  "Fn::GetAZs": {
+                    "Ref": "AWS::Region"
+                  }
+                }
+              ]
+            },
+            "SecurityGroupIdList": [
+              {
+                "Ref": "RDSSecurityGroup"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "PublicSubnetOne"
+            }
+          },
+          "ConnectionProperties": {
+            "JDBC_CONNECTION_URL": {
+              "Fn::Join": [
+                "",
+                [
+                  "jdbc:mysql://",
+                  {
+                    "Fn::GetAtt": [
+                      "TPCDatabase",
+                      "Endpoint.Address"
+                    ]
+                  },
+                  ":3306/tpc"
+                ]
+              ]
+            },
+            "USERNAME": {
+              "Ref": "DBMasterUser"
+            },
+            "PASSWORD": {
+              "Ref": "DBMasterPassword"
+            },
+            "JDBC_ENFORCE_SSL": "false"
+          }
+        }
+      }
+    },
+    "GlueServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "glue.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+        ],
+        "Policies": [
+          {
+            "PolicyName": "LF-Data-Lake-Storage-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "DataLakeBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "DataLakeBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "RoleName": "LF-GlueServiceRole"
+      }
+    },
+    "DataLakeBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
+            "-",
+            [
+              "lf-data-lake-bucket",
+              {
+                "Ref": "AWS::AccountId"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "AdminUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "SampleUserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AdministratorAccess"
+        ],
+        "UserName": "admin"
+      }
+    },
+    "DeveloperUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "SampleUserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+        ],
+        "UserName": "developer"
+      }
+    },
+    "CampaignManagerUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "SampleUserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+        ],
+        "UserName": "campaign-manager"
+      }
+    },
+    "BusinessAnalystUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "SampleUserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+        ],
+        "UserName": "business-analyst"
+      }
+    },
+    "EC2Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "RoleName": "EC2Role",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AdministratorAccess"
+        ]
+      }
+    },
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "EC2Role"
+          }
+        ]
+      }
+    },
+    "BackUpRestoreInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceType": "t2.small",
+        "ImageId": "ami-0c6b1d09930fac512",
+        "IamInstanceProfile": {
+          "Ref": "EC2InstanceProfile"
+        },
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [
+              {
+                "Ref": "RDSSecurityGroup"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "PublicSubnetOne"
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -ex\n",
+                "sudo yum -y install mysql\n",
+                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup . --debug\n",
+                "gunzip < tpc.backup | mysql -h ", { "Fn::GetAtt": [ "TPCDatabase", "Endpoint.Address" ] },
+                " -u ",{ "Ref": "DBMasterUser"}," -p'",{ "Ref": "DBMasterPassword"},"'",
+                "\n"
+              ]
+            ]
+          }
+        },
+        "Tags" : [ {
+          "Key" : "Name",
+          "Value" : "EC2-DB-Loader"
+        } ]
+      },
+      "DependsOn": [
+        "TPCDatabase"
+      ]
+    }
+  }
+}

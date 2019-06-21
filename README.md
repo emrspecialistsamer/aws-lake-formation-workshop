@@ -1,37 +1,6 @@
-# workshop-sample
+# Lake Formation Workshop
 
-This project allows you to scaffold a workshop similar to those available at [cdkworkshop.com](https://cdkworkshop.com/), [eksworkshop.com](https://eksworkshop.com/), or [ecsworkshop.com](https://ecsworkshop.com/).
-
-```bash
-.
-├── buildspec.yml                     <-- Build Spec used to build this project in CodeBuild
-├── LICENSE.txt                       <-- License file
-├── README.md                         <-- This instructions file
-├── deck                              <-- Directory for presentation deck
-├── images                            <-- Directory for GitHub README images
-├── resources                         <-- Directory for workshop resources
-│   ├── code                          <-- Directory for workshop modules code
-│   ├── policies                      <-- Directory for workshop modules IAM Roles and Policies
-│   └── templates                     <-- Directory for workshop modules CloudFormation templates
-├── website                           <-- Directory for Hugo workshop website
-└── workshop                          
-    ├── buildspec.yml                 <-- AWS CodeBuild build script
-    └── templates                     <-- Website Stack CloudFormation templates
-        ├── pipeline-template.yaml    <-- Deployment pipeline from GitHub to static S3 website
-        └── workshop-cloudfront.yaml  <-- CloudFront distribution for HTTPS access to S3 website
-```
-
-## Requirements
-
-1. [Fork this repository](https://help.github.com/articles/fork-a-repo/).
-
-2. Create a [GitHub personal OAuth access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/).  `repo` permissions are required.
-
-## Instructions
-
-[Installing the Sample Workshop in your AWS Account](#installing-the-sample-workshop-in-your-aws-account)
-
-## Install the Sample Workshop in your AWS Account
+## Install the Lake Formation Workshop in your AWS Account
 
 1. Complete the [Requirements](#requirements).
 

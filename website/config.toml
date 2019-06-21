@@ -1,7 +1,7 @@
 baseURL = "https://helloworld.aworkshop.io"
 languageCode = "en-us"
 defaultContentLanguage = "en"
-title = "Amazon EMR Workshop"
+title = "AWS Lake Formation Workshop"
 theme = "learn"
 uglyurls = true
 sectionPagesMenu = "main"
@@ -11,7 +11,7 @@ pygmentsStyle = "monokai"
 [params]
 themeVariant = "mine"
 showVisitedLinks = false
-description = "Amazon EMR Workshop"
+description = "AWS Lake Formation Workshop"
 disableSearch = false
 disableAssetsBusting = true
 disableLanguageSwitchingButton = true
