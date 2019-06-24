@@ -7,7 +7,7 @@ Parameters:
 
   ParentZone:
     Type: String
-    Default: awsworkshop.io
+    Default: aworkshop.io
 
   GitHubUsername:
     Type: String

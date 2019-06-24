@@ -9,7 +9,7 @@ Parameters:
 
   ParentZone:
     Type: String
-    Default: aws.seibtribe.com
+    Default: aworkshop.io
 
 Resources:
   CDNDNS:
