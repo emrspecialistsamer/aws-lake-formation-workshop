@@ -6,7 +6,7 @@
 
 1. Click on the CloudFormation Launch link below that corresponds to the AWS Region in which you want to deploy the workshop.
 
-    [![US East (Ohio)](https://samdengler.github.io/cloudformation-launch-stack-button-svg/images/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=lakeformation&templateURL=https://s3.amazonaws.com/workshop-sample-us-east-1/pipeline-template.yaml&param_GitHubBranch=master&param_GitHubRepository=workshop-sample) 
+    [![US East (Ohio)](https://samdengler.github.io/cloudformation-launch-stack-button-svg/images/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=lakeformation&templateURL=https://s3.amazonaws.com/workshop-sample-us-east-1/pipeline-template.yaml&param_GitHubBranch=master&param_GitHubRepository=aws-lake-formation-workshop) 
 
 
 1. This workshop uses the CloudFormation CAPABILITY_AUTO_EXPAND capability, which requires the new CloudFormation Console UI.  If you see the following message at the top of the page, click on the link to **Try it out now and provide us feedback.** to use the new interface.
