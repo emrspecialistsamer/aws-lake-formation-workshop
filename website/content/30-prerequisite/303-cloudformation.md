@@ -1,5 +1,5 @@
 +++
-title = "CloudFormation Template"
+title = "CFN Template"
 weight = 303
 chapter = true
 +++
@@ -21,6 +21,6 @@ chapter = true
     The CloudFormation stack will roughly take 12-14 minutes to complete. Check the CloudFormation console and wait for
     the status <b>CREATE_COMPLETE</b> as shown below:<img src="/images/cfn-complete.png" title="LF Workshop CFN"/>
 
-    Once the stack creation is completed, move to the next chapter.
+    Once the stack creation is completed, your AWS account will have all required resources to run exercises. Please proceed to the next chapter to run exercise.
 
 </div>
