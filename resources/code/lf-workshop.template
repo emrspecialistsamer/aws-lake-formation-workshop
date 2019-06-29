@@ -506,6 +506,34 @@
                 }
               ]
             }
+          },
+          {
+            "PolicyName": "LF-Data-Lake-PassRole-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "iam:PassRole"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:iam::",
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          ":role/LF-GlueServiceRole"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
           }
         ],
         "RoleName": "LF-GlueServiceRole"
@@ -631,6 +659,7 @@
       "Properties": {
         "InstanceType": "t2.small",
         "ImageId": "ami-0c6b1d09930fac512",
+        "KeyName": "dev-virginia",
         "IamInstanceProfile": {
           "Ref": "EC2InstanceProfile"
         },
@@ -655,8 +684,8 @@
               [
                 "#!/bin/bash -ex\n",
                 "sudo yum -y install mysql\n",
-                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup . --debug\n",
-                "gunzip < tpc.backup | mysql -h ", { "Fn::GetAtt": [ "TPCDatabase", "Endpoint.Address" ] },
+                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup /tmp/\n",
+                "gunzip < /tmp/tpc.backup | mysql -h ", { "Fn::GetAtt": [ "TPCDatabase", "Endpoint.Address" ] },
                 " -u ",{ "Ref": "DBMasterUser"}," -p'",{ "Ref": "DBMasterPassword"},"'",
                 "\n"
               ]
