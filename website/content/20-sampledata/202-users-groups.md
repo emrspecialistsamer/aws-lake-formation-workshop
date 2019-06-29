@@ -11,10 +11,9 @@ weight = 202
     these sets of users and groups in an Active Directory.
 
     <ul>
-        <li> "developer" can only see web_page & web_site</li>
-        <li> "campaign_manager" can see everything except web_site</li>
-        <li> "business_analyst" can see everything except web_page, web_site and cannot check customer pii</li>
-        <li> only "admin" has access to LF and make any changes on LF</li>
-
+        <li><b>developer</b> can only see <b>web_page</b> & <b>web_site</b> tables.</li>
+        <li><b>campaign_manager</b> can see everything except <b>web_site</b> table.</li>
+        <li><b>business_analyst</b> can see everything except <b>web_page</b>, <b>web_site</b> and cannot check customer personal information, for example: email address, address, date of birth, etc.</li>
+        <li><b>admin</b> has access to all tables, Lake Formation components and can make any changes on Lake Formation.</li>
     </ul>
 </div>
