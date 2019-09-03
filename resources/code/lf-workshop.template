@@ -285,7 +285,7 @@ Resources:
                 Action:
                 - lakeformation:GetDataAccess
                 - lakeformation:GrantPermissions
-                Resource: *
+                Resource: "*"
         - PolicyName: LF-Workflow-Policy
           PolicyDocument:
             Version: 2012-10-17
@@ -418,8 +418,8 @@ Resources:
       Name: "Developer-Query"
       QueryString: >
                    /*
-                   Developer can only see web_page & web_sales tables
-                   */
+                    * Developer can only see web_page & web_sales tables
+                    */
                    SELECT sum(ws_net_paid_inc_tax) NetPaid,
                            ws_web_site_sk WebSiteID
                    FROM tpc_web_sales ws, tpc_web_page wp
@@ -434,53 +434,53 @@ Resources:
                    /*
                    Verify that a developer cannot access any other table. This should give a Insufficient Privileges message
                    */
-                   SELECT * FROM tpc_tpc_item limit 10;
+                   SELECT * FROM tpc_tpc_item limit 10
 
-   AthenaBusinessAnalystNamedQuery:
-     Type: AWS::Athena::NamedQuery
-     Properties:
-       Database: !Ref TPCDBName
-       Description: "Sample query issued by Campaign Manager on web page data."
-       Name: "BusinessAnalyst-Query"
-       QueryString: >
-                    /*
+  AthenaBusinessAnalystNamedQuery:
+    Type: AWS::Athena::NamedQuery
+    Properties:
+      Database: !Ref TPCDBName
+      Description: "Sample query issued by Campaign Manager on web page data."
+      Name: "BusinessAnalyst-Query"
+      QueryString: >
+                  /*
                     Run a sample query as a business analyst
                     */
                     --
                     SELECT sum(ws.ws_net_paid_inc_tax) NetPaid, count(distinct i.i_item_sk) NumItems, ca.ca_zip ZipCode FROM tpc_tpc_item i, tpc_tpc_web_sales ws, tpc_tpc_customer_address ca
                     WHERE i.i_item_sk = ws.ws_item_sk
                     AND ws.ws_ship_addr_sk = ca.ca_address_sk
-                    GROUP BY ca.ca_zip;
+                    GROUP BY ca.ca_zip
 
                     /*
                      Verify that business-analyst can access the all the non-PII columns in customer table
                      */
                     SELECT *
-                    FROM tpc_tpc_customer limit 10;
+                    FROM tpc_tpc_customer limit 10
 
                     /*
                      Verify that a business-analyst cannot access PII data
                     */
                     SELECT c_first_name, c_last_name, c_customer_sk, c_current_addr_sk
-                    FROM tpc_tpc_customer;
-   AthenaCampaignManagerNamedQuery:
-     Type: AWS::Athena::NamedQuery
-     Properties:
-       Database: !Ref TPCDBName
-       Description: "Sample query issued by Campaign Manager."
-       Name: "CampaignManager-Query"
-       QueryString: >
-                    /*
-                     * Sample Query from a Campaign Manager who is interested in marketing analytics
-                     */
+                    FROM tpc_tpc_customer
+  AthenaCampaignManagerNamedQuery:
+    Type: AWS::Athena::NamedQuery
+    Properties:
+      Database: !Ref TPCDBName
+      Description: "Sample query issued by Campaign Manager."
+      Name: "CampaignManager-Query"
+      QueryString: >
+                   /*
+                    * Sample Query from a Campaign Manager who is interested in marketing analytics
+                    */
 
-                    SELECT count(distinct i.i_item_sk) NumItems, p.p_promo_id PromotionId
-                    FROM tpc_tpc_item i, tpc_tpc_promotion p, tpc_tpc_web_sales ws
-                    WHERE i.i_item_sk = ws_item_sk
-                    AND ws.ws_promo_sk = p.p_promo_sk
-                    GROUP BY p.p_promo_id;
+                   SELECT count(distinct i.i_item_sk) NumItems, p.p_promo_id PromotionId
+                   FROM tpc_tpc_item i, tpc_tpc_promotion p, tpc_tpc_web_sales ws
+                   WHERE i.i_item_sk = ws_item_sk
+                   AND ws.ws_promo_sk = p.p_promo_sk
+                   GROUP BY p.p_promo_id;
 
-                    /*
-                     * Make sure Campaign manager cannot access web_page table
-                     */
-                    SELECT count(*) FROM web_page;
+                   /*
+                    * Make sure Campaign manager cannot access web_page table
+                    */
+                   SELECT count(*) FROM web_page;
