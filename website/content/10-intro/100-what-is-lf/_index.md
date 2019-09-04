@@ -14,11 +14,11 @@ autoNav = true
     data sources and catalog, cleanse, and transform the data. You can then use Lake Formation to secure and ingest the
     data into an Amazon Simple Storage Service (Amazon S3) data lake.
 
-    <br/><br/>
+    <br /><br />
     Moving your data into a data lake can provide better flexibility, cost savings, and scalability. However, manually
     setting up and managing data lakes can be a complex and time-consuming process. Lake Formation provides the
     following capabilities, either directly or through other AWS services, to reduce the time to deploy data lakes from
-    many months to a few days or weeks:<br/>
+    many months to a few days or weeks:<br />
     <ul>
         <li>Ingest and organize data.</li>
         <li>Cleanse data.</li>
