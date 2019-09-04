@@ -1,5 +1,5 @@
 +++
-title = "Query Data With Amazon Athena - Campaign Manager"
+title = "Query Data With Amazon Athena as a Campaign Manager"
 chapter = true
 weight = 40163
 +++
