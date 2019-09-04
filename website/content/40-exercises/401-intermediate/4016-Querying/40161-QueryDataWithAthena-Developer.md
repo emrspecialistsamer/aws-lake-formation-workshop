@@ -1,5 +1,5 @@
 +++
-title = "Query Data With Amazon Athena - Developer"
+title = "Query Data With Amazon Athena as a Developer"
 chapter = true
 weight = 40161
 +++
