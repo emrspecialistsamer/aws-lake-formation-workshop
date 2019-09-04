@@ -5,9 +5,9 @@ weight = 10
 autoNav = true
 +++
 
-<center><h4>Welcome to the AWS Lake Formation Workshop!</h4></center>
+<div style="text-align: justify">
 
-<div style="text-align: left">
+    <center><h4>Welcome to the AWS Lake Formation Workshop!</h4></center>
 
     The intent of this workshop is to educate users on the features of AWS Lake Formation. Background in AWS Glue and other AWS Analytics services are not required, but they may come in handy.<br /><br />
 
