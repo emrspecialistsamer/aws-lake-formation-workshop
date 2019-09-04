@@ -4,10 +4,10 @@ chapter = true
 weight = 401
 +++
 
-<div style="text-align: justify">
 
 <center><h3>Intermediate Level Exercise</h3></center>
 
+<div style="text-align: justify">
 
 This exercise covers basic functionalities of Lake Formation, how different components can be glued together to
 create a data lake on AWS, how to configure different security policies to provide access, how to do search across catalogs and collaborate. <br /> <br />
