@@ -6,12 +6,11 @@ autoNav = true
 +++
 
 <div style="text-align: justify">
+    ### Welcome to the AWS Lake Formation Workshop!
 
-    <center><h4>Welcome to the AWS Lake Formation Workshop!</h4></center>
+    The intent of this workshop is to educate users on the features of AWS Lake Formation. Background in AWS Glue and other AWS Analytics services are not required, but they may come in handy.
 
-    The intent of this workshop is to educate users on the features of AWS Lake Formation. Background in AWS Glue and other AWS Analytics services are not required, but they may come in handy.<br /><br />
-
-    This chapter will introduce you to the basic of AWS Lake Formation, laying the foundation for the hands-on portion of the workshop.<br /><br />
+    This chapter will introduce you to the basic of AWS Lake Formation, laying the foundation for the hands-on portion of the workshop.
 
     Specifically, we will walk you through the following topics:
 
