@@ -10,7 +10,8 @@ weight = 20
 
   To demonstrate different Lake Formation usage patterns and its capabilities, a sample data set is being used in this workshop along with sample users and groups. <br /><br />
 
-  We will walk you through these test data & users next:
+
+  Let's walk through the following test data & users:
 
   {{% children showhidden="false" %}}
 
