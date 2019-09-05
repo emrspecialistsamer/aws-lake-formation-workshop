@@ -9,6 +9,17 @@ Mappings:
       CIDR: 10.0.1.0/24
     Private:
       CIDR: 10.0.2.0/24
+  AWSRegionAMI:
+    us-east-1:
+      HVM64: ami-0c6b1d09930fac512
+    us-east-2:
+      HVM64: ami-00ceeb607e7372455
+    us-west-2:
+      HVM64: ami-03d1cd80b265afe51
+    eu-west-1:
+      HVM64: ami-007fb32dc0831ae00
+    ap-northeast-1:
+      HVM64: ami-029976583a7442c30
 Parameters:
   TPCDBName:
     Type: String
@@ -372,7 +383,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       InstanceType: t2.small
-      ImageId: ami-0c6b1d09930fac512
+      ImageId: !FindInMap [AWSRegionAMI, !Ref 'AWS::Region', HVM64]
       KeyName: !Ref EC2KeyPair
       IamInstanceProfile: !Ref EC2InstanceProfile
       NetworkInterfaces:
