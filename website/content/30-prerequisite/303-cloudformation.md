@@ -1,5 +1,5 @@
 +++
-title = "CFN Template"
+title = "CloudFormation Template"
 weight = 303
 chapter = true
 +++
