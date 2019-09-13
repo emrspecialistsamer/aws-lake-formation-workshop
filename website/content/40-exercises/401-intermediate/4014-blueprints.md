@@ -31,7 +31,7 @@ weight = 4014
         <li>Choose <b>Create</b>. Wait for the status of the blueprints to go from Creating to <b>Successfully created...</b> message.<img src="/images/blueprint6.png" style="margin:15px 0px; border:1px solid black"/>
         </li>
         <li>Now select the newly created workflow <b>tpc-ingest</b> and start the workflow by selecting <b>Start</b> option from the <b>Actions</b> drop-down.<img src="/images/blueprint7.png" style="margin:15px 0px; border:1px solid black"/></li>
-        <li>It will take few minutes to ingest the TPC database to your data lake. During this phase, the <b>Last run status</b> column will reflect different phases of ingestion process, for example: Discovering, Importing, COMPLETED.
+        <li>It will take few minutes to ingest the TPC database to your data lake. During this phase, the <b>Last run status</b> column will reflect different phases of ingestion process. For this exercise, <i>Discovering</i> phase will take around ~4 minutes, <i>Importing</i> phase will take ~20 minutes.
         </li>
         <li>Move to the next chapter when the blueprint <b>tpc-ingest</b> is completed successfully.<img src="/images/blueprint8.png" style="margin:15px 0px; border:1px solid black"/></li>
     </ol>

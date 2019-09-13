@@ -426,14 +426,14 @@ Resources:
     Properties:
       Database: !Ref TPCDBName
       Description: "A developer query on web page and web sales data."
-      Name: "Developer-Query"
+      Name: "LF-Developer-Query"
       QueryString: >
                    /*
                     * Developer can only see web_page & web_sales tables
                     */
                    SELECT sum(ws_net_paid_inc_tax) NetPaid,
                            ws_web_site_sk WebSiteID
-                   FROM tpc_web_sales ws, tpc_web_page wp
+                   FROM dl_tpc_web_sales ws, dl_tpc_web_page wp
                    WHERE ws.ws_web_site_sk = wp.wp_web_page_sk
                    GROUP BY  ws_web_site_sk;
 
@@ -452,7 +452,7 @@ Resources:
     Properties:
       Database: !Ref TPCDBName
       Description: "Sample query issued by Campaign Manager on web page data."
-      Name: "BusinessAnalyst-Query"
+      Name: "LF-BusinessAnalyst-Query"
       QueryString: >
                   /*
                     Run a sample query as a business analyst
@@ -479,7 +479,7 @@ Resources:
     Properties:
       Database: !Ref TPCDBName
       Description: "Sample query issued by Campaign Manager."
-      Name: "CampaignManager-Query"
+      Name: "LF-CampaignManager-Query"
       QueryString: >
                    /*
                     * Sample Query from a Campaign Manager who is interested in marketing analytics
@@ -495,3 +495,10 @@ Resources:
                     * Make sure Campaign manager cannot access web_page table
                     */
                    SELECT count(*) FROM web_page;
+Outputs:
+  LFBucketName:
+    Description: Lake Formation Data Lake Bucket Name
+    Value: !Ref DataLakeBucket
+  LFUsersPassword:
+    Description: Password for Data Lake Users
+    Value: !Ref SampleUserPassword
