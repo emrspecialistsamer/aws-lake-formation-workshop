@@ -26,16 +26,16 @@ Parameters:
     Default: tpc
     AllowedValues:
       - tpc
-    Description: Name of the database that will be created. DO NOT change this
+    Description: Name of the database that will be created.
   DBMasterUser:
     Type: String
-    Default: admin
+    Default: tpcadmin
     Description: Master username for TPC database.
   DBMasterPassword:
     Type: String
     Default: BigData26!
     Description: Master password for TPC database.
-  SampleUserPassword:
+  TestUserPassword:
     Type: String
     Default: Password1!
     Description: Password for all test users.
@@ -323,41 +323,41 @@ Resources:
     Properties:
       Path: /
       LoginProfile:
-        Password: !Ref SampleUserPassword
+        Password: !Ref TestUserPassword
         PasswordResetRequired: false
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AdministratorAccess'
-      UserName: admin
+      UserName: lf-admin
   DeveloperUser:
     Type: 'AWS::IAM::User'
     Properties:
       Path: /
       LoginProfile:
-        Password: !Ref SampleUserPassword
+        Password: !Ref TestUserPassword
         PasswordResetRequired: false
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonAthenaFullAccess'
-      UserName: developer
+      UserName: lf-developer
   CampaignManagerUser:
     Type: 'AWS::IAM::User'
     Properties:
       Path: /
       LoginProfile:
-        Password: !Ref SampleUserPassword
+        Password: !Ref TestUserPassword
         PasswordResetRequired: false
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonAthenaFullAccess'
-      UserName: campaign-manager
+      UserName: lf-campaign-manager
   BusinessAnalystUser:
     Type: 'AWS::IAM::User'
     Properties:
       Path: /
       LoginProfile:
-        Password: !Ref SampleUserPassword
+        Password: !Ref TestUserPassword
         PasswordResetRequired: false
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonAthenaFullAccess'
-      UserName: business-analyst
+      UserName: lf-business-analyst
   EC2Role:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -437,15 +437,17 @@ Resources:
                    WHERE ws.ws_web_site_sk = wp.wp_web_page_sk
                    GROUP BY  ws_web_site_sk;
 
+
                    /*
                     Check out the web_sales table
                    */
                    SELECT COUNT(*) FROM dl_tpc_web_sales;
 
+
                    /*
                    Verify that a developer cannot access any other table. This should give a Insufficient Privileges message
                    */
-                   SELECT * FROM dl_tpc_item limit 10
+                   SELECT * FROM dl_tpc_item limit 10;
 
   AthenaBusinessAnalystNamedQuery:
     Type: AWS::Athena::NamedQuery
@@ -457,23 +459,22 @@ Resources:
                   /*
                     Run a sample query as a business analyst
                     */
-                    --
                     SELECT sum(ws.ws_net_paid_inc_tax) NetPaid, count(distinct i.i_item_sk) NumItems, ca.ca_zip ZipCode FROM dl_tpc_item i, dl_tpc_web_sales ws, dl_tpc_customer_address ca
                     WHERE i.i_item_sk = ws.ws_item_sk
                     AND ws.ws_ship_addr_sk = ca.ca_address_sk
-                    GROUP BY ca.ca_zip
+                    GROUP BY ca.ca_zip;
 
                     /*
                      Verify that business-analyst can access the all the non-PII columns in customer table
                      */
                     SELECT *
-                    FROM dl_tpc_customer limit 10
+                    FROM dl_tpc_customer limit 10;
 
                     /*
                      Verify that a business-analyst cannot access PII data
                     */
                     SELECT c_first_name, c_last_name, c_customer_sk, c_current_addr_sk
-                    FROM dl_tpc_customer
+                    FROM dl_tpc_customer;
   AthenaCampaignManagerNamedQuery:
     Type: AWS::Athena::NamedQuery
     Properties:
@@ -494,11 +495,11 @@ Resources:
                    /*
                     * Make sure Campaign manager cannot access web_page table
                     */
-                   SELECT count(*) FROM web_page;
+                   SELECT count(*) FROM dl_tpc_web_page;
 Outputs:
   LFBucketName:
     Description: Lake Formation Data Lake Bucket Name
     Value: !Ref DataLakeBucket
   LFUsersPassword:
     Description: Password for Data Lake Users
-    Value: !Ref SampleUserPassword
+    Value: !Ref TestUserPassword

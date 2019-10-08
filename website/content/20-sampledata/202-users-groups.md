@@ -11,9 +11,9 @@ weight = 202
     these sets of users and groups in an Active Directory.
 
     <ul>
-        <li><b>developer</b> can only see <b>web_page</b> & <b>web_sales</b> tables.</li>
-        <li><b>campaign_manager</b> can see everything except <b>web_page</b> table.</li>
-        <li><b>business_analyst</b> can see everything except <b>web_page</b>, <b>web_sales</b> and cannot check customer personal information, for example: email address, address, date of birth, etc.</li>
-        <li><b>admin</b> has access to all Lake Formation components and can make any changes in Lake Formation.</li>
+        <li><b>lf-developer</b> can only see <b>web_page</b> & <b>web_sales</b> tables.</li>
+        <li><b>lf-campaign_manager</b> can see everything except <b>web_page</b> table.</li>
+        <li><b>lf-business_analyst</b> can see everything except <b>web_page</b>, <b>web_sales</b> and cannot check customer personal information, for example: email address, address, date of birth, etc.</li>
+        <li><b>lf-admin</b> has access to all Lake Formation components and can make any changes in Lake Formation.</li>
     </ul>
 </div>

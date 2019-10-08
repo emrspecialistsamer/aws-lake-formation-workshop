@@ -24,7 +24,7 @@ weight = 4014
         <li>For the AWS Glue <b>Database connection</b> name, choose <b>TPCGlueConnector</b> which is created through CloudFormation to access the TPC database running on RDS.
         </li>
         <li>For the <b>Source data path</b>, enter <b>"tpc/"</b>. Leave <b>Exclude pattern</b> options as default.<img src="/images/blueprint3.png" style="margin:15px 0px; border:1px solid black"/></li>
-        <li>Under <b>Import target</b> section, choose <b>tpc</b> as the target database. For the <b>Data lake location</b>, choose the S3 path which you used in the <b>Data lake storage</b> section. For Data format, choose <b>Parquet</b> as the format in which the data is written.<img src="/images/blueprint4.png" style="margin:15px 0px; border:1px solid black"/>
+        <li>Under <b>Import target</b> section, choose <b>tpc</b> as the target database. For the <b>Target storage location</b>, choose the S3 path which you used in the <b>Data Lake Locations</b> section. For Data format, choose <b>Parquet</b> as the format in which the data is written.<img src="/images/blueprint4.png" style="margin:15px 0px; border:1px solid black"/>
         </li>
         <li>Now move to <b>Import options</b>, enter a workflow name <b>tpc-ingest</b>. Choose <b>LF-GlueServiceRole</b> for the IAM role and enter "dt" as the <b>Table prefix</b>. Leave the rest of the fields as default.<img src="/images/blueprint5.png" style="margin:15px 0px; border:1px solid black"/>
         </li>
