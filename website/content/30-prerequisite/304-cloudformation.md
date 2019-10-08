@@ -1,6 +1,6 @@
 +++
 title = "CloudFormation Template"
-weight = 303
+weight = 304
 chapter = true
 +++
 

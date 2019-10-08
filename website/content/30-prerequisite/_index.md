@@ -27,6 +27,7 @@ weight = 30
 <div>
     If you already have an AWS account, please skip the above two steps and go directly to this chapter:
     <ul>
-        <li><a href="30-prerequisite/303-cloudformation.html">Using CFN Template</a></li>
+        <li><a href="30-prerequisite/303-ec2-keypair.html">Create EC2 Key Pair</a></li>
+        <li><a href="30-prerequisite/304-cloudformation.html">Using CFN Template</a></li>
     </ul>
 </div>

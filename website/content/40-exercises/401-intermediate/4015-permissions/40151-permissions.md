@@ -15,5 +15,6 @@ weight = 40151
     </li>
     <li><b>Campaign Manager</b>: Is a user that has access to all tables to run marketing campaigns with the exception of web_sales table.
   </ul>
+  <b>Note:</b> Lake Formation blueprints will create a few temp tables for the ingestion process, all temp table names will start with underscore (_) as prefix, for example:  _dl_tpc_customer. Rest of the exercises will <b>EXCLUDE</b> all temp tables. <br/><br/>
   Let's go ahead and create these data permission in Lake Formation for the above personas.
 </div>
