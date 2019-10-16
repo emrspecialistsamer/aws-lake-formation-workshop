@@ -9,7 +9,7 @@ weight = 40163
   <ol>
     <li>From the AWS Management console, search for <b>Amazon Athena</b> service <img src="/images/Query-AthenaService-search.png" style="margin:15px 0px; border:1px solid black"/>
     </li>
-    <li>Make sure you are logged in as a business-analyst user<img src="/images/campaign-manager-view.png" style="margin:15px 0px; border:1px solid black"/>
+    <li>Make sure you are logged in as a lf-campaign-manager user<img src="/images/campaign-manager-view.png" style="margin:15px 0px; border:1px solid black"/>
     </li>
     <li>Locate and expand the table section on the left hand side of the screen. Notice that a campaign manager has access to all tables except <b>dl_tpc_web_page</b></li>
     <li>On the top left hand side of the screen, select <b>Saved Queries</b> and choose a query named <b>LF-CampaignManager-Query</b> <img src="/images/campaign-manager-queries.png" style="margin:15px 0px; border:1px solid black"/></li>
