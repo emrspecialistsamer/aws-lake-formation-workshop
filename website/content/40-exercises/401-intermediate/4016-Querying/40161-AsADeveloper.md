@@ -5,7 +5,7 @@ weight = 40161
 +++
 
 <div style="text-align: justify">
-  As you may recall, a developer only has access to web_page and web_sales tables. Login to your AWS account as the user <b>lf-developer</b>. Let us make sure a developer run queries from Athena console on those tables and nothing else.
+  As you may recall, a developer only has access to web_page and web_sales tables. Login to your AWS account as the user <b>lf-developer</b> using the IAM sign in link. Let us make sure a developer run queries from Athena console on those tables and nothing else.
   <ol>
     <li>From the AWS Management console, search for <b>Amazon Athena</b> service <img src="/images/Query-AthenaService-search.png" style="margin:15px 0px; border:1px solid black"/>
     </li>
