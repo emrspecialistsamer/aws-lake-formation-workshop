@@ -318,6 +318,13 @@ Resources:
         - '-'
         - - lf-data-lake-bucket
           - !Ref 'AWS::AccountId'
+  AthenaQueryResultBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Join
+        - '-'
+        - - lf-athena-query-results
+          - !Ref 'AWS::AccountId'
   AdminUser:
     Type: 'AWS::IAM::User'
     Properties:
@@ -335,6 +342,26 @@ Resources:
       LoginProfile:
         Password: !Ref TestUserPassword
         PasswordResetRequired: false
+      Policies:
+        - PolicyName: LF-Athena-Query-Result-Policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:Put*'
+                  - 's3:Get*'
+                  - 's3:List*'
+                Resource:
+                  - !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref AthenaQueryResultBucket
+                      - /*
+                  - !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref AthenaQueryResultBucket
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonAthenaFullAccess'
       UserName: lf-developer
@@ -345,6 +372,26 @@ Resources:
       LoginProfile:
         Password: !Ref TestUserPassword
         PasswordResetRequired: false
+      Policies:
+        - PolicyName: LF-Athena-Query-Result-Policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:Put*'
+                  - 's3:Get*'
+                  - 's3:List*'
+                Resource:
+                  - !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref AthenaQueryResultBucket
+                      - /*
+                  - !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref AthenaQueryResultBucket
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonAthenaFullAccess'
       UserName: lf-campaign-manager
@@ -355,6 +402,26 @@ Resources:
       LoginProfile:
         Password: !Ref TestUserPassword
         PasswordResetRequired: false
+      Policies:
+        - PolicyName: LF-Athena-Query-Result-Policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:Put*'
+                  - 's3:Get*'
+                  - 's3:List*'
+                Resource:
+                  - !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref AthenaQueryResultBucket
+                      - /*
+                  - !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref AthenaQueryResultBucket
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonAthenaFullAccess'
       UserName: lf-business-analyst
@@ -500,6 +567,9 @@ Outputs:
   LFBucketName:
     Description: Lake Formation Data Lake Bucket Name
     Value: !Ref DataLakeBucket
+  AthenaQueryResultBucketName:
+    Description: Bucket to store Athena query results
+    Value: !Ref AthenaQueryResultBucket
   LFUsersPassword:
     Description: Password for Data Lake Users
     Value: !Ref TestUserPassword
