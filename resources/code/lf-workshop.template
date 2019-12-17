@@ -1,4 +1,30 @@
 Description: CloudFormation template to create AWS Lake Formation workshop resources
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Database Configuration"
+        Parameters:
+          - TPCDBName
+          - DBMasterUser
+          - DBMasterPassword
+      -
+        Label:
+          default: "User Configuration"
+        Parameters:
+          - TestUserPassword
+    ParameterLabels:
+      TPCDBName:
+        default: "Database Name"
+      DBMasterUser:
+        default: "Master Username"
+      DBMasterPassword:
+        default: "Master User Password"
+      TestUserPassword:
+        default: "Test User Password"
+      EC2KeyPair:
+        default: "EC2 Key Pair"
 Mappings:
   SubnetConfig:
     VPC:
@@ -42,6 +68,7 @@ Parameters:
   EC2KeyPair:
     Description: Amazon EC2 Key Pair
     Type: 'AWS::EC2::KeyPair::KeyName'
+    MinLength: 1
 Resources:
   RDSSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
@@ -288,6 +315,23 @@ Resources:
                     - ''
                     - - 'arn:aws:s3:::'
                       - !Ref DataLakeBucket
+        - PolicyName: Glue-Demo-Access-Policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:*'
+                Resource:
+                  - !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref GlueBucket
+                      - /*
+                  - !Join
+                    - ''
+                    - - 'arn:aws:s3:::'
+                      - !Ref GlueBucket
         - PolicyName: LF-DataAccess-Policy
           PolicyDocument:
             Version: 2012-10-17
@@ -325,6 +369,13 @@ Resources:
         - '-'
         - - lf-athena-query-results
           - !Ref 'AWS::AccountId'
+  GlueBucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Join
+          - '-'
+          - - lf-glue-bucket
+            - !Ref 'AWS::AccountId'
   AdminUser:
     Type: 'AWS::IAM::User'
     Properties:
@@ -466,10 +517,16 @@ Resources:
               #!/bin/bash -ex
             - |
               sudo yum -y install mysql
+            - 'aws s3 cp s3://aws-data-analytics-blog/emr-step-functions/tripdata.csv '
+            - 's3://'
+            - !Ref GlueBucket
+            - '/nyctaxi/'
+            - |+
+
             - >
               aws s3 cp
               s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup
-              /tmp/ --debug
+              /tmp/
             - 'gunzip < /tmp/tpc.backup | mysql -h '
             - !GetAtt
               - TPCDatabase
@@ -567,6 +624,9 @@ Outputs:
   LFBucketName:
     Description: Lake Formation Data Lake Bucket Name
     Value: !Ref DataLakeBucket
+  GlueDemoBucketName:
+      Description: S3 bucket for Glue Demos
+      Value: !Ref GlueBucket
   AthenaQueryResultBucketName:
     Description: Bucket to store Athena query results
     Value: !Ref AthenaQueryResultBucket
