@@ -1,10 +1,10 @@
 +++
-title = "Glue Orchestration"
+title = "Glue Orchestration (WIP)"
 chapter = true
 weight = 4003
 +++
 
-<center><h3>Glue Orchestration</h3></center>
+<center><h3>Glue Orchestration (WIP)</h3></center>
 
 <div style="text-align: justify">
   So far, we have ingested, cleansed, transformed, organized raw data and setup data access privileges for different personas who will be accessing the data assets in the data lake.

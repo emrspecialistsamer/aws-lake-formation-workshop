@@ -517,10 +517,16 @@ Resources:
               #!/bin/bash -ex
             - |
               sudo yum -y install mysql
-            - 'aws s3 cp s3://aws-data-analytics-blog/emr-step-functions/tripdata.csv '
+            - 'aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tripdata.csv '
             - 's3://'
             - !Ref GlueBucket
             - '/nyctaxi/'
+            - |+
+
+            - 'aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py '
+            - 's3://'
+            - !Ref GlueBucket
+            - '/scripts/'
             - |+
 
             - >
