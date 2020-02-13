@@ -1,6 +1,6 @@
 +++
 title = "Create EC2 Key Pair"
-weight = 303
+weight = 3012
 chapter = true
 +++
 
