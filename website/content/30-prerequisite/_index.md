@@ -28,6 +28,27 @@ weight = 30
     If you already have an AWS account, please skip the above two steps and go directly to this chapter:
     <ul>
         <li><a href="30-prerequisite/303-ec2-keypair.html">Create EC2 Key Pair</a></li>
+    </ul>
+</div>
+
+
+<div>
+    If you are planning on Integrating AWS Lake Formation with Amazon EMR and enable SAML based authentication for EMR Notebooks or Apache Zeppelin authentication part of this workshop then please finish the following steps for Auth0.
+    
+    <br/>
+    <h4> Auth0 </h4>
+    <ul>
+        <li><a href="30-prerequisite/305-saml-providers/3051-auth0/30511-configure-auth0.html">Configure Auth0</a></li>
+        <li><a href="30-prerequisite/305-saml-providers/3051-auth0/30512-create-saml-provider-in-aws.html">Create AuthO SAML Provider in AWS</a></li>
+        <li><a href="30-prerequisite/305-saml-providers/3051-auth0/30513-upload-metadata.html">Upload AuthO Metadata into S3</a></li>
+    </ul>
+    
+    
+</div>
+
+<div>
+    Finally create cluster using following chapter:
+    <ul>
         <li><a href="30-prerequisite/304-cloudformation.html">Using CFN Template</a></li>
     </ul>
 </div>

@@ -1,0 +1,1784 @@
+{
+  "Description": "CloudFormation template to create AWS LakeFormation Integrated with EMR and Auth0 Federation workshop resources",
+  "Metadata": {
+    "AWS::CloudFormation::Interface": {
+      "ParameterGroups": [
+        {
+          "Label": {
+            "default": "Database Configuration"
+          },
+          "Parameters": [
+            "TPCDBName",
+            "DBMasterUser",
+            "DBMasterPassword"
+          ]
+        },
+        {
+          "Label": {
+            "default": "User Configuration"
+          },
+          "Parameters": [
+            "TestUserPassword"
+          ]
+        },
+        {
+          "Label": {
+            "default": "EMR Cluster Configuration"
+          },
+          "Parameters": [
+            "IntegrateWithEMR",
+            "Auth0SAMLProvider",
+            "Auth0MetaDataInS3",
+            "Realm",
+            "KdcAdminPassword",
+            "ReleaseLabel",
+            "InstanceType"
+
+
+          ]
+        }
+      ],
+      "ParameterLabels": {
+        "TPCDBName": {
+          "default": "Database Name"
+        },
+        "DBMasterUser": {
+          "default": "Master Username"
+        },
+        "DBMasterPassword": {
+          "default": "Master User Password"
+        },
+        "TestUserPassword": {
+          "default": "Test User Password"
+        },
+        "EC2KeyPair": {
+          "default": "EC2 Key Pair"
+        },
+        "Auth0SAMLProvider": {
+          "default": "Auth0 SAML Provider"
+        },
+        "Auth0MetaDataInS3": {
+          "default": "Auth0 SAML Provider MetaData "
+        },
+        "IntegrateWithEMR": {
+          "default": "Integrate With EMR"
+        }
+      }
+    }
+  },
+  "Mappings": {
+    "SubnetConfig": {
+      "VPC": {
+        "CIDR": "10.0.0.0/16"
+      },
+      "PublicOne": {
+        "CIDR": "10.0.0.0/24"
+      },
+      "PublicTwo": {
+        "CIDR": "10.0.1.0/24"
+      },
+      "Private": {
+        "CIDR": "10.0.2.0/24"
+      }
+    },
+    "AWSRegionAMI": {
+      "us-east-1": {
+        "HVM64": "ami-0c6b1d09930fac512"
+      },
+      "us-east-2": {
+        "HVM64": "ami-02ccb28830b645a41"
+      },
+      "us-west-2": {
+        "HVM64": "ami-04590e7389a6e577c"
+      },
+      "us-west-1": {
+        "HVM64": "ami-03caa3f860895f82e"
+      },
+      "ap-northeast-1": {
+        "HVM64": "ami-011facbea5ec0363b"
+      }
+    }
+  },
+  "Parameters": {
+    "TPCDBName": {
+      "Type": "String",
+      "Default": "tpc",
+      "AllowedValues": [
+        "tpc"
+      ],
+      "Description": "Name of the database that will be created."
+    },
+    "DBMasterUser": {
+      "Type": "String",
+      "Default": "tpcadmin",
+      "Description": "Master username for TPC database."
+    },
+    "DBMasterPassword": {
+      "Type": "String",
+      "Default": "BigData26!",
+      "Description": "Master password for TPC database."
+    },
+    "TestUserPassword": {
+      "Type": "String",
+      "Default": "Password1!",
+      "Description": "Password for all test users."
+    },
+    "EC2KeyPair": {
+      "Description": "Amazon EC2 Key Pair",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "MinLength": 1
+    },
+    "IntegrateWithEMR" : {
+      "Description" : "Integrate AWS LakeFormation With EMR?.",
+      "Default" : "No",
+      "Type" : "String",
+      "AllowedValues" : ["Yes", "No"],
+      "ConstraintDescription" : "must specify Yes or No"
+    },
+    "Auth0SAMLProvider": {
+      "Type": "String",
+      "Default": "auth0SAMLProvider",
+      "Description": "Auth0 SAML Provider Created in AWS"
+    },
+    "Auth0MetaDataInS3": {
+      "Type": "String",
+      "Description": "Auth0 Metadata xml file in S3 (e.g s3://bucket/myfolder/metadata.xml ),if you are planning on integrating LakeFormation with EMR and Auth0 SAML authentication then you need provide proper S3 file path, default value is just a dummy file",
+      "Default": "s3://emr-workshops-us-west-2/lakeformation-emr-workshop/auth0-metadata/Auth0metadata.xml"
+
+    },
+    "KdcAdminPassword": {
+      "Type": "String",
+      "Default": "Password1!"
+    },
+    "Realm": {
+      "Type": "String",
+      "Default": "EC2.INTERNAL",
+      "Description": "Kerberos Realm for Internal KDC"
+    },
+    "InstanceType": {
+      "Type": "String",
+      "Default": "m4.xlarge",
+      "Description": "EMR Cluster Instance Types for both Master & Core"
+    },
+    "ReleaseLabel": {
+      "Type": "String",
+      "Default": "emr-5.29.0",
+      "AllowedValues": [
+        "emr-5.26.0",
+        "emr-5.27.0",
+        "emr-5.28.0",
+        "emr-5.29.0"
+      ],
+      "Description": "EMR Version"
+    }
+  },
+  "Conditions" : {
+    "CreateEMRCluster" : {"Fn::Equals" : [{"Ref" : "IntegrateWithEMR"}, "Yes"]}
+  },
+  "Resources": {
+    "RDSSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Security Group for RDS",
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-RDS-SecGroup"
+          }
+        ]
+      }
+    },
+    "SelfIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "DependsOn": "RDSSecurityGroup",
+      "Properties": {
+        "GroupId": {
+          "Ref": "RDSSecurityGroup"
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Ref": "RDSSecurityGroup"
+        }
+      }
+    },
+    "RDSSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "RDS Subnet Group using subnets from 2 AZs",
+        "SubnetIds": [
+          {
+            "Ref": "PublicSubnetOne"
+          },
+          {
+            "Ref": "PublicSubnetTwo"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-RDS-SubnetGroup"
+          }
+        ]
+      }
+    },
+    "TPCDatabase": {
+      "Type": "AWS::RDS::DBInstance",
+      "DependsOn": [
+        "RDSSubnetGroup",
+        "RDSSecurityGroup"
+      ],
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "DBInstanceClass": "db.r5.large",
+        "DBInstanceIdentifier": "tpc-database",
+        "DBName": {
+          "Ref": "TPCDBName"
+        },
+        "AllocatedStorage": "100",
+        "DBSubnetGroupName": {
+          "Ref": "RDSSubnetGroup"
+        },
+        "Engine": "MySQL",
+        "EngineVersion": "5.7.22",
+        "MasterUsername": {
+          "Ref": "DBMasterUser"
+        },
+        "MasterUserPassword": {
+          "Ref": "DBMasterPassword"
+        },
+        "BackupRetentionPeriod": "0",
+        "StorageType": "gp2",
+        "AllowMajorVersionUpgrade": false,
+        "VPCSecurityGroups": [
+          {
+            "Ref": "RDSSecurityGroup"
+          }
+        ],
+        "PubliclyAccessible": true
+      }
+    },
+    "LakeFormationVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "VPC",
+            "CIDR"
+          ]
+        },
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-VPC"
+          }
+        ]
+      }
+    },
+    "PrivateSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "Private",
+            "CIDR"
+          ]
+        },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": {
+                "Ref": "AWS::Region"
+              }
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-PrivateSubnet"
+          }
+        ]
+      }
+    },
+    "PublicSubnetOne": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "PublicOne",
+            "CIDR"
+          ]
+        },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": {
+                "Ref": "AWS::Region"
+              }
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-PublicSubneOne"
+          }
+        ]
+      }
+    },
+    "PublicSubnetTwo": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": {
+          "Fn::FindInMap": [
+            "SubnetConfig",
+            "PublicTwo",
+            "CIDR"
+          ]
+        },
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": {
+                "Ref": "AWS::Region"
+              }
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-PublicSubnetTwo"
+          }
+        ]
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-IG"
+          }
+        ]
+      }
+    },
+    "VPCGatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "InternetGatewayRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        }
+      }
+    },
+    "InternetGatewayRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "VPCGatewayAttachment",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "PublicSubnetOneRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnetOne"
+        }
+      }
+    },
+    "PublicSubnetTwoRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "InternetGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnetTwo"
+        }
+      }
+    },
+    "NATGatewayAttachment": {
+      "Type": "AWS::EC2::EIP",
+      "DependsOn": "VPCGatewayAttachment",
+      "Properties": {
+        "Domain": "vpc"
+      }
+    },
+    "NATGateway": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PublicSubnetOne"
+        },
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "NATGatewayAttachment",
+            "AllocationId"
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-NAT-Gateway"
+          }
+        ]
+      }
+    },
+    "NATGatewayRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-NAT-RouteTable"
+          }
+        ]
+      }
+    },
+    "NATGatewayRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "NATGatewayRouteTable"
+        },
+        "NatGatewayId": {
+          "Ref": "NATGateway"
+        }
+      }
+    },
+    "PrivateSubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "NATGatewayRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PrivateSubnet"
+        }
+      }
+    },
+    "S3Endpoint": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "*",
+              "Principal": "*",
+              "Resource": "*"
+            }
+          ]
+        },
+        "RouteTableIds": [
+          {
+            "Ref": "NATGatewayRouteTable"
+          },
+          {
+            "Ref": "InternetGatewayRouteTable"
+          }
+        ],
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.s3"
+        },
+        "VpcId": {
+          "Ref": "LakeFormationVPC"
+        }
+      }
+    },
+    "TPCGlueConnector": {
+      "Type": "AWS::Glue::Connection",
+      "Properties": {
+        "CatalogId": {
+          "Ref": "AWS::AccountId"
+        },
+        "ConnectionInput": {
+          "Name": "TPCGlueConnector",
+          "ConnectionType": "JDBC",
+          "PhysicalConnectionRequirements": {
+            "AvailabilityZone": {
+              "Fn::Select": [
+                0,
+                {
+                  "Fn::GetAZs": {
+                    "Ref": "AWS::Region"
+                  }
+                }
+              ]
+            },
+            "SecurityGroupIdList": [
+              {
+                "Ref": "RDSSecurityGroup"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "PublicSubnetOne"
+            }
+          },
+          "ConnectionProperties": {
+            "JDBC_CONNECTION_URL": {
+              "Fn::Join": [
+                "",
+                [
+                  "jdbc:mysql://",
+                  {
+                    "Fn::GetAtt": [
+                      "TPCDatabase",
+                      "Endpoint.Address"
+                    ]
+                  },
+                  ":3306/tpc"
+                ]
+              ]
+            },
+            "USERNAME": {
+              "Ref": "DBMasterUser"
+            },
+            "PASSWORD": {
+              "Ref": "DBMasterPassword"
+            },
+            "JDBC_ENFORCE_SSL": "false"
+          }
+        }
+      }
+    },
+    "GlueServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "glue.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+        ],
+        "Policies": [
+          {
+            "PolicyName": "LF-Data-Lake-Storage-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "DataLakeBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "DataLakeBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "Glue-Demo-Access-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "GlueBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "GlueBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "LF-DataAccess-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "lakeformation:GetDataAccess",
+                    "lakeformation:GrantPermissions"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "LF-Workflow-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "iam:PassRole"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:iam::",
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          ":role/LF-GlueServiceRole"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "RoleName": "LF-GlueServiceRole"
+      }
+    },
+    "LakeFormationAuth0Role": {
+      "Type": "AWS::IAM::Role",
+      "Condition" : "CreateEMRCluster",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":saml-provider/",
+                      {
+                        "Ref": "Auth0SAMLProvider"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "Action": "sts:AssumeRoleWithSAML"
+            },
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "glue.amazonaws.com",
+                  "lakeformation.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LF-Auth0-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": {
+                "Effect": "Allow",
+                "Action": [
+                  "lakeformation:GetDataAccess",
+                  "lakeformation:GetMetadataAccess",
+                  "glue:CreateDatabase",
+                  "glue:GetUnfiltered*",
+                  "glue:GetTable",
+                  "glue:GetTables",
+                  "glue:GetDatabase",
+                  "glue:GetDatabases",
+                  "glue:GetUserDefinedFunction",
+                  "glue:GetUserDefinedFunctions"
+                ],
+                "Resource": "*"
+              }
+            }
+          }
+        ],
+        "RoleName": "LF-Auth0-Role"
+      }
+    },
+    "LakeFormationEMRRole": {
+      "Type": "AWS::IAM::Role",
+      "Condition" : "CreateEMRCluster",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2008-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "elasticmapreduce.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LF-EMR-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Action": [
+                    "ec2:AuthorizeSecurityGroupEgress",
+                    "ec2:AuthorizeSecurityGroupIngress",
+                    "ec2:CancelSpotInstanceRequests",
+                    "ec2:CreateNetworkInterface",
+                    "ec2:CreateSecurityGroup",
+                    "ec2:CreateTags",
+                    "ec2:DeleteNetworkInterface",
+                    "ec2:DeleteSecurityGroup",
+                    "ec2:DeleteTags",
+                    "ec2:DescribeAvailabilityZones",
+                    "ec2:DescribeAccountAttributes",
+                    "ec2:DescribeDhcpOptions",
+                    "ec2:DescribeImages",
+                    "ec2:DescribeInstanceStatus",
+                    "ec2:DescribeInstances",
+                    "ec2:DescribeKeyPairs",
+                    "ec2:DescribeNetworkAcls",
+                    "ec2:DescribeNetworkInterfaces",
+                    "ec2:DescribePrefixLists",
+                    "ec2:DescribeRouteTables",
+                    "ec2:DescribeSecurityGroups",
+                    "ec2:DescribeSpotInstanceRequests",
+                    "ec2:DescribeSpotPriceHistory",
+                    "ec2:DescribeSubnets",
+                    "ec2:DescribeTags",
+                    "ec2:DescribeVpcAttribute",
+                    "ec2:DescribeVpcEndpoints",
+                    "ec2:DescribeVpcEndpointServices",
+                    "ec2:DescribeVpcs",
+                    "ec2:DetachNetworkInterface",
+                    "ec2:ModifyImageAttribute",
+                    "ec2:ModifyInstanceAttribute",
+                    "ec2:RequestSpotInstances",
+                    "ec2:RevokeSecurityGroupEgress",
+                    "ec2:RunInstances",
+                    "ec2:TerminateInstances",
+                    "ec2:DeleteVolume",
+                    "ec2:DescribeVolumeStatus",
+                    "ec2:DescribeVolumes",
+                    "ec2:DetachVolume",
+                    "iam:GetRole",
+                    "iam:GetRolePolicy",
+                    "iam:ListInstanceProfiles",
+                    "iam:ListRolePolicies",
+                    "iam:PassRole",
+                    "sdb:BatchPutAttributes",
+                    "sdb:Select",
+                    "sqs:CreateQueue",
+                    "sqs:Delete*",
+                    "sqs:GetQueue*",
+                    "sqs:PurgeQueue",
+                    "sqs:ReceiveMessage",
+                    "cloudwatch:PutMetricAlarm",
+                    "cloudwatch:DescribeAlarms",
+                    "cloudwatch:DeleteAlarms",
+                    "application-autoscaling:RegisterScalableTarget",
+                    "application-autoscaling:DeregisterScalableTarget",
+                    "application-autoscaling:PutScalingPolicy",
+                    "application-autoscaling:DeleteScalingPolicy",
+                    "application-autoscaling:Describe*"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "iam:CreateServiceLinkedRole",
+                  "Resource": "arn:aws:iam::*:role/aws-service-role/spot.amazonaws.com/AWSServiceRoleForEC2Spot*",
+                  "Condition": {
+                    "StringLike": {
+                      "iam:AWSServiceName": "spot.amazonaws.com"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "RoleName": "LF-EMR-Role"
+      }
+    },
+    "LakeFormationEMRInstanceProfileRole": {
+      "Type": "AWS::IAM::Role",
+      "Condition" : "CreateEMRCluster",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LF-EMR-InstanceProfile-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Action": [
+                    "cloudwatch:*",
+                    "dynamodb:*",
+                    "ec2:Describe*",
+                    "elasticmapreduce:Describe*",
+                    "elasticmapreduce:ListBootstrapActions",
+                    "elasticmapreduce:ListClusters",
+                    "elasticmapreduce:ListInstanceGroups",
+                    "elasticmapreduce:ListInstances",
+                    "elasticmapreduce:ListSteps",
+                    "kinesis:CreateStream",
+                    "kinesis:DeleteStream",
+                    "kinesis:DescribeStream",
+                    "kinesis:GetRecords",
+                    "kinesis:GetShardIterator",
+                    "kinesis:MergeShards",
+                    "kinesis:PutRecord",
+                    "kinesis:SplitShard",
+                    "rds:Describe*",
+                    "s3:*",
+                    "sdb:*",
+                    "sns:*",
+                    "sqs:*",
+                    "glue:CreateDatabase",
+                    "glue:UpdateDatabase",
+                    "glue:DeleteDatabase",
+                    "glue:GetDatabase",
+                    "glue:GetDatabases",
+                    "glue:CreateTable",
+                    "glue:UpdateTable",
+                    "glue:DeleteTable",
+                    "glue:GetTable",
+                    "glue:GetTables",
+                    "glue:GetTableVersions",
+                    "glue:CreatePartition",
+                    "glue:BatchCreatePartition",
+                    "glue:UpdatePartition",
+                    "glue:DeletePartition",
+                    "glue:BatchDeletePartition",
+                    "glue:GetPartition",
+                    "glue:GetPartitions",
+                    "glue:BatchGetPartition",
+                    "glue:CreateUserDefinedFunction",
+                    "glue:UpdateUserDefinedFunction",
+                    "glue:DeleteUserDefinedFunction",
+                    "glue:GetUserDefinedFunction",
+                    "glue:GetUserDefinedFunctions"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:DescribeAssociation",
+                    "ssm:GetDeployablePatchSnapshotForInstance",
+                    "ssm:GetDocument",
+                    "ssm:DescribeDocument",
+                    "ssm:GetManifest",
+                    "ssm:GetParameters",
+                    "ssm:ListAssociations",
+                    "ssm:ListInstanceAssociations",
+                    "ssm:PutInventory",
+                    "ssm:PutComplianceItems",
+                    "ssm:PutConfigurePackageResult",
+                    "ssm:UpdateAssociationStatus",
+                    "ssm:UpdateInstanceAssociationStatus",
+                    "ssm:UpdateInstanceInformation"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssmmessages:CreateControlChannel",
+                    "ssmmessages:CreateDataChannel",
+                    "ssmmessages:OpenControlChannel",
+                    "ssmmessages:OpenDataChannel"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ec2messages:AcknowledgeMessage",
+                    "ec2messages:DeleteMessage",
+                    "ec2messages:FailMessage",
+                    "ec2messages:GetEndpoint",
+                    "ec2messages:GetMessages",
+                    "ec2messages:SendReply"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cloudwatch:PutMetricData"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ec2:DescribeInstanceStatus"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ds:CreateComputer",
+                    "ds:DescribeDirectories"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:DescribeLogGroups",
+                    "logs:DescribeLogStreams",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "iam:PassRole",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:aws:iam::",
+                        {
+                          "Ref": "AWS::AccountId"
+                        },
+                        ":role/LF-Auth0-Role"
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "sts:AssumeRole",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:aws:iam::",
+                        {
+                          "Ref": "AWS::AccountId"
+                        },
+                        ":role/LF-EMR-Role"
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "lakeformation:GetTemporaryUserCredentialsWithSAML",
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "iam:GetRole",
+                  "Resource": "arn:aws:iam::*:role/*"
+                }
+              ]
+            }
+          }
+        ],
+        "RoleName": "LF-EMR-InstanceProfile-Role"
+      }
+    },
+    "LFEMRInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Condition" : "CreateEMRCluster",
+      "Properties": {
+        "InstanceProfileName": "LakeFormationEMRInstanceProfileRole",
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "LakeFormationEMRInstanceProfileRole"
+          }
+        ]
+      }
+    },
+    "LFEMRSecurityConfiguration": {
+      "Type": "AWS::EMR::SecurityConfiguration",
+      "Condition" : "CreateEMRCluster",
+      "DependsOn": [
+        "LakeFormationAuth0Role"
+      ],
+      "Properties": {
+        "Name": "LF-EMR-SecurityConfiguration",
+        "SecurityConfiguration": {
+          "LakeFormationConfiguration": {
+            "IdpMetadataS3Path": {
+              "Ref": "Auth0MetaDataInS3"
+            },
+            "EmrRoleForUsersARN": {
+              "Fn::GetAtt": [
+                "LakeFormationEMRRole",
+                "Arn"
+              ]
+            },
+            "LakeFormationRoleForSAMLPrincipalARN": {
+              "Fn::GetAtt": [
+                "LakeFormationAuth0Role",
+                "Arn"
+              ]
+            }
+          },
+          "AuthenticationConfiguration": {
+            "KerberosConfiguration": {
+              "Provider": "ClusterDedicatedKdc",
+              "ClusterDedicatedKdcConfiguration": {
+                "TicketLifetimeInHours": 24
+              }
+            }
+          }
+        }
+      }
+    },
+    "S3EMRLogsBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Condition" : "CreateEMRCluster",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
+            "-",
+            [
+              "emr-logs",
+              {
+                "Ref": "AWS::AccountId"
+              }
+            ]
+          ]
+        }
+      }
+    },"S3NotebooksBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Condition" : "CreateEMRCluster",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
+            "-",
+            [
+              "notebooks",
+              {
+                "Ref": "AWS::AccountId"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "EMRCluster": {
+      "Type": "AWS::EMR::Cluster",
+      "Condition" : "CreateEMRCluster",
+      "DependsOn": [
+        "LFEMRSecurityConfiguration",
+        "LakeFormationEMRInstanceProfileRole",
+        "LFEMRInstanceProfile",
+        "S3NotebooksBucket"
+      ],
+      "Properties": {
+        "Instances": {
+          "MasterInstanceGroup": {
+            "InstanceCount": 1,
+            "InstanceType": {
+              "Ref": "InstanceType"
+            },
+            "Market": "ON_DEMAND",
+            "Name": "cfnMaster"
+          },
+          "CoreInstanceGroup": {
+            "InstanceCount": 1,
+            "InstanceType": {
+              "Ref": "InstanceType"
+            },
+            "Market": "ON_DEMAND",
+            "Name": "cfnCore"
+          },
+          "Ec2SubnetId": {
+            "Ref": "PublicSubnetTwo"
+          },
+          "Ec2KeyName": {
+            "Ref": "EC2KeyPair"
+          }
+        },
+        "Name": "LF-EMRCluster",
+        "Applications": [
+          {
+            "Name": "Hadoop"
+          },
+          {
+            "Name": "Spark"
+          },
+          {
+            "Name": "Livy"
+          },
+          {
+            "Name": "Zeppelin"
+          }
+        ],
+        "Configurations": [
+          {
+            "Classification": "spark-hive-site",
+            "ConfigurationProperties": {
+              "hive.metastore.glue.catalogid": {
+                "Ref": "AWS::AccountId"
+              }
+            }
+          }
+        ],
+        "JobFlowRole": {
+          "Ref": "LFEMRInstanceProfile"
+        },
+        "KerberosAttributes": {
+          "KdcAdminPassword": {
+            "Ref": "KdcAdminPassword"
+          },
+          "Realm": {
+            "Ref": "Realm"
+          }
+        },
+        "ServiceRole": {
+          "Ref": "LakeFormationEMRRole"
+        },
+        "BootstrapActions": [
+          {
+            "Name": "Download the scripts",
+            "ScriptBootstrapAction": {
+              "Path": "s3://emr-workshops-us-west-2/lakeformation-emr-workshop/scripts/download-scripts.sh",
+              "Args": ["emr-workshops-us-west-2/lakeformation-emr-workshop"]
+            }
+          }
+        ],
+        "ReleaseLabel": {
+          "Ref": "ReleaseLabel"
+        },
+        "SecurityConfiguration": {
+          "Ref": "LFEMRSecurityConfiguration"
+        },
+        "VisibleToAllUsers": true,
+        "LogUri": {
+          "Fn::Join": [
+            "",
+            [
+              "s3://",
+              {
+                "Ref": "S3EMRLogsBucket"
+              },
+              "/"
+            ]
+          ]
+        }
+      }
+    },"EMRCopyNotebooksStep": {
+      "Type": "AWS::EMR::Step",
+      "Condition" : "CreateEMRCluster",
+      "Properties": {
+        "ActionOnFailure": "CONTINUE",
+        "HadoopJarStep": {
+          "Args": [
+            "/tmp/scripts/copynotebooks.sh",
+            "emr-workshops-us-west-2/lakeformation-emr-workshop",
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "s3://",
+                  {
+                    "Ref": "S3NotebooksBucket"
+                  }
+                ]
+              ]
+            }
+          ],
+          "Jar": "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
+          "MainClass": ""
+        },
+        "Name": "CopyNoteBooks",
+        "JobFlowId": {
+          "Ref": "EMRCluster"
+        }
+      }
+
+    },
+    "DataLakeBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
+            "-",
+            [
+              "lf-data-lake-bucket",
+              {
+                "Ref": "AWS::AccountId"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "AthenaQueryResultBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
+            "-",
+            [
+              "lf-athena-query-results",
+              {
+                "Ref": "AWS::AccountId"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "GlueBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": [
+            "-",
+            [
+              "lf-glue-bucket",
+              {
+                "Ref": "AWS::AccountId"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "AdminUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "TestUserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AdministratorAccess"
+        ],
+        "UserName": "lf-admin"
+      }
+    },
+    "DeveloperUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "TestUserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "Policies": [
+          {
+            "PolicyName": "LF-Athena-Query-Result-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:Put*",
+                    "s3:Get*",
+                    "s3:List*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "AthenaQueryResultBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "AthenaQueryResultBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+        ],
+        "UserName": "lf-developer"
+      }
+    },
+    "CampaignManagerUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "TestUserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "Policies": [
+          {
+            "PolicyName": "LF-Athena-Query-Result-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:Put*",
+                    "s3:Get*",
+                    "s3:List*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "AthenaQueryResultBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "AthenaQueryResultBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+        ],
+        "UserName": "lf-campaign-manager"
+      }
+    },
+    "BusinessAnalystUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Path": "/",
+        "LoginProfile": {
+          "Password": {
+            "Ref": "TestUserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "Policies": [
+          {
+            "PolicyName": "LF-Athena-Query-Result-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:Put*",
+                    "s3:Get*",
+                    "s3:List*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "AthenaQueryResultBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "AthenaQueryResultBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+        ],
+        "UserName": "lf-business-analyst"
+      }
+    },
+    "EC2Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "RoleName": "EC2Role",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AdministratorAccess"
+        ]
+      }
+    },
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "EC2Role"
+          }
+        ]
+      }
+    },
+    "BackUpRestoreInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceType": "t2.small",
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionAMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            "HVM64"
+          ]
+        },
+        "KeyName": {
+          "Ref": "EC2KeyPair"
+        },
+        "IamInstanceProfile": {
+          "Ref": "EC2InstanceProfile"
+        },
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [
+              {
+                "Ref": "RDSSecurityGroup"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "PublicSubnetOne"
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -ex\n",
+                "sudo yum -y install mysql\n",
+                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tripdata.csv ",
+                "s3://",
+                {
+                  "Ref": "GlueBucket"
+                },
+                "/nyctaxi/",
+                "\n",
+                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py ",
+                "s3://",
+                {
+                  "Ref": "GlueBucket"
+                },
+                "/scripts/",
+                "\n",
+                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup /tmp/\n",
+                "gunzip < /tmp/tpc.backup | mysql -h ",
+                {
+                  "Fn::GetAtt": [
+                    "TPCDatabase",
+                    "Endpoint.Address"
+                  ]
+                },
+                " -u ",
+                {
+                  "Ref": "DBMasterUser"
+                },
+                " -p'",
+                {
+                  "Ref": "DBMasterPassword"
+                },
+                "' ",
+                {
+                  "Ref": "TPCDBName"
+                },
+                "\n"
+              ]
+            ]
+          }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "EC2-DB-Loader"
+          }
+        ]
+      },
+      "DependsOn": [
+        "TPCDatabase"
+      ]
+    },
+    "AthenaDeveloperNamedQuery": {
+      "Type": "AWS::Athena::NamedQuery",
+      "Properties": {
+        "Database": {
+          "Ref": "TPCDBName"
+        },
+        "Description": "A developer query on web page and web sales data.",
+        "Name": "LF-Developer-Query",
+        "QueryString": "/*\n * Developer can only see web_page & web_sales tables\n */\nSELECT sum(ws_net_paid_inc_tax) NetPaid,\n        ws_web_site_sk WebSiteID\nFROM dl_tpc_web_sales ws, dl_tpc_web_page wp WHERE ws.ws_web_site_sk = wp.wp_web_page_sk GROUP BY  ws_web_site_sk;\n\n/*\n Check out the web_sales table\n*/ SELECT COUNT(*) FROM dl_tpc_web_sales;\n\n/* Verify that a developer cannot access any other table. This should give a Insufficient Privileges message */ SELECT * FROM dl_tpc_item limit 10;\n"
+      }
+    },
+    "AthenaBusinessAnalystNamedQuery": {
+      "Type": "AWS::Athena::NamedQuery",
+      "Properties": {
+        "Database": {
+          "Ref": "TPCDBName"
+        },
+        "Description": "Sample query issued by Campaign Manager on web page data.",
+        "Name": "LF-BusinessAnalyst-Query",
+        "QueryString": "/*\n  Run a sample query as a business analyst\n  */\n  SELECT sum(ws.ws_net_paid_inc_tax) NetPaid, count(distinct i.i_item_sk) NumItems, ca.ca_zip ZipCode FROM dl_tpc_item i, dl_tpc_web_sales ws, dl_tpc_customer_address ca\n  WHERE i.i_item_sk = ws.ws_item_sk\n  AND ws.ws_ship_addr_sk = ca.ca_address_sk\n  GROUP BY ca.ca_zip;\n\n  /*\n   Verify that business-analyst can access the all the non-PII columns in customer table\n   */\n  SELECT *\n  FROM dl_tpc_customer limit 10;\n\n  /*\n   Verify that a business-analyst cannot access PII data\n  */\n  SELECT c_first_name, c_last_name, c_customer_sk, c_current_addr_sk\n  FROM dl_tpc_customer;\n"
+      }
+    },
+    "AthenaCampaignManagerNamedQuery": {
+      "Type": "AWS::Athena::NamedQuery",
+      "Properties": {
+        "Database": {
+          "Ref": "TPCDBName"
+        },
+        "Description": "Sample query issued by Campaign Manager.",
+        "Name": "LF-CampaignManager-Query",
+        "QueryString": "/*\n * Sample Query from a Campaign Manager who is interested in marketing analytics\n */\n\nSELECT count(distinct i.i_item_sk) NumItems, p.p_promo_id PromotionId FROM dl_tpc_item i, dl_tpc_promotion p, dl_tpc_web_sales ws WHERE i.i_item_sk = ws_item_sk AND ws.ws_promo_sk = p.p_promo_sk GROUP BY p.p_promo_id;\n/*\n * Make sure Campaign manager cannot access web_page table\n */\nSELECT count(*) FROM dl_tpc_web_page;\n"
+      }
+    }
+  },
+  "Outputs": {
+    "LFBucketName": {
+      "Description": "Lake Formation Data Lake Bucket Name",
+      "Value": {
+        "Ref": "DataLakeBucket"
+      }
+    },
+    "GlueDemoBucketName": {
+      "Description": "S3 bucket for Glue Demos",
+      "Value": {
+        "Ref": "GlueBucket"
+      }
+    },
+    "AthenaQueryResultBucketName": {
+      "Description": "Bucket to store Athena query results",
+      "Value": {
+        "Ref": "AthenaQueryResultBucket"
+      }
+    },
+    "LFUsersPassword": {
+      "Description": "Password for Data Lake Users",
+      "Value": {
+        "Ref": "TestUserPassword"
+      }
+    },
+    "ConsoleIAMLoginUrl": {
+      "Description": "Console IAM Login URL to try out different users",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "AWS::AccountId"
+            },
+            ".signin.aws.amazon.com/console"
+          ]
+        ]
+      }
+    },
+    "EMRMasterNodeDNS": {
+      "Description": "EMR Cluster Master Node DNS",
+      "Condition" : "CreateEMRCluster",
+      "Value":
+          { "Fn::GetAtt" : [ "EMRCluster", "MasterPublicDNS" ] }
+
+    },
+    "NoteBooksBucketName": {
+      "Description": "Bucket which contains Zeppelin & EMR Notebooks",
+      "Condition" : "CreateEMRCluster",
+      "Value": {
+        "Ref": "S3NotebooksBucket"
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ weight = 303
 chapter = true
 +++
 
-<center><h3>Creating a Key Pair Using Amazon EC2</h3></center>
+<center><h4>Creating a Key Pair Using Amazon EC2</h4></center>
 
 <div style="text-align: justify">
     The CloudFormation template will require you to provide an Amazon EC2 key pair. if you already have an EC2 key pair, proceed to the next chapter.<br />
