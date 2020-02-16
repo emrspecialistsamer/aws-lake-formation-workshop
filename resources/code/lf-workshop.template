@@ -1,46 +1,30 @@
-Description: >-
-  CloudFormation template to create AWS LakeFormation Integrated with EMR and
-  Auth0 Federation workshop resources
+Description: CloudFormation template to create AWS Lake Formation workshop resources
 Metadata:
-  'AWS::CloudFormation::Interface':
+  AWS::CloudFormation::Interface:
     ParameterGroups:
-      - Label:
-          default: Database Configuration
+      -
+        Label:
+          default: "Database Configuration"
         Parameters:
           - TPCDBName
           - DBMasterUser
           - DBMasterPassword
-      - Label:
-          default: User Configuration
+      -
+        Label:
+          default: "User Configuration"
         Parameters:
           - TestUserPassword
-      - Label:
-          default: EMR Cluster Configuration
-        Parameters:
-          - IntegrateWithEMR
-          - Auth0SAMLProvider
-          - Auth0MetaDataInS3
-          - Realm
-          - KdcAdminPassword
-          - ReleaseLabel
-          - InstanceType
     ParameterLabels:
       TPCDBName:
-        default: Database Name
+        default: "Database Name"
       DBMasterUser:
-        default: Master Username
+        default: "Master Username"
       DBMasterPassword:
-        default: Master User Password
+        default: "Master User Password"
       TestUserPassword:
-        default: Test User Password
+        default: "Test User Password"
       EC2KeyPair:
-        default: EC2 Key Pair
-      Auth0SAMLProvider:
-        default: Auth0 SAML Provider
-      Auth0MetaDataInS3:
-        default: 'Auth0 SAML Provider MetaData '
-      IntegrateWithEMR:
-        default: Integrate With EMR
+        default: "EC2 Key Pair"
 Mappings:
   SubnetConfig:
     VPC:
@@ -55,13 +39,13 @@ Mappings:
     us-east-1:
       HVM64: ami-0c6b1d09930fac512
     us-east-2:
-      HVM64: ami-02ccb28830b645a41
+      HVM64: ami-00ceeb607e7372455
     us-west-2:
-      HVM64: ami-04590e7389a6e577c
-    us-west-1:
-      HVM64: ami-03caa3f860895f82e
+      HVM64: ami-03d1cd80b265afe51
+    eu-west-1:
+      HVM64: ami-007fb32dc0831ae00
     ap-northeast-1:
-      HVM64: ami-011facbea5ec0363b
+      HVM64: ami-029976583a7442c30
 Parameters:
   TPCDBName:
     Type: String
@@ -85,51 +69,6 @@ Parameters:
     Description: Amazon EC2 Key Pair
     Type: 'AWS::EC2::KeyPair::KeyName'
     MinLength: 1
-  IntegrateWithEMR:
-    Description: Integrate AWS LakeFormation With EMR?.
-    Default: 'No'
-    Type: String
-    AllowedValues:
-      - 'Yes'
-      - 'No'
-    ConstraintDescription: must specify Yes or No
-  Auth0SAMLProvider:
-    Type: String
-    Default: auth0SAMLProvider
-    Description: Auth0 SAML Provider Created in AWS
-  Auth0MetaDataInS3:
-    Type: String
-    Description: >-
-      Auth0 Metadata xml file in S3 (e.g s3://bucket/myfolder/metadata.xml ),if
-      you are planning on integrating LakeFormation with EMR and Auth0 SAML
-      authentication then you need provide proper S3 file path, default value is
-      just a dummy file
-    Default: >-
-      s3://emr-workshops-us-west-2/lakeformation-emr-workshop/auth0-metadata/Auth0metadata.xml
-  KdcAdminPassword:
-    Type: String
-    Default: Password1!
-  Realm:
-    Type: String
-    Default: EC2.INTERNAL
-    Description: Kerberos Realm for Internal KDC
-  InstanceType:
-    Type: String
-    Default: m4.xlarge
-    Description: EMR Cluster Instance Types for both Master & Core
-  ReleaseLabel:
-    Type: String
-    Default: emr-5.29.0
-    AllowedValues:
-      - emr-5.26.0
-      - emr-5.27.0
-      - emr-5.28.0
-      - emr-5.29.0
-    Description: EMR Version
-Conditions:
-  CreateEMRCluster: !Equals
-    - !Ref IntegrateWithEMR
-    - 'Yes'
 Resources:
   RDSSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
@@ -399,9 +338,9 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - 'lakeformation:GetDataAccess'
-                  - 'lakeformation:GrantPermissions'
-                Resource: '*'
+                - lakeformation:GetDataAccess
+                - lakeformation:GrantPermissions
+                Resource: "*"
         - PolicyName: LF-Workflow-Policy
           PolicyDocument:
             Version: 2012-10-17
@@ -410,395 +349,12 @@ Resources:
                 Action:
                   - 'iam:PassRole'
                 Resource:
-                  - !Join
-                    - ''
-                    - - 'arn:aws:iam::'
-                      - !Ref 'AWS::AccountId'
-                      - ':role/LF-GlueServiceRole'
+                   - !Join
+                     - ''
+                     - - 'arn:aws:iam::'
+                       - !Ref 'AWS::AccountId'
+                       - ':role/LF-GlueServiceRole'
       RoleName: LF-GlueServiceRole
-  LakeFormationAuth0Role:
-    Type: 'AWS::IAM::Role'
-    Condition: CreateEMRCluster
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Federated: !Join
-                - ''
-                - - 'arn:aws:iam::'
-                  - !Ref 'AWS::AccountId'
-                  - ':saml-provider/'
-                  - !Ref Auth0SAMLProvider
-            Action: 'sts:AssumeRoleWithSAML'
-          - Effect: Allow
-            Principal:
-              Service:
-                - glue.amazonaws.com
-                - lakeformation.amazonaws.com
-            Action: 'sts:AssumeRole'
-      Policies:
-        - PolicyName: LF-Auth0-Policy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              Effect: Allow
-              Action:
-                - 'lakeformation:GetDataAccess'
-                - 'lakeformation:GetMetadataAccess'
-                - 'glue:CreateDatabase'
-                - 'glue:GetUnfiltered*'
-                - 'glue:GetTable'
-                - 'glue:GetTables'
-                - 'glue:GetDatabase'
-                - 'glue:GetDatabases'
-                - 'glue:GetUserDefinedFunction'
-                - 'glue:GetUserDefinedFunctions'
-              Resource: '*'
-      RoleName: LF-Auth0-Role
-  LakeFormationEMRRole:
-    Type: 'AWS::IAM::Role'
-    Condition: CreateEMRCluster
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2008-10-17
-        Statement:
-          - Sid: ''
-            Effect: Allow
-            Principal:
-              Service: elasticmapreduce.amazonaws.com
-            Action: 'sts:AssumeRole'
-      Policies:
-        - PolicyName: LF-EMR-Policy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Resource: '*'
-                Action:
-                  - 'ec2:AuthorizeSecurityGroupEgress'
-                  - 'ec2:AuthorizeSecurityGroupIngress'
-                  - 'ec2:CancelSpotInstanceRequests'
-                  - 'ec2:CreateNetworkInterface'
-                  - 'ec2:CreateSecurityGroup'
-                  - 'ec2:CreateTags'
-                  - 'ec2:DeleteNetworkInterface'
-                  - 'ec2:DeleteSecurityGroup'
-                  - 'ec2:DeleteTags'
-                  - 'ec2:DescribeAvailabilityZones'
-                  - 'ec2:DescribeAccountAttributes'
-                  - 'ec2:DescribeDhcpOptions'
-                  - 'ec2:DescribeImages'
-                  - 'ec2:DescribeInstanceStatus'
-                  - 'ec2:DescribeInstances'
-                  - 'ec2:DescribeKeyPairs'
-                  - 'ec2:DescribeNetworkAcls'
-                  - 'ec2:DescribeNetworkInterfaces'
-                  - 'ec2:DescribePrefixLists'
-                  - 'ec2:DescribeRouteTables'
-                  - 'ec2:DescribeSecurityGroups'
-                  - 'ec2:DescribeSpotInstanceRequests'
-                  - 'ec2:DescribeSpotPriceHistory'
-                  - 'ec2:DescribeSubnets'
-                  - 'ec2:DescribeTags'
-                  - 'ec2:DescribeVpcAttribute'
-                  - 'ec2:DescribeVpcEndpoints'
-                  - 'ec2:DescribeVpcEndpointServices'
-                  - 'ec2:DescribeVpcs'
-                  - 'ec2:DetachNetworkInterface'
-                  - 'ec2:ModifyImageAttribute'
-                  - 'ec2:ModifyInstanceAttribute'
-                  - 'ec2:RequestSpotInstances'
-                  - 'ec2:RevokeSecurityGroupEgress'
-                  - 'ec2:RunInstances'
-                  - 'ec2:TerminateInstances'
-                  - 'ec2:DeleteVolume'
-                  - 'ec2:DescribeVolumeStatus'
-                  - 'ec2:DescribeVolumes'
-                  - 'ec2:DetachVolume'
-                  - 'iam:GetRole'
-                  - 'iam:GetRolePolicy'
-                  - 'iam:ListInstanceProfiles'
-                  - 'iam:ListRolePolicies'
-                  - 'iam:PassRole'
-                  - 'sdb:BatchPutAttributes'
-                  - 'sdb:Select'
-                  - 'sqs:CreateQueue'
-                  - 'sqs:Delete*'
-                  - 'sqs:GetQueue*'
-                  - 'sqs:PurgeQueue'
-                  - 'sqs:ReceiveMessage'
-                  - 'cloudwatch:PutMetricAlarm'
-                  - 'cloudwatch:DescribeAlarms'
-                  - 'cloudwatch:DeleteAlarms'
-                  - 'application-autoscaling:RegisterScalableTarget'
-                  - 'application-autoscaling:DeregisterScalableTarget'
-                  - 'application-autoscaling:PutScalingPolicy'
-                  - 'application-autoscaling:DeleteScalingPolicy'
-                  - 'application-autoscaling:Describe*'
-              - Effect: Allow
-                Action: 'iam:CreateServiceLinkedRole'
-                Resource: >-
-                  arn:aws:iam::*:role/aws-service-role/spot.amazonaws.com/AWSServiceRoleForEC2Spot*
-                Condition:
-                  StringLike:
-                    'iam:AWSServiceName': spot.amazonaws.com
-      RoleName: LF-EMR-Role
-  LakeFormationEMRInstanceProfileRole:
-    Type: 'AWS::IAM::Role'
-    Condition: CreateEMRCluster
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: ec2.amazonaws.com
-            Action: 'sts:AssumeRole'
-      Policies:
-        - PolicyName: LF-EMR-InstanceProfile-Policy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Resource: '*'
-                Action:
-                  - 'cloudwatch:*'
-                  - 'dynamodb:*'
-                  - 'ec2:Describe*'
-                  - 'elasticmapreduce:Describe*'
-                  - 'elasticmapreduce:ListBootstrapActions'
-                  - 'elasticmapreduce:ListClusters'
-                  - 'elasticmapreduce:ListInstanceGroups'
-                  - 'elasticmapreduce:ListInstances'
-                  - 'elasticmapreduce:ListSteps'
-                  - 'kinesis:CreateStream'
-                  - 'kinesis:DeleteStream'
-                  - 'kinesis:DescribeStream'
-                  - 'kinesis:GetRecords'
-                  - 'kinesis:GetShardIterator'
-                  - 'kinesis:MergeShards'
-                  - 'kinesis:PutRecord'
-                  - 'kinesis:SplitShard'
-                  - 'rds:Describe*'
-                  - 's3:*'
-                  - 'sdb:*'
-                  - 'sns:*'
-                  - 'sqs:*'
-                  - 'glue:CreateDatabase'
-                  - 'glue:UpdateDatabase'
-                  - 'glue:DeleteDatabase'
-                  - 'glue:GetDatabase'
-                  - 'glue:GetDatabases'
-                  - 'glue:CreateTable'
-                  - 'glue:UpdateTable'
-                  - 'glue:DeleteTable'
-                  - 'glue:GetTable'
-                  - 'glue:GetTables'
-                  - 'glue:GetTableVersions'
-                  - 'glue:CreatePartition'
-                  - 'glue:BatchCreatePartition'
-                  - 'glue:UpdatePartition'
-                  - 'glue:DeletePartition'
-                  - 'glue:BatchDeletePartition'
-                  - 'glue:GetPartition'
-                  - 'glue:GetPartitions'
-                  - 'glue:BatchGetPartition'
-                  - 'glue:CreateUserDefinedFunction'
-                  - 'glue:UpdateUserDefinedFunction'
-                  - 'glue:DeleteUserDefinedFunction'
-                  - 'glue:GetUserDefinedFunction'
-                  - 'glue:GetUserDefinedFunctions'
-              - Effect: Allow
-                Action:
-                  - 'ssm:DescribeAssociation'
-                  - 'ssm:GetDeployablePatchSnapshotForInstance'
-                  - 'ssm:GetDocument'
-                  - 'ssm:DescribeDocument'
-                  - 'ssm:GetManifest'
-                  - 'ssm:GetParameters'
-                  - 'ssm:ListAssociations'
-                  - 'ssm:ListInstanceAssociations'
-                  - 'ssm:PutInventory'
-                  - 'ssm:PutComplianceItems'
-                  - 'ssm:PutConfigurePackageResult'
-                  - 'ssm:UpdateAssociationStatus'
-                  - 'ssm:UpdateInstanceAssociationStatus'
-                  - 'ssm:UpdateInstanceInformation'
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - 'ssmmessages:CreateControlChannel'
-                  - 'ssmmessages:CreateDataChannel'
-                  - 'ssmmessages:OpenControlChannel'
-                  - 'ssmmessages:OpenDataChannel'
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - 'ec2messages:AcknowledgeMessage'
-                  - 'ec2messages:DeleteMessage'
-                  - 'ec2messages:FailMessage'
-                  - 'ec2messages:GetEndpoint'
-                  - 'ec2messages:GetMessages'
-                  - 'ec2messages:SendReply'
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - 'cloudwatch:PutMetricData'
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - 'ec2:DescribeInstanceStatus'
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - 'ds:CreateComputer'
-                  - 'ds:DescribeDirectories'
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - 'logs:CreateLogGroup'
-                  - 'logs:CreateLogStream'
-                  - 'logs:DescribeLogGroups'
-                  - 'logs:DescribeLogStreams'
-                  - 'logs:PutLogEvents'
-                Resource: '*'
-              - Effect: Allow
-                Action: 'iam:PassRole'
-                Resource: !Join
-                  - ''
-                  - - 'arn:aws:iam::'
-                    - !Ref 'AWS::AccountId'
-                    - ':role/LF-Auth0-Role'
-              - Effect: Allow
-                Action: 'sts:AssumeRole'
-                Resource: !Join
-                  - ''
-                  - - 'arn:aws:iam::'
-                    - !Ref 'AWS::AccountId'
-                    - ':role/LF-EMR-Role'
-              - Effect: Allow
-                Action: 'lakeformation:GetTemporaryUserCredentialsWithSAML'
-                Resource: '*'
-              - Effect: Allow
-                Action: 'iam:GetRole'
-                Resource: 'arn:aws:iam::*:role/*'
-      RoleName: LF-EMR-InstanceProfile-Role
-  LFEMRInstanceProfile:
-    Type: 'AWS::IAM::InstanceProfile'
-    Condition: CreateEMRCluster
-    Properties:
-      InstanceProfileName: LakeFormationEMRInstanceProfileRole
-      Path: /
-      Roles:
-        - !Ref LakeFormationEMRInstanceProfileRole
-  LFEMRSecurityConfiguration:
-    Type: 'AWS::EMR::SecurityConfiguration'
-    Condition: CreateEMRCluster
-    DependsOn:
-      - LakeFormationAuth0Role
-    Properties:
-      Name: LF-EMR-SecurityConfiguration
-      SecurityConfiguration:
-        LakeFormationConfiguration:
-          IdpMetadataS3Path: !Ref Auth0MetaDataInS3
-          EmrRoleForUsersARN: !GetAtt
-            - LakeFormationEMRRole
-            - Arn
-          LakeFormationRoleForSAMLPrincipalARN: !GetAtt
-            - LakeFormationAuth0Role
-            - Arn
-        AuthenticationConfiguration:
-          KerberosConfiguration:
-            Provider: ClusterDedicatedKdc
-            ClusterDedicatedKdcConfiguration:
-              TicketLifetimeInHours: 24
-  S3EMRLogsBucket:
-    Type: 'AWS::S3::Bucket'
-    Condition: CreateEMRCluster
-    Properties:
-      BucketName: !Join
-        - '-'
-        - - emr-logs
-          - !Ref 'AWS::AccountId'
-  S3NotebooksBucket:
-    Type: 'AWS::S3::Bucket'
-    Condition: CreateEMRCluster
-    Properties:
-      BucketName: !Join
-        - '-'
-        - - notebooks
-          - !Ref 'AWS::AccountId'
-  EMRCluster:
-    Type: 'AWS::EMR::Cluster'
-    Condition: CreateEMRCluster
-    DependsOn:
-      - LFEMRSecurityConfiguration
-      - LakeFormationEMRInstanceProfileRole
-      - LFEMRInstanceProfile
-      - S3NotebooksBucket
-    Properties:
-      Instances:
-        MasterInstanceGroup:
-          InstanceCount: 1
-          InstanceType: !Ref InstanceType
-          Market: ON_DEMAND
-          Name: cfnMaster
-        CoreInstanceGroup:
-          InstanceCount: 1
-          InstanceType: !Ref InstanceType
-          Market: ON_DEMAND
-          Name: cfnCore
-        Ec2SubnetId: !Ref PublicSubnetTwo
-        Ec2KeyName: !Ref EC2KeyPair
-      Name: LF-EMRCluster
-      Applications:
-        - Name: Hadoop
-        - Name: Spark
-        - Name: Livy
-        - Name: Zeppelin
-      Configurations:
-        - Classification: spark-hive-site
-          ConfigurationProperties:
-            hive.metastore.glue.catalogid: !Ref 'AWS::AccountId'
-      JobFlowRole: !Ref LFEMRInstanceProfile
-      KerberosAttributes:
-        KdcAdminPassword: !Ref KdcAdminPassword
-        Realm: !Ref Realm
-      ServiceRole: !Ref LakeFormationEMRRole
-      BootstrapActions:
-        - Name: Download the scripts
-          ScriptBootstrapAction:
-            Path: >-
-              s3://emr-workshops-us-west-2/lakeformation-emr-workshop/scripts/download-scripts.sh
-            Args:
-              - emr-workshops-us-west-2/lakeformation-emr-workshop
-      ReleaseLabel: !Ref ReleaseLabel
-      SecurityConfiguration: !Ref LFEMRSecurityConfiguration
-      VisibleToAllUsers: true
-      LogUri: !Join
-        - ''
-        - - 's3://'
-          - !Ref S3EMRLogsBucket
-          - /
-  EMRCopyNotebooksStep:
-    Type: 'AWS::EMR::Step'
-    Condition: CreateEMRCluster
-    Properties:
-      ActionOnFailure: CONTINUE
-      HadoopJarStep:
-        Args:
-          - /tmp/scripts/copynotebooks.sh
-          - emr-workshops-us-west-2/lakeformation-emr-workshop
-          - !Join
-            - ''
-            - - 's3://'
-              - !Ref S3NotebooksBucket
-        Jar: 's3://elasticmapreduce/libs/script-runner/script-runner.jar'
-        MainClass: ''
-      Name: CopyNoteBooks
-      JobFlowId: !Ref EMRCluster
   DataLakeBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
@@ -814,12 +370,12 @@ Resources:
         - - lf-athena-query-results
           - !Ref 'AWS::AccountId'
   GlueBucket:
-    Type: 'AWS::S3::Bucket'
-    Properties:
-      BucketName: !Join
-        - '-'
-        - - lf-glue-bucket
-          - !Ref 'AWS::AccountId'
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Join
+          - '-'
+          - - lf-glue-bucket
+            - !Ref 'AWS::AccountId'
   AdminUser:
     Type: 'AWS::IAM::User'
     Properties:
@@ -945,10 +501,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       InstanceType: t2.small
-      ImageId: !FindInMap
-        - AWSRegionAMI
-        - !Ref 'AWS::Region'
-        - HVM64
+      ImageId: !FindInMap [AWSRegionAMI, !Ref 'AWS::Region', HVM64]
       KeyName: !Ref EC2KeyPair
       IamInstanceProfile: !Ref EC2InstanceProfile
       NetworkInterfaces:
@@ -964,20 +517,16 @@ Resources:
               #!/bin/bash -ex
             - |
               sudo yum -y install mysql
-            - >-
-              aws s3 cp
-              s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tripdata.csv
+            - 'aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tripdata.csv '
             - 's3://'
             - !Ref GlueBucket
-            - /nyctaxi/
+            - '/nyctaxi/'
             - |+
 
-            - >-
-              aws s3 cp
-              s3://aws-data-analytics-blog/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py
+            - 'aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py '
             - 's3://'
             - !Ref GlueBucket
-            - /scripts/
+            - '/scripts/'
             - |+
 
             - >
@@ -1001,83 +550,89 @@ Resources:
           Value: EC2-DB-Loader
     DependsOn:
       - TPCDatabase
+
   AthenaDeveloperNamedQuery:
-    Type: 'AWS::Athena::NamedQuery'
+    Type: AWS::Athena::NamedQuery
     Properties:
       Database: !Ref TPCDBName
-      Description: A developer query on web page and web sales data.
-      Name: LF-Developer-Query
+      Description: "A developer query on web page and web sales data."
+      Name: "LF-Developer-Query"
       QueryString: >
-        /*
-         * Developer can only see web_page & web_sales tables
-         */
-        SELECT sum(ws_net_paid_inc_tax) NetPaid,
-                ws_web_site_sk WebSiteID
-        FROM dl_tpc_web_sales ws, dl_tpc_web_page wp WHERE ws.ws_web_site_sk =
-        wp.wp_web_page_sk GROUP BY  ws_web_site_sk;
+                   /*
+                    * Developer can only see web_page & web_sales tables
+                    */
+                   SELECT sum(ws_net_paid_inc_tax) NetPaid,
+                           ws_web_site_sk WebSiteID
+                   FROM dl_tpc_web_sales ws, dl_tpc_web_page wp
+                   WHERE ws.ws_web_site_sk = wp.wp_web_page_sk
+                   GROUP BY  ws_web_site_sk;
 
 
-        /*
-         Check out the web_sales table
-        */ SELECT COUNT(*) FROM dl_tpc_web_sales;
+                   /*
+                    Check out the web_sales table
+                   */
+                   SELECT COUNT(*) FROM dl_tpc_web_sales;
 
 
-        /* Verify that a developer cannot access any other table. This should
-        give a Insufficient Privileges message */ SELECT * FROM dl_tpc_item
-        limit 10;
+                   /*
+                   Verify that a developer cannot access any other table. This should give a Insufficient Privileges message
+                   */
+                   SELECT * FROM dl_tpc_item limit 10;
+
   AthenaBusinessAnalystNamedQuery:
-    Type: 'AWS::Athena::NamedQuery'
+    Type: AWS::Athena::NamedQuery
     Properties:
       Database: !Ref TPCDBName
-      Description: Sample query issued by Campaign Manager on web page data.
-      Name: LF-BusinessAnalyst-Query
-      QueryString: |
-        /*
-          Run a sample query as a business analyst
-          */
-          SELECT sum(ws.ws_net_paid_inc_tax) NetPaid, count(distinct i.i_item_sk) NumItems, ca.ca_zip ZipCode FROM dl_tpc_item i, dl_tpc_web_sales ws, dl_tpc_customer_address ca
-          WHERE i.i_item_sk = ws.ws_item_sk
-          AND ws.ws_ship_addr_sk = ca.ca_address_sk
-          GROUP BY ca.ca_zip;
-
-          /*
-           Verify that business-analyst can access the all the non-PII columns in customer table
-           */
-          SELECT *
-          FROM dl_tpc_customer limit 10;
-
-          /*
-           Verify that a business-analyst cannot access PII data
-          */
-          SELECT c_first_name, c_last_name, c_customer_sk, c_current_addr_sk
-          FROM dl_tpc_customer;
-  AthenaCampaignManagerNamedQuery:
-    Type: 'AWS::Athena::NamedQuery'
-    Properties:
-      Database: !Ref TPCDBName
-      Description: Sample query issued by Campaign Manager.
-      Name: LF-CampaignManager-Query
+      Description: "Sample query issued by Campaign Manager on web page data."
+      Name: "LF-BusinessAnalyst-Query"
       QueryString: >
-        /*
-         * Sample Query from a Campaign Manager who is interested in marketing analytics
-         */
+                  /*
+                    Run a sample query as a business analyst
+                    */
+                    SELECT sum(ws.ws_net_paid_inc_tax) NetPaid, count(distinct i.i_item_sk) NumItems, ca.ca_zip ZipCode FROM dl_tpc_item i, dl_tpc_web_sales ws, dl_tpc_customer_address ca
+                    WHERE i.i_item_sk = ws.ws_item_sk
+                    AND ws.ws_ship_addr_sk = ca.ca_address_sk
+                    GROUP BY ca.ca_zip;
 
-        SELECT count(distinct i.i_item_sk) NumItems, p.p_promo_id PromotionId
-        FROM dl_tpc_item i, dl_tpc_promotion p, dl_tpc_web_sales ws WHERE
-        i.i_item_sk = ws_item_sk AND ws.ws_promo_sk = p.p_promo_sk GROUP BY
-        p.p_promo_id;
+                    /*
+                     Verify that business-analyst can access the all the non-PII columns in customer table
+                     */
+                    SELECT *
+                    FROM dl_tpc_customer limit 10;
 
-        /*
-         * Make sure Campaign manager cannot access web_page table
-         */
-        SELECT count(*) FROM dl_tpc_web_page;
+                    /*
+                     Verify that a business-analyst cannot access PII data
+                    */
+                    SELECT c_first_name, c_last_name, c_customer_sk, c_current_addr_sk
+                    FROM dl_tpc_customer;
+  AthenaCampaignManagerNamedQuery:
+    Type: AWS::Athena::NamedQuery
+    Properties:
+      Database: !Ref TPCDBName
+      Description: "Sample query issued by Campaign Manager."
+      Name: "LF-CampaignManager-Query"
+      QueryString: >
+                   /*
+                    * Sample Query from a Campaign Manager who is interested in marketing analytics
+                    */
+
+                   SELECT count(distinct i.i_item_sk) NumItems, p.p_promo_id PromotionId
+                   FROM dl_tpc_item i, dl_tpc_promotion p, dl_tpc_web_sales ws
+                   WHERE i.i_item_sk = ws_item_sk
+                   AND ws.ws_promo_sk = p.p_promo_sk
+                   GROUP BY p.p_promo_id;
+
+                   /*
+                    * Make sure Campaign manager cannot access web_page table
+                    */
+                   SELECT count(*) FROM dl_tpc_web_page;
 Outputs:
   LFBucketName:
     Description: Lake Formation Data Lake Bucket Name
     Value: !Ref DataLakeBucket
   GlueDemoBucketName:
-    Description: S3 bucket for Glue Demos
-    Value: !Ref GlueBucket
+      Description: S3 bucket for Glue Demos
+      Value: !Ref GlueBucket
   AthenaQueryResultBucketName:
     Description: Bucket to store Athena query results
     Value: !Ref AthenaQueryResultBucket
@@ -1087,17 +642,7 @@ Outputs:
   ConsoleIAMLoginUrl:
     Description: Console IAM Login URL to try out different users
     Value: !Join
-      - ''
-      - - 'https://'
-        - !Ref 'AWS::AccountId'
-        - .signin.aws.amazon.com/console
-  EMRMasterNodeDNS:
-    Description: EMR Cluster Master Node DNS
-    Condition: CreateEMRCluster
-    Value: !GetAtt
-      - EMRCluster
-      - MasterPublicDNS
-  NoteBooksBucketName:
-    Description: Bucket which contains Zeppelin & EMR Notebooks
-    Condition: CreateEMRCluster
-    Value: !Ref S3NotebooksBucket
+              - ''
+              - - 'https://'
+                - !Ref 'AWS::AccountId'
+                - '.signin.aws.amazon.com/console'

@@ -3,3 +3,5 @@ workshop/public
 public
 packaged.yaml
 .DS_Store
+.idea/
+.idea/dictionaries/
