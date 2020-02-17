@@ -30,12 +30,12 @@ autoNav = true
         <li>Apache Zeppelin</li>
         <li>Amazon EMR notebooks</li>
     </ul>
-    <h4>Before You Begin</h4>
-    To launch an Amazon EMR cluster with AWS Lake Formation, you need to complete the following prerequisites:
-    <ul>
-        <li>Configure AWS IAM roles for AWS Lake Formation</li>
-        <li>Configure Trust Relationship Between your IdP and Lake Formation</li>
-        <li>Configure Amazon EMR security features.</li>
-    </ul>
-    Proceed to the next exercise to configure AWS IAM roles for AWS Lake Formation.
+    
+   <h4>Before You Begin</h4>
+    To launch an Amazon EMR cluster with AWS Lake Formation, you need to complete the following prerequisite:
+   <ul>
+        <li>Configure Trust Relationship Between third-party SAML 2.0 identity provider (IdP) solutions and AWS </li>
+ 
+   </ul>
+    Proceed to the next exercise to configure Trust Relationship.
 </div>
