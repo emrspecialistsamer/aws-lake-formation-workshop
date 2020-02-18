@@ -19,7 +19,7 @@ weight = 301
 <div style="text-align: justify">
   Follow these steps to create Amazon EC2 keypair and then execute AWS CloudFormation template to create required resources:
   <ul>
-    <li><a href="30-howtostart/301-self-paced/3012-ec2-keypair.html">Create EC2 Key Pair</a></li>
-    <li><a href="30-howtostart/301-self-paced/3013-cloudformation.html">Using CFN Template</a></li>
+    <li><a href="301-self-paced/3012-ec2-keypair.html">Create EC2 Key Pair</a></li>
+    <li><a href="301-self-paced/3013-cloudformation.html">Using CFN Template</a></li>
   </ul>
 </div>
