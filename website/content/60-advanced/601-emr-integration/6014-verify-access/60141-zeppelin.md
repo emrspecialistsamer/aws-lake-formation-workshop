@@ -26,7 +26,7 @@ Finish the following steps in order to access the Zeppelin notebook and execute 
         <img src="/images/2mastersecuritygroup8442.png" title="Add Rule" style="margin:15px 0px; border:1px solid black"/>
        <li>To access Apache Zeppelin, grap the <b>EMRMasterNodeDNS</b> value from CloudFormation stack output. Using your browser, navigate to https://<b>EMRMasterNodeDNS</b>:8442/gateway/default/zeppelin/. Ensure the URL includes the trailing slash at the end </li> 
        <li>Once the Proxy Agent’s certificate is accepted, your browser redirects you to your Identity Provider (IdP) to authenticate. Once authenticated, you will be redirected to Zeppelin.</li> 
-       <li>Download an existing Zeppelin Notebook ( LF-EMR-Zeppelin.json  ) from your S3 bucket (bucket name can be found in CloudFormation Stack Output, <b>notebooks-accountId </b> ) into local computer.</li> 
+       <li>Download an existing Zeppelin Notebook ( LF-EMR-Zeppelin.json  ) from your S3 bucket (bucket name can be found in CloudFormation Stack Output, <b>lf-notebooks-bucket-accountId </b> ) into local computer.</li> 
         <img src="/images/emr-zeppelinnotebookins3.png" title="Download Zeppelin Notebook" style="margin:15px 0px; border:1px solid black"/>
         <li>Upload the same file into Zeppelin</li>    
         <img src="/images/ImportZeppelinNotebook.png" title="Import Zepplin Notebook" style="margin:15px 0px; border:1px solid black"/>

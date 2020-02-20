@@ -376,6 +376,13 @@ Resources:
           - '-'
           - - lf-glue-bucket
             - !Ref 'AWS::AccountId'
+  MetadataBucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Join
+          - '-'
+          - - lf-metadata-bucket
+            - !Ref 'AWS::AccountId'
   AdminUser:
     Type: 'AWS::IAM::User'
     Properties:
