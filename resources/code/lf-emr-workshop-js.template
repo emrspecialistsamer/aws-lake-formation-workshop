@@ -74,7 +74,7 @@
     "IdentityProviderMetaDataInS3": {
       "Type": "String",
       "Description": "Identity Provider Metadata xml file in S3 (e.g s3://lf-metadata-bucket-account-id/metadata.xml )",
-      "AllowedPattern" : "(s3:\/\/.*)"
+      "AllowedPattern" : "s3:\/\/.*"
 
     },
     "KdcAdminPassword": {
