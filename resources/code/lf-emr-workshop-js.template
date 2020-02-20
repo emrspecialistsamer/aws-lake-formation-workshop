@@ -73,8 +73,8 @@
     },
     "IdentityProviderMetaDataInS3": {
       "Type": "String",
-      "Description": "Identity Provider Metadata xml file in S3 (e.g s3://saml-account-id-metadata/metadata.xml ),if you are planning on integrating LakeFormation with EMR  then you need provide proper S3 file path, default value is just a dummy file",
-      "Default": "s3://emr-workshops-us-west-2/lakeformation-emr-workshop/auth0-metadata/Auth0metadata.xml"
+      "Description": "Identity Provider Metadata xml file in S3 (e.g s3://lf-metadata-bucket-account-id/metadata.xml )",
+      "AllowedPattern" : "(s3:\/\/.*)"
 
     },
     "KdcAdminPassword": {
@@ -532,7 +532,7 @@
           "Fn::Join": [
             "-",
             [
-              "emr-logs",
+              "lf-emr-logs-bucket",
               {
                 "Ref": "AWS::AccountId"
               }
@@ -547,7 +547,7 @@
           "Fn::Join": [
             "-",
             [
-              "notebooks",
+              "lf-notebooks-bucket",
               {
                 "Ref": "AWS::AccountId"
               }

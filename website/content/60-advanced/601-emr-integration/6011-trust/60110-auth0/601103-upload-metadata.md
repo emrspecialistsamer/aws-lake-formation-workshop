@@ -8,18 +8,18 @@ chapter = true
 
 <div style="text-align: justify">
 
-   <br/>
-   <h5>Create S3 bucket in your account and upload metadata file.</h5>
-   
-   <br/> 
-   1. Create S3 bucket and name it as <b>saml-account-id-metadata</b>, replace <b>account-id</b> with your AWS account.
-   <br/><br/>
-   2. Upload metadata xml file you downloaded from <b>Auth0</b> for LakeFormation Application into S3 bucket you just created above, and make a note of S3 path to this file 
-   as we need this during AWS CloudFormation Stack creation as one of the input. 
-   <br/>
+
    
    <br/>
    
+   <ol>
+   <li>Click on S3 bucket <b>lf-metadata-bucket-account-id</b>, where <b>account-id</b> is your AWS account in S3 Console.</li>
+   <img src="/images/s3metadatabucket.png" title="S3 Metadata Bucket" style="margin:15px 0px; border:1px solid black"/>
+   <li>Upload metadata xml file you downloaded from <b>Auth0</b> for AWS SSO Application you created in the previous chapter into S3 bucket you selected above, and make a note of S3 path to this file 
+   as we need this during AWS CloudFormation Stack creation as one of the input. </li>
    
+   <img src="/images/s3metadataupload.png" title="S3 Metadata Upload" style="margin:15px 0px; border:1px solid black"/>
+   
+   </ol>
    
 </div>

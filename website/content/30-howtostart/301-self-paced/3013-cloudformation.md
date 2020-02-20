@@ -17,7 +17,7 @@ chapter = true
 
     <b>NOTE:</b> This template is created for us-east-1 region (N.Virginia) and will not work in other regions.<br />
 
-    <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Lake-Formation-WF&templateURL=https://aws-data-analytics-blog.s3.amazonaws.com/lake-formation-workshop/cfn/lf-workshop.template" target="_blank"><img src="/images/LaunchStack.svg" title="LF Workshop CFN" width="140" height="60" style="margin:10px 0px"/></a>
+    <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Lake-Formation-WF&templateURL=https://emr-workshops-us-west-2.s3-us-west-2.amazonaws.com/lakeformation-emr-workshop/cf-templates/lf-workshop-js.template" target="_blank"><img src="/images/LaunchStack.svg" title="LF Workshop CFN" width="140" height="60" style="margin:10px 0px"/></a>
 
     The CloudFormation stack will roughly take 12-14 minutes to complete. Check the CloudFormation console and wait for
     the status <b>CREATE_COMPLETE</b> as shown below:<img src="/images/cfn-complete.png" title="LF Workshop CFN" style="margin:15px 0px; border:1px solid black"/>

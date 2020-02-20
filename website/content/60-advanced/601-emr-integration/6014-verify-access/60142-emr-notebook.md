@@ -31,7 +31,7 @@ In order to access the notebook application, you must first ensure that your clu
       <li>Select Create notebook to create the notebook. Notebook will get created and wait for it go <b>Ready</b> state</li>
       <img src="/images/4notebook-in-readystatus.png" title="Ready State" style="margin:15px 0px; border:1px solid black"/>
       <li>Once Notebook in Ready state, Click <b>Open In Jupyter</b> or <b>JupyterLab</b>, You will be redirected to the Proxy Agent on the Amazon EMR cluster. Once you’ve accepted the Proxy Agent’s certificate, your browser will redirect you to your Identity Provider (IdP) to authenticate. Once authenticated, you will be redirected to the EMR notebook.</li>
-      <li>Download an existing EMR Notebook ( LF-EMR-Jupyter.ipynb file ) from your S3 bucket (bucket name can be found in CloudFormation Stack Output, <b>notebooks-accountId </b> ) into local computer.</li> 
+      <li>Download an existing EMR Notebook ( LF-EMR-Jupyter.ipynb file ) from your S3 bucket (bucket name can be found in CloudFormation Stack Output, <b>lf-notebooks-bucket-accountId </b> ) into local computer.</li> 
        <img src="/images/emr-jupyternotebookins3.png" title="Download Jupyter Notebook" style="margin:15px 0px; border:1px solid black"/>
        <li>Upload the same file into Jupyter</li>      
        <img src="/images/lf-emr-uploadjupyternotebook.png" title="Import Jupyter Notebook" style="margin:15px 0px; border:1px solid black"/>

@@ -668,128 +668,6 @@
                 "RoleName": "LF-GlueServiceRole"
             }
         },
-        "EMRRoleForLakeFormation": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-                "AssumeRolePolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                          "Effect": "Allow",
-                          "Principal": {
-                            "Federated": {
-                                            "Fn::Join": [
-                                                "",
-                                                [
-                                                    "arn:aws:iam::",
-                                                    {
-                                                        "Ref": "AWS::AccountId"
-                                                    },
-                                                    ":saml-provider/IAM_identity_provider_name"
-                                                ]
-                                            ]
-                                        }
-                          },
-                          "Action": "sts:AssumeRoleWithSAML"
-                        },
-                        {
-                          "Effect": "Allow",
-                          "Principal": {
-                            "Service": [
-                              "glue.amazonaws.com",
-                              "lakeformation.amazonaws.com"
-                            ]
-                          },
-                          "Action": "sts:AssumeRole"
-                        }
-                    ]
-                },
-                "Policies": [
-                    {
-                        "PolicyName": "LF-EMR-Access-For-Lake-Formation-Policy",
-                        "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Effect": "Allow",
-                                    "Action": [
-                                        "lakeformation:GetDataAccess",
-                                        "lakeformation:GetMetadataAccess",
-                                        "glue:GetUnfiltered*",
-                                        "glue:GetTable",
-                                        "glue:GetTables",
-                                        "glue:GetDatabase",
-                                        "glue:GetDatabases",
-                                        "glue:GetUserDefinedFunction",
-                                        "glue:GetUserDefinedFunctions"
-                                    ],
-                                    "Resource": "*"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "PolicyName": "LF-EMR-EC2-Instance-Profile-Policy",
-                        "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Effect": "Allow",
-                                    "Action": "iam:PassRole",
-                                    "Resource": {
-                                        "Fn::Join": [
-                                            "",
-                                            [
-                                                "arn:aws:iam::",
-                                                {
-                                                    "Ref": "AWS::AccountId"
-                                                },
-                                                ":role/LF-EMRRoleForLakeFormation"
-                                            ]
-                                        ]
-                                    }
-                                },
-                                {
-                                    "Effect": "Allow",
-                                    "Action": "sts:AssumeRole",
-                                    "Resource": {
-                                        "Fn::Join": [
-                                            "",
-                                            [
-                                                "arn:aws:iam::",
-                                                {
-                                                    "Ref": "AWS::AccountId"
-                                                },
-                                                ":role/LF-EMRRoleForLakeFormation"
-                                            ]
-                                        ]
-                                    }
-                                },
-                                {
-                                    "Effect": "Allow",
-                                    "Action": "lakeformation:GetTemporaryUserCredentialsWithSAML",
-                                    "Resource": "*"
-                                },
-                                {
-                                    "Effect": "Allow",
-                                    "Action": "iam:GetRole",
-                                    "Resource": "arn:aws:iam::*:role/*"
-                                }
-                            ]
-                        }
-                    }
-                ],
-                "RoleName": "LF-EMRRoleForLakeFormation"
-            }
-        },
-        "EMREC2InstanceProfile": {
-          "Type": "AWS::IAM::InstanceProfile",
-          "Properties": {
-            "Path": "/",
-            "Roles": [ { "Ref": "EMRRoleForLakeFormation"} ],
-            "InstanceProfileName": LF-EMRRoleForLakeFormation
-          }
-        },
         "DataLakeBucket": {
             "Type": "AWS::S3::Bucket",
             "Properties": {
@@ -830,6 +708,22 @@
                         "-",
                         [
                             "lf-glue-bucket",
+                            {
+                                "Ref": "AWS::AccountId"
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "MetadataBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "BucketName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            "lf-metadata-bucket",
                             {
                                 "Ref": "AWS::AccountId"
                             }
