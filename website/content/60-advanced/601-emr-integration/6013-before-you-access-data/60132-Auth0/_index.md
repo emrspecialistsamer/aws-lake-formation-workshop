@@ -10,7 +10,7 @@ autoNav = true
 
 <div style="text-align: justify">
   <br/>
-  1. Grab the value of <b>EMRMasterNodeDNS</b>  from CloudFormation Stack Output 
+  1. Grab the value of <b>EMRMasterNodeDNS</b> from CloudFormation Stack <b>Lake-Formation-With-EMR-WF Output</b>
   <br/>
   2. Login into Auth0 account and select AWS SSO Application and under Setting tab replace Allowed Callback URls <b>public-dns</b> with EMR Master Node DNS 
   
