@@ -18,6 +18,7 @@ In order to access the notebook application, you must first ensure that your clu
       <li> Click on <b>Security groups for Master</b> link </li>
       <img src="/images/masternode-securith-group.png" title="Master Node Security" style="margin:15px 0px; border:1px solid black"/>
       <li> Select <b>ElasticMapReduce-master</b> security group. Under Inbound tab click on Edit and Add New Inbound Rule to allow traffic ( Type: Custom TPC) from your computer IP on port <b>8442</b> (Make sure you are not on your VPN) and click <b>Save</b> </li> 
+       <br/> <b>Note:</b> The following instructions only work if you are NOT on VPN. Please Turn off your VPN.
       <img src="/images/1mastersecuritygroup8442.png" title="Master Security Group" style="margin:15px 0px; border:1px solid black"/>
       <img src="/images/2mastersecuritygroup8442.png" title="Add Rule" style="margin:15px 0px; border:1px solid black"/>
       <li>To create an EMR notebook </li>
