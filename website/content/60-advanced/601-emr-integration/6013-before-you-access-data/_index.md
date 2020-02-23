@@ -20,8 +20,8 @@ autoNav = true
           </ul>
        
    <br/>
-    Before you access the data you need to update the SAML Identity Provider Application Callback URL with proper Amazon EMR cluster Master Node DNS and grant data access through AWS Lake Formation.
+    Before you access the data you need to grant data access through AWS Lake Formation and update the SAML Identity Provider Application Callback URL with proper Amazon EMR cluster Master Node DNS.
     
     <br/><br/>
-    In the next section, you will update SAML Identity Provider Application Callback URL and grant IdP user the permissions.
+    In the next section, you will grant IdP user the permissions and update SAML Identity Provider Application Callback URL (Either Auth0 or Okta).
 </div>
