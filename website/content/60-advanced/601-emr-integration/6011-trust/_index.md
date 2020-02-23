@@ -20,5 +20,5 @@ autoNav = true
         <li>Microsoft Active Directory Federation Services (AD FS)</li>
         <li>Okta</li>
     </ul>
-    In the next section, you will choose one of the 3rd party IdP provider and create  an account and then setup trust relationship between your account and AWS .
+    In the next section, you will choose one of the 3rd party IdP provider and create an account and then setup trust relationship between your account and AWS.
 </div>
