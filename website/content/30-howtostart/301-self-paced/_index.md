@@ -12,8 +12,8 @@ weight = 301
   <br><br/>
   If you've already signed up for Amazon Web Services (AWS), you can jump to the next section. If you haven't signed up for AWS account yet, or if you need assistance, complete the following tasks to get set up your AWS account for the workshop:
   <ul>
-    <li><a href="30-howtostart/301-self-paced/3010-sign-up-aws.html">Sign Up for AWS</a></li>
-    <li><a href="30-howtostart/301-self-paced/3011-create-iam-account.html">Create an IAM User</a></li>
+    <li><a href="301-self-paced/3010-sign-up-aws.html">Sign Up for AWS</a></li>
+    <li><a href="301-self-paced/3011-create-iam-account.html">Create an IAM User</a></li>
   </ul>
 </div>
 <div style="text-align: justify">

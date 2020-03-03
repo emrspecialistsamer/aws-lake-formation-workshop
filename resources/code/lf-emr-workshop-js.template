@@ -60,14 +60,16 @@
     "EC2KeyPair": {
       "Description": "Amazon EC2 Key Pair",
       "Type": "AWS::EC2::KeyPair::KeyName",
-      "MinLength": 1
+      "MinLength": 1,
+      "AllowedPattern" : ".+"
     },
     "SAMLProviderName": {
       "Type": "String",
       "Default": "auth0SAMLProvider",
       "AllowedValues": [
         "auth0SAMLProvider",
-        "oktaSAMLProvider"
+        "oktaSAMLProvider",
+        "ADFSSAMLProvider"
       ],
       "Description": "SAML Provider Name Created in AWS"
     },
@@ -99,7 +101,8 @@
     },
     "VPCPublicSubnet": {
       "Type": "AWS::EC2::Subnet::Id",
-      "Description": "Public Subnet to be used for Amazon EMR cluster, please choose LF-Workshop-PublicSubnetTwo"
+      "Description": "Public Subnet to be used for Amazon EMR cluster, please choose LF-Workshop-PublicSubnetTwo",
+      "AllowedPattern" : ".+"
     },
     "InstanceType": {
       "Type": "String",
