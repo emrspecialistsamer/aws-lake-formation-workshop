@@ -10,16 +10,20 @@ weight = 6012
    
  
 <br/>
-
+    Now that we finished setting up Identity Provider Trust, it's time to create Amazon EMR cluster integrating with AWS Lake Formation.
+    
     Upon successful completion of the following CloudFormaiton template, it will create the following IAM resources:
    <ul>
         <li>Roles Needed for AWS Lake Formation Integration <a href="https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-lf-iam-role.html">Overview of the IAM Roles for Lake Formation</a></li>
+        <li>EMR Security Configuration</li>
         <li>Amazon EMR Cluster</li>
         
    </ul>
    
    <br/>
-        <b>NOTE:</b> This template is created for us-east-1 region (N.Virginia) and will not work in other regions. <br />
+   
+        Logout and login back into AWS console using TeamRole ( If Hashcode given, use chapter <a href="/30-howtostart/302-aws-event.html" > AWS Event </a> to login) or as Administrator you created in <a href="/30-howtostart/301-self-paced.html" > Self Paced Labs </a>
+        <br/><br/><b>NOTE:</b> This template is created for us-east-1 region (N.Virginia) and will not work in other regions. <br />
         <br/>
       
         <br/><br/><b style="color:red !important;">NOTE:</b> Please make a note of Identity Provider metadata file path in S3 which you have uploded part of Configure Trust Relationship exersie, we need it during stack creation as one of the input also make sure to select proper SAMLProviderName depending on whether you are trying with <b>Auth0 </b> or <b>Okta</b> provider .

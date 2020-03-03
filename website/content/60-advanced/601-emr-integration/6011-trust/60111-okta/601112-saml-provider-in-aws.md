@@ -12,8 +12,8 @@ chapter = true
    <h5>In the IAM console, create a SAML identity provider entity.</h5>
   
    <ol> 
-      <li> Logout from the current AWS console and use the sign in link from the CloudFormation output to login as <b><i>lf-admin</i></b> user (default password: Password1!).</li>
-      <li>Open the AWS IAM console at <a
+    <li>Login into AWS console ( If Hashcode given use chapter <a href="/30-howtostart/302-aws-event.html" > AWS Event </a> to login) or as Administrator you created in <a href="/30-howtostart/301-self-paced.html" > Self Paced Labs </a></li>
+    <li>Open the AWS IAM console at <a
                      href="https://console.aws.amazon.com/iam/home?region=us-east-1">https://console.aws.amazon.com/iam</a>.</li>
     
    <li>In the navigation pane, choose <b>Identity Providers</b>, <b>Create Provider</b>. </li>

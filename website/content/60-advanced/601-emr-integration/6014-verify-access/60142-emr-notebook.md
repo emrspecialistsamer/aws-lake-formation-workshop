@@ -18,7 +18,7 @@ In order to access the notebook application, you must first ensure that your clu
       <li> Click on <b>Security groups for Master</b> link </li>
       <img src="/images/masternode-securith-group.png" title="Master Node Security" style="margin:15px 0px; border:1px solid black"/>
       <li> Select <b>ElasticMapReduce-master</b> security group. Under Inbound tab click on Edit and Add New Inbound Rule to allow traffic ( Type: Custom TPC) from your computer IP on port <b>8442</b> (Make sure you are not on your VPN) and click <b>Save</b> </li> 
-       <br/> <b>Note:</b> The following instructions only work if you are NOT on VPN. Please Turn off your VPN.
+       <br/> <b>Note:</b>Please Turn off your VPN, sometimes high levels ports are blocked by VPN.
       <img src="/images/1mastersecuritygroup8442.png" title="Master Security Group" style="margin:15px 0px; border:1px solid black"/>
       <img src="/images/2mastersecuritygroup8442.png" title="Add Rule" style="margin:15px 0px; border:1px solid black"/>
       <li>To create an EMR notebook </li>
@@ -32,12 +32,14 @@ In order to access the notebook application, you must first ensure that your clu
       <li>Select an existing EMR cluster integrated with Lake Formation and Choose cluster.</li>
       <li>Select Create notebook to create the notebook. Notebook will get created and wait for it go <b>Ready</b> state</li>
       <img src="/images/4notebook-in-readystatus.png" title="Ready State" style="margin:15px 0px; border:1px solid black"/>
+      <li>Clear the browser cache/cookies as your previous login into IdP account is still in the session <b>OR</b> Open in Incognito mode if you are using Chrome. </li>
       <li>Once Notebook in Ready state, Click <b>Open In Jupyter</b> or <b>JupyterLab</b>, You will be redirected to the Proxy Agent on the Amazon EMR cluster. Once you’ve accepted the Proxy Agent’s certificate, your browser will redirect you to your Identity Provider (IdP) to authenticate. Once authenticated with user <b> aws-lfemr-developer@somecompany.com</b> and password you provided, you will be redirected to the EMR notebook </li>
       
       <br/> <b>Note:</b> In case of Okta, you have to choose a forgot password question for first time. 
       <br/> <b>Note:</b> Sometimes Auth0/Okta IPs may be blocked by your VPN, so make sure to turn off VPN.
             
-      <img src="/images/okta-login.png" title="Auth0 Authentication" style="margin:15px 0px; border:1px solid black"/>
+      <img src="/images/okta-login.png" title="Okta Authentication" style="margin:15px 0px; border:1px solid black"/>
+      <img src="/images/auth0-authenticate.png" title="Auth0 Authentication" style="margin:15px 0px; border:1px solid black"/>
              
       <li>Download an existing EMR Notebook ( LF-EMR-Jupyter.ipynb file ) from your S3 bucket (bucket name can be found in CloudFormation Stack Output, <b>lf-notebooks-bucket-accountId </b> ) into local computer.</li> 
        <img src="/images/emr-jupyternotebookins3.png" title="Download Jupyter Notebook" style="margin:15px 0px; border:1px solid black"/>
