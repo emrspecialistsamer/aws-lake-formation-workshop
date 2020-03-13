@@ -598,7 +598,7 @@
                                                 [
                                                     "arn:aws:s3:::",
                                                     {
-                                                        "Ref": "GlueBucket"
+                                                        "Ref": "LFWorkshopBucket"
                                                     },
                                                     "/*"
                                                 ]
@@ -610,7 +610,7 @@
                                                 [
                                                     "arn:aws:s3:::",
                                                     {
-                                                        "Ref": "GlueBucket"
+                                                        "Ref": "LFWorkshopBucket"
                                                     }
                                                 ]
                                             ]
@@ -675,7 +675,7 @@
                     "Fn::Join": [
                         "-",
                         [
-                            "lf-data-lake-bucket",
+                            "lf-data-lake",
                             {
                                 "Ref": "AWS::AccountId"
                             }
@@ -684,46 +684,14 @@
                 }
             }
         },
-        "AthenaQueryResultBucket": {
+        "LFWorkshopBucket": {
             "Type": "AWS::S3::Bucket",
             "Properties": {
                 "BucketName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "lf-athena-query-results",
-                            {
-                                "Ref": "AWS::AccountId"
-                            }
-                        ]
-                    ]
-                }
-            }
-        },
-        "GlueBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-                "BucketName": {
-                    "Fn::Join": [
-                        "-",
-                        [
-                            "lf-glue-bucket",
-                            {
-                                "Ref": "AWS::AccountId"
-                            }
-                        ]
-                    ]
-                }
-            }
-        },
-        "MetadataBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-                "BucketName": {
-                    "Fn::Join": [
-                        "-",
-                        [
-                            "lf-metadata-bucket",
+                            "lf-workshop",
                             {
                                 "Ref": "AWS::AccountId"
                             }
@@ -778,20 +746,9 @@
                                                 [
                                                     "arn:aws:s3:::",
                                                     {
-                                                        "Ref": "AthenaQueryResultBucket"
+                                                        "Ref": "LFWorkshopBucket"
                                                     },
-                                                    "/*"
-                                                ]
-                                            ]
-                                        },
-                                        {
-                                            "Fn::Join": [
-                                                "",
-                                                [
-                                                    "arn:aws:s3:::",
-                                                    {
-                                                        "Ref": "AthenaQueryResultBucket"
-                                                    }
+                                                    "/athena-results/*"
                                                 ]
                                             ]
                                         }
@@ -837,20 +794,9 @@
                                                 [
                                                     "arn:aws:s3:::",
                                                     {
-                                                        "Ref": "AthenaQueryResultBucket"
+                                                        "Ref": "LFWorkshopBucket"
                                                     },
-                                                    "/*"
-                                                ]
-                                            ]
-                                        },
-                                        {
-                                            "Fn::Join": [
-                                                "",
-                                                [
-                                                    "arn:aws:s3:::",
-                                                    {
-                                                        "Ref": "AthenaQueryResultBucket"
-                                                    }
+                                                    "/athena-results/*"
                                                 ]
                                             ]
                                         }
@@ -896,20 +842,9 @@
                                                 [
                                                     "arn:aws:s3:::",
                                                     {
-                                                        "Ref": "AthenaQueryResultBucket"
+                                                        "Ref": "LFWorkshopBucket"
                                                     },
-                                                    "/*"
-                                                ]
-                                            ]
-                                        },
-                                        {
-                                            "Fn::Join": [
-                                                "",
-                                                [
-                                                    "arn:aws:s3:::",
-                                                    {
-                                                        "Ref": "AthenaQueryResultBucket"
-                                                    }
+                                                    "/athena-results/*"
                                                 ]
                                             ]
                                         }
@@ -1003,16 +938,16 @@
                                 "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tripdata.csv ",
                                 "s3://",
                                 {
-                                    "Ref": "GlueBucket"
+                                    "Ref": "LFWorkshopBucket"
                                 },
-                                "/nyctaxi/",
+                                "/glue/nyctaxi/",
                                 "\n",
                                 "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py ",
                                 "s3://",
                                 {
-                                    "Ref": "GlueBucket"
+                                    "Ref": "LFWorkshopBucket"
                                 },
-                                "/scripts/",
+                                "/glue/scripts/",
                                 "\n",
                                 "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup /tmp/\n",
                                 "gunzip < /tmp/tpc.backup | mysql -h ",
@@ -1091,16 +1026,55 @@
                 "Ref": "DataLakeBucket"
             }
         },
-        "GlueDemoBucketName": {
-            "Description": "S3 bucket for Glue Demos",
+        "LFBucketName": {
+            "Description": "Lake Formation Workshop Bucket Name",
             "Value": {
-                "Ref": "GlueBucket"
+                "Ref": "LFWorkshopBucket"
             }
         },
-        "AthenaQueryResultBucketName": {
-            "Description": "Bucket to store Athena query results",
+        "AthenaQueryResultLocation": {
+            "Description": "Athena Query Result Location",
             "Value": {
-                "Ref": "AthenaQueryResultBucket"
+                "Fn::Join": [
+                    "",
+                    [
+                        "s3://",
+                        {
+                            "Ref": "LFWorkshopBucket"
+                        },
+                        "/athena-results/"
+                    ]
+                ]
+            }
+        },
+        "NYCTaxiDataLocation": {
+            "Description": "NY Taxi Data Location",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "s3://",
+                        {
+                            "Ref": "LFWorkshopBucket"
+                        },
+                        "/glue/nyctaxi"
+                    ]
+                ]
+            }
+        },
+        "PythonScriptLocation": {
+            "Description": "Python Shell Script Location",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "s3://",
+                        {
+                            "Ref": "LFWorkshopBucket"
+                        },
+                        "/glue/scripts/nyctaxi-csv-to-json.py"
+                    ]
+                ]
             }
         },
         "LFUsersPassword": {

@@ -22,5 +22,5 @@ chapter = true
     The CloudFormation stack will roughly take 12-14 minutes to complete. Check the CloudFormation console and wait for
     the status <b>CREATE_COMPLETE</b> as shown below:<img src="/images/cfn-complete.png" title="LF Workshop CFN" style="margin:15px 0px; border:1px solid black"/>
     Once the stack creation is completed, your AWS account will have all required resources to run this workshop. Capture the data lake bucket name, password, and Athena query result output location from the output tab and proceed to the next chapter to run different lab.<img src="/images/cfn-complete-2.png" style="margin:15px 0px; border:1px solid black"/>
-    The CloudFormation template also shows AWS console IAM login link. Use this link to login to different users for this workshop..<img src="/images/cfn-complete-3.png" style="margin:15px 0px; border:1px solid black"/>
+    The CloudFormation template also shows AWS console IAM login link. Use that link to switch between different users for this workshop.
 </div>
