@@ -1077,6 +1077,21 @@
                 ]
             }
         },
+        "MetadataLocation": {
+            "Description": "Metadata Location",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "s3://",
+                        {
+                            "Ref": "LFWorkshopBucket"
+                        },
+                        "/metadata"
+                    ]
+                ]
+            }
+        },
         "LFUsersPassword": {
             "Description": "Password for Data Lake Users",
             "Value": {

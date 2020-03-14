@@ -4,24 +4,13 @@ weight = 601103
 chapter = true
 +++
 
-<center><h3>Upload Auth0 Metadata Into S3 </h3></center>
+<center><h3>Upload Auth0 Metadata into Amazon S3</h3></center>
 
 <div style="text-align: justify">
-
-
-   
-   <br/>
-   
    <ol>
-   <li>Click on S3 bucket <b>lf-metadata-bucket-account-id</b>, where <b>account-id</b> is your AWS account in S3 Console.</li>
-   <img src="/images/s3metadatabucket.png" title="S3 Metadata Bucket" style="margin:15px 0px; border:1px solid black"/>
-   <li>Upload metadata xml file (<b>Note:</b> Make sure file name does not have any special characters or spaces etc, Amazon EMR cluster creation will fail with bootstrap errors if the file name has any spaces or special characters )  you downloaded from <b>Auth0</b> for AWS SSO Application you created in the previous chapter into S3 bucket you selected above, and make a note of S3 path to this file 
-   (by copying the address to this file in notepad or some text editor) as we need this during AWS CloudFormation Stack creation as one of the input. </li>
-   
-   <img src="/images/s3metadataupload.png" title="S3 Metadata Upload" style="margin:15px 0px; border:1px solid black"/>
-   
-   <li>You can now go to <b> <a href="/60-advanced/601-emr-integration/6012-cloudformation.html"> Create Amazon EMR Cluster</a></b> chapter and skip next chapter of setting up Okta.</li>
-   
+      <li>In this part, you will upload the Auth0 metadata into your S3 location. Grab the Metadata location from the CloudFormation output and open it on Amazon S3 console. Create a folder named <b>metadata</b> using the <b>Create folder</b> button.<img src="/images/s3metadata1.png" style="margin:15px 0px; border:1px solid black"/></li>
+      <li>Locate the metadata XML file that you downloaded in the previous step and upload it under <b>metadata</b> folder.<img src="/images/s3metadata2.png" style="margin:15px 0px; border:1px solid black"/>
+      <b>Note</b>: Make sure the file name does not have any special characters or spaces, etc. Amazon EMR cluster creation will fail with bootstrap errors if the file name has any spaces or special characters.</li>
    </ol>
-   
+   You can go to the <a href="/60-advanced/601-emr-integration/6012-cloudformation.html"><b>Create Amazon EMR Cluster</b></a> chapter to start the EMR & Lake Formation integration process. If you want to set up Okta, proceed to the next lab.
 </div>
