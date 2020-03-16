@@ -5,7 +5,7 @@ weight = 60142
 autoNav = true
 +++
 
-<center><h3>EMR Notebook</h3></center>
+<center><h3>Amazon EMR Notebook</h3></center>
 
 <div>
 EMR notebooks can be created using the Amazon EMR console and used with an existing Amazon EMR cluster integrated with Lake Formation.
