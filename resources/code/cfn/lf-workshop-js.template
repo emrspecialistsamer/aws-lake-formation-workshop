@@ -949,6 +949,13 @@
                                 },
                                 "/glue/scripts/",
                                 "\n",
+                                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/notebook/ ",
+                                "s3://",
+                                {
+                                    "Ref": "LFWorkshopBucket"
+                                },
+                                "/notebook/ --recursive",
+                                "\n",
                                 "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup /tmp/\n",
                                 "gunzip < /tmp/tpc.backup | mysql -h ",
                                 {

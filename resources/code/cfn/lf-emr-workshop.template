@@ -521,45 +521,12 @@
             }
          }
       },
-      "S3EMRLogsBucket":{
-         "Type":"AWS::S3::Bucket",
-         "Properties":{
-            "BucketName":{
-               "Fn::Join":[
-                  "-",
-                  [
-                     "lf-emr-logs-bucket",
-                     {
-                        "Ref":"AWS::AccountId"
-                     }
-                  ]
-               ]
-            }
-         }
-      },
-      "S3NotebooksBucket":{
-         "Type":"AWS::S3::Bucket",
-         "Properties":{
-            "BucketName":{
-               "Fn::Join":[
-                  "-",
-                  [
-                     "lf-notebooks-bucket",
-                     {
-                        "Ref":"AWS::AccountId"
-                     }
-                  ]
-               ]
-            }
-         }
-      },
       "EMRCluster":{
          "Type":"AWS::EMR::Cluster",
          "DependsOn":[
             "LFEMRSecurityConfiguration",
             "LakeFormationEMRInstanceProfileRole",
-            "LFEMRInstanceProfile",
-            "S3NotebooksBucket"
+            "LFEMRInstanceProfile"
          ],
          "Properties":{
             "Instances":{
@@ -625,17 +592,6 @@
             "ServiceRole":{
                "Ref":"LakeFormationEMRRole"
             },
-            "BootstrapActions":[
-               {
-                  "Name":"Download the scripts",
-                  "ScriptBootstrapAction":{
-                     "Path":"s3://emr-workshops-us-west-2/lakeformation-emr-workshop/scripts/download-scripts.sh",
-                     "Args":[
-                        "emr-workshops-us-west-2/lakeformation-emr-workshop"
-                     ]
-                  }
-               }
-            ],
             "ReleaseLabel":{
                "Ref":"ReleaseLabel"
             },
@@ -647,42 +603,13 @@
                "Fn::Join":[
                   "",
                   [
-                     "s3://",
-                     {
-                        "Ref":"S3EMRLogsBucket"
-                     },
-                     "/"
+                    "s3://lf-workshop-",
+                    {
+                       "Ref":"AWS::AccountId"
+                    },
+                    "/emrlogs"
                   ]
-               ]
-            }
-         }
-      },
-      "EMRCopyNotebooksStep":{
-         "Type":"AWS::EMR::Step",
-         "Properties":{
-            "ActionOnFailure":"CONTINUE",
-            "HadoopJarStep":{
-               "Args":[
-                  "/tmp/scripts/copynotebooks.sh",
-                  "emr-workshops-us-west-2/lakeformation-emr-workshop",
-                  {
-                     "Fn::Join":[
-                        "",
-                        [
-                           "s3://",
-                           {
-                              "Ref":"S3NotebooksBucket"
-                           }
-                        ]
-                     ]
-                  }
-               ],
-               "Jar":"s3://elasticmapreduce/libs/script-runner/script-runner.jar",
-               "MainClass":""
-            },
-            "Name":"CopyNoteBooks",
-            "JobFlowId":{
-               "Ref":"EMRCluster"
+                ]
             }
          }
       }
@@ -712,10 +639,19 @@
             ]
          }
       },
-      "NoteBooksBucketName":{
-         "Description":"Bucket which contains Zeppelin & EMR Notebooks",
+      "NoteBooksS3Path":{
+         "Description":"Amazon S3 path that contains Zeppelin & EMR Notebooks",
          "Value":{
-            "Ref":"S3NotebooksBucket"
+            "Fn::Join":[
+               "",
+               [
+                  "s3://lf-workshop-",
+                  {
+                     "Ref": "AWS::AccountId"
+                  },
+                  "/notebook"
+               ]
+            ]
          }
       }
    }

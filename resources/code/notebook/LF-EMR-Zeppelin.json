@@ -1,0 +1,469 @@
+﻿{
+   "paragraphs":[
+      {
+         "text":"In Lake Formation enabled clusters, Spark SQL can only read from data managed by AWS Glue Data Catalog and cannot access data managed outside of AWS Glue or Lake Formation.\nData from other sources can be accessed using non-Spark SQL operations if the IAM role for other AWS Services chosen during cluster deployment has policies in place allowing the cluster to access those data sources\n\nSpark SQL can only read from Lake Formation tables\n\nSo let's see how may databases you have access to, one of them should be tpc as SAML authenticatd user has SELECT permission for two of the tables in tpc database.",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "results":{
+
+            },
+            "enabled":false
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452553_-1309282629",
+         "id":"20200212-213816_325620074",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "focus":true,
+         "$$hashKey":"object:1127"
+      },
+      {
+         "title":"",
+         "text":"spark.sql(\"show databases\").show()",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "title":false,
+            "results":{
+
+            },
+            "enabled":true
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452557_2141691468",
+         "id":"20200210-201358_1488794384",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1128"
+      },
+      {
+         "text":"As we gave SELECT permission to dl_tpc_web_page table under tpc database , let's get the count(*) of rows from the table ",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "results":{
+
+            },
+            "enabled":false
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452558_-2085340618",
+         "id":"20200212-213947_706265815",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1129"
+      },
+      {
+         "text":"spark.sql( \"select count(*) from tpc.dl_tpc_web_page \").show()",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "results":{
+               "0":{
+                  "graph":{
+                     "mode":"table",
+                     "height":300,
+                     "optionOpen":false,
+                     "setting":{
+                        "table":{
+                           "tableGridState":{
+
+                           },
+                           "tableColumnTypeState":{
+                              "names":{
+                                 "count(1)":"string"
+                              },
+                              "updated":false
+                           },
+                           "tableOptionSpecHash":"[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                           "tableOptionValue":{
+                              "useFilter":false,
+                              "showPagination":false,
+                              "showAggregationFooter":false
+                           },
+                           "updated":false,
+                           "initialized":false
+                        }
+                     },
+                     "commonSetting":{
+
+                     }
+                  },
+                  "helium":{
+
+                  }
+               }
+            },
+            "enabled":true
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452558_-1651731267",
+         "id":"20200210-202617_1512789887",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1130"
+      },
+      {
+         "text":"spark.sql( \" SELECT sum(ws_net_paid_inc_tax) NetPaid, ws_web_site_sk WebSiteID FROM tpc.dl_tpc_web_sales ws, tpc.dl_tpc_web_page wp WHERE ws.ws_web_site_sk =wp.wp_web_page_sk GROUP BY  ws_web_site_sk \").show()",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "results":{
+               "0":{
+                  "graph":{
+                     "mode":"table",
+                     "height":300,
+                     "optionOpen":false,
+                     "setting":{
+                        "table":{
+                           "tableGridState":{
+
+                           },
+                           "tableColumnTypeState":{
+                              "names":{
+                                 "NetPaid":"string",
+                                 "WebSiteID":"string"
+                              },
+                              "updated":false
+                           },
+                           "tableOptionSpecHash":"[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                           "tableOptionValue":{
+                              "useFilter":false,
+                              "showPagination":false,
+                              "showAggregationFooter":false
+                           },
+                           "updated":false,
+                           "initialized":false
+                        }
+                     },
+                     "commonSetting":{
+
+                     }
+                  }
+               }
+            },
+            "enabled":true
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452559_-1943858117",
+         "id":"20200210-210710_1556991954",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1131"
+      },
+      {
+         "text":"Let's select a table for which user does not have SELECT permission and see what happens? You should receive Service: AWSGlue; Status Code: 400; Error Code: AccessDeniedException for the following",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "results":{
+
+            },
+            "enabled":false
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452559_-728101276",
+         "id":"20200212-214120_529407211",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1132"
+      },
+      {
+         "text":"%sql\nSELECT * FROM tpc.dl_tpc_item limit 10",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"sql",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/sql",
+            "fontSize":9,
+            "results":{
+
+            },
+            "enabled":true
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452560_1661709583",
+         "id":"20200210-210939_888909168",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1133"
+      },
+      {
+         "text":"For dl_tpc_customer table we only give SELECT permission at four columns COLUMN which includes ( c_first_sales_date_sk, c_first_name,c_last_name,c_first_shipto_date_sk ) \nfollowing query should only show those columns for which user has access.\n",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "results":{
+
+            },
+            "enabled":false
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452560_1712955033",
+         "id":"20200212-214145_449414646",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1134"
+      },
+      {
+         "text":"spark.sql(\"select * from tpc.dl_tpc_customer limit 10\").show()\n",
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "results":{
+
+            },
+            "enabled":true
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452560_1056382196",
+         "id":"20200210-211122_557582954",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1135"
+      },
+      {
+         "user":"emr-developer",
+         "dateUpdated":"2020-03-16T22:57:32+0000",
+         "config":{
+            "editorSetting":{
+               "language":"scala",
+               "editOnDblClick":false,
+               "completionKey":"TAB",
+               "completionSupport":true
+            },
+            "colWidth":12,
+            "editorMode":"ace/mode/scala",
+            "fontSize":9,
+            "results":{
+
+            },
+            "enabled":true
+         },
+         "settings":{
+            "params":{
+
+            },
+            "forms":{
+
+            }
+         },
+         "apps":[
+
+         ],
+         "jobName":"paragraph_1584399452561_-88254079",
+         "id":"20200211-135446_1452608321",
+         "dateCreated":"2020-03-16T22:57:32+0000",
+         "status":"READY",
+         "errorMessage":"",
+         "progressUpdateIntervalMs":500,
+         "$$hashKey":"object:1136"
+      }
+   ],
+   "name":"LakeFormation-EMR-Notebook",
+   "id":"2F599NGVP",
+   "noteParams":{
+
+   },
+   "noteForms":{
+
+   },
+   "angularObjects":{
+
+   },
+   "config":{
+      "isZeppelinNotebookCronEnable":false,
+      "looknfeel":"default",
+      "personalizedMode":"false"
+   },
+   "info":{
+
+   }
+}
