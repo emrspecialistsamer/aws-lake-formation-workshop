@@ -16,7 +16,7 @@ autoNav = true
         <li>On the AWS Lake Formation console, click on the <b>Data permissions</b> section.<img src="/images/DataPermissions.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Then click on the <b>Grant</b> button.<img src="/images/DataPermissions-Grant.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>On the window that pops up, fill out <b>Active Directory users and groups (EMR beta only)</b> field based on your IdP provider.
-        <br/><br/><b>For Auto0</b><br/>
+        <br/><br/><b>For Auth0</b><br/>
         arn:aws:iam::<b style="color:red">account-id</b>:saml-provider/auth0SAMLProvider:user/emr-developer
         <br/><br/><b>For Okta</b><br/>
         arn:aws:iam::<b style="color:red">account-id</b>:saml-provider/oktaSAMLProvider:user/emr-developer

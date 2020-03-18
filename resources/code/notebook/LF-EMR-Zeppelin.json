@@ -37,7 +37,7 @@
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
          "focus":true,
-         "$$hashKey":"object:1127"
+         "$$hashKey":"object:2459"
       },
       {
          "title":"",
@@ -77,7 +77,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1128"
+         "$$hashKey":"object:2460"
       },
       {
          "text":"As we gave SELECT permission to dl_tpc_web_page table under tpc database , let's get the count(*) of rows from the table ",
@@ -115,7 +115,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1129"
+         "$$hashKey":"object:2461"
       },
       {
          "text":"spark.sql( \"select count(*) from tpc.dl_tpc_web_page \").show()",
@@ -186,7 +186,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1130"
+         "$$hashKey":"object:2462"
       },
       {
          "text":"spark.sql( \" SELECT sum(ws_net_paid_inc_tax) NetPaid, ws_web_site_sk WebSiteID FROM tpc.dl_tpc_web_sales ws, tpc.dl_tpc_web_page wp WHERE ws.ws_web_site_sk =wp.wp_web_page_sk GROUP BY  ws_web_site_sk \").show()",
@@ -255,7 +255,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1131"
+         "$$hashKey":"object:2463"
       },
       {
          "text":"Let's select a table for which user does not have SELECT permission and see what happens? You should receive Service: AWSGlue; Status Code: 400; Error Code: AccessDeniedException for the following",
@@ -293,7 +293,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1132"
+         "$$hashKey":"object:2464"
       },
       {
          "text":"%sql\nSELECT * FROM tpc.dl_tpc_item limit 10",
@@ -331,7 +331,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1133"
+         "$$hashKey":"object:2465"
       },
       {
          "text":"For dl_tpc_customer table we only give SELECT permission at four columns COLUMN which includes ( c_first_sales_date_sk, c_first_name,c_last_name,c_first_shipto_date_sk ) \nfollowing query should only show those columns for which user has access.\n",
@@ -369,7 +369,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1134"
+         "$$hashKey":"object:2466"
       },
       {
          "text":"spark.sql(\"select * from tpc.dl_tpc_customer limit 10\").show()\n",
@@ -407,7 +407,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1135"
+         "$$hashKey":"object:2467"
       },
       {
          "user":"emr-developer",
@@ -444,7 +444,7 @@
          "status":"READY",
          "errorMessage":"",
          "progressUpdateIntervalMs":500,
-         "$$hashKey":"object:1136"
+         "$$hashKey":"object:2468"
       }
    ],
    "name":"LakeFormation-EMR-Notebook",

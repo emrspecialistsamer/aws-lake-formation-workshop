@@ -612,6 +612,34 @@
                 ]
             }
          }
+      },
+      "EMRCopyNotebooksStep": {
+        "Type": "AWS::EMR::Step",
+        "Properties": {
+          "ActionOnFailure": "CONTINUE",
+          "HadoopJarStep": {
+            "Args": [
+              "s3://aws-data-analytics-blog/lake-formation-workshop/scripts/copyNotebooks.sh",
+              {
+                "Fn::Join":[
+                  "",
+                  [
+                    "lf-workshop-",
+                    {
+                      "Ref": "AWS::AccountId"
+                    }
+                  ]
+                ]
+             }
+            ],
+            "Jar": "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
+            "MainClass": ""
+          },
+          "Name": "CopyNoteBooks",
+          "JobFlowId": {
+            "Ref": "EMRCluster"
+          }
+        }
       }
    },
    "Outputs":{
