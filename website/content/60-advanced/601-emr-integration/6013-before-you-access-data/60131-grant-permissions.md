@@ -13,7 +13,7 @@ autoNav = true
     <img src="/images/cfn-complete-3.png" style="margin:15px 0px; border:1px solid black"/>
     <br/>Follow these steps to update Lake Formation permissions for IdP user.
     <ol>
-        <li>On the AWS Lake Formation console, click on the <b>Data permissions</b> section.<img src="/images/DataPermissions.png" style="margin:15px 0px; border:1px solid black"/></li>
+        <li>On the AWS Lake Formation console, click on the <b>Data permissions</b> section.<img src="/images/DataPermissions.png" height="400" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Then click on the <b>Grant</b> button.<img src="/images/DataPermissions-Grant.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>On the window that pops up, fill out <b>Active Directory users and groups (EMR beta only)</b> field based on your IdP provider.
         <br/><br/><b>For Auth0</b><br/>
