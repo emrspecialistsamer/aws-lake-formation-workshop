@@ -17,7 +17,7 @@ autoNav = true
     </ol>
   <h4>For Okta</h4>
   <ol>
-    <li>Login into Okta account and Select Lake-Formation Application and under General tab Edit SAML Setting and replace Single sign-on URL's <b>public-dns</b> with EMR Master Node DNS.<img src="/images/okta-editsaml.png" title="Update Auth0 Callback URL" style="margin:15px 0px; border:1px solid black"/></li>
-    <li>Scroll down to the bottom of the page and click on Next and click Finish on the Feedback tab.</li>
+    <li>Login into Okta account and select Lake-Formation application. Then go to General tab -> SAML Settings -> Configure SAML section. Edit the Single sign-on URL field by replacing <b>public-dns</b> with the Amazon EMR master node DNS.<img src="/images/okta-editsaml.png" title="Update Auth0 Callback URL" style="margin:15px 0px; border:1px solid black"/></li>
+    <li>Scroll down to the bottom of the page and click on <b>Next</b> and then click on <b>Finish</b> on the Feedback tab.</li>
   </ol>
 </div>

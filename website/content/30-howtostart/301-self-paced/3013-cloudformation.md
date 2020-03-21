@@ -10,7 +10,7 @@ chapter = true
     Before starting this AWS Lake Formation workshop, you need to create the required AWS resources. To do this, we
     provide AWS CloudFormation template to create a stack that contains the resources. When you create the stack, AWS
     creates a number of resources in your account. The outcome of these steps is to create the sample TPC database
-    running on Amazon RDS, sample users to test different security patterns, Glue connections and other IAM resources. <br />
+    running on Amazon RDS, sample users to test different security patterns, Glue connections and other IAM resources. <br/>
 
     All of these resources are required for this workshop to build a secured data lake on AWS.<br/><br/>
     To launch the CloudFormation stack, click on Launch Stack. <br /> <br />

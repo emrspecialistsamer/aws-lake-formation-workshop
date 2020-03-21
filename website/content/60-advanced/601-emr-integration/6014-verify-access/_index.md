@@ -11,7 +11,7 @@ autoNav = true
     As of now, the integration between Amazon EMR and AWS Lake Formation supports running Apace Spark through the following applications:
     <ul>
         <li>Apache Zeppelin</li>
-        <li>Amazon EMR notebooks</li>
+        <li>Amazon EMR Notebooks</li>
     </ul>
     In this chapter, you will walk-through these applications to demonstrate different data access scenarios.
     {{% children showhidden="false" %}}

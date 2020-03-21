@@ -5,17 +5,22 @@
          "ParameterGroups":[
             {
                "Label":{
-                  "default":"EMR Cluster Configuration"
+                  "default":"Amazon EMR Cluster Configuration"
+               },
+               "Parameters":[
+                  "ReleaseLabel",
+                  "InstanceType",
+                  "VPCPublicSubnet",
+                  "EC2KeyPair"
+               ]
+            },
+            {
+               "Label":{
+                  "default":"SAML Configuration"
                },
                "Parameters":[
                   "SAMLProviderName",
-                  "IdentityProviderMetaDataInS3",
-                  "Realm",
-                  "KdcAdminPassword",
-                  "ReleaseLabel",
-                  "InstanceType",
-                  "EC2KeyPair",
-                  "VPCPublicSubnet"
+                  "IdentityProviderMetadataPath"
                ]
             }
          ],
@@ -23,11 +28,20 @@
             "EC2KeyPair":{
                "default":"EC2 Key Pair"
             },
-            "SAMLProviderName":{
-               "default":"SAML Identity Provider Name In AWS"
+            "ReleaseLabel":{
+               "default":"EMR Release Label"
             },
-            "IdentityProviderMetaDataInS3":{
-               "default":"SAML Identity Provider MetaData File in S3 "
+            "VPCPublicSubnet":{
+               "default":"VPC Public Subnet"
+            },
+            "EC2KeyPair":{
+               "default":"EC2 Key Pair"
+            },
+            "SAMLProviderName":{
+               "default":"SAML Identity Provider Name"
+            },
+            "IdentityProviderMetadataPath":{
+               "default":"SAML Identity Provider Metadata Path"
             }
          }
       }
@@ -66,21 +80,12 @@
             "oktaSAMLProvider",
             "ADFSSAMLProvider"
          ],
-         "Description":"SAML Provider Name Created in AWS"
+         "Description":"SAML Provider Name"
       },
-      "IdentityProviderMetaDataInS3":{
+      "IdentityProviderMetadataPath":{
          "Type":"String",
-         "Description":"Identity Provider Metadata xml file in S3 (e.g s3://lf-metadata-bucket-account-id/metadata.xml )",
+         "Description":"Identity Provider Metadata file in S3 (e.g s3://lf-workshop-<account-id>/metadata/metadata.xml )",
          "AllowedPattern":"s3:\/\/.*"
-      },
-      "KdcAdminPassword":{
-         "Type":"String",
-         "Default":"Password1!"
-      },
-      "Realm":{
-         "Type":"String",
-         "Default":"EC2.INTERNAL",
-         "Description":"Kerberos Realm for Internal KDC"
       },
       "ReleaseLabel":{
          "Type":"String",
@@ -91,17 +96,17 @@
             "emr-5.28.0",
             "emr-5.29.0"
          ],
-         "Description":"EMR Version"
+         "Description":"Amazon EMR Version"
       },
       "VPCPublicSubnet":{
          "Type":"AWS::EC2::Subnet::Id",
-         "Description":"Public Subnet to be used for Amazon EMR cluster, please choose LF-Workshop-PublicSubnetTwo",
+         "Description":"Public Subnet to be used for Amazon EMR cluster, please choose either LF-Workshop-PublicSubnetOne or LF-Workshop-PublicSubnetTwo",
          "AllowedPattern":".+"
       },
       "InstanceType":{
          "Type":"String",
          "Default":"m4.xlarge",
-         "Description":"EMR Cluster Instance Types for both Master & Core"
+         "Description":"Amazon EMR Cluster Instance Type"
       }
    },
    "Resources":{
@@ -495,7 +500,7 @@
             "SecurityConfiguration":{
                "LakeFormationConfiguration":{
                   "IdpMetadataS3Path":{
-                     "Ref":"IdentityProviderMetaDataInS3"
+                     "Ref":"IdentityProviderMetadataPath"
                   },
                   "EmrRoleForUsersARN":{
                      "Fn::GetAtt":[
@@ -582,12 +587,8 @@
                "Ref":"LFEMRInstanceProfile"
             },
             "KerberosAttributes":{
-               "KdcAdminPassword":{
-                  "Ref":"KdcAdminPassword"
-               },
-               "Realm":{
-                  "Ref":"Realm"
-               }
+               "KdcAdminPassword": "Password1!",
+               "Realm": "EC2.INTERNAL"
             },
             "ServiceRole":{
                "Ref":"LakeFormationEMRRole"
@@ -667,7 +668,7 @@
             ]
          }
       },
-      "NoteBooksS3Path":{
+      "NotebooksS3Path":{
          "Description":"Amazon S3 path that contains Zeppelin & EMR Notebooks",
          "Value":{
             "Fn::Join":[
@@ -677,7 +678,7 @@
                   {
                      "Ref": "AWS::AccountId"
                   },
-                  "/notebook"
+                  "/notebooks"
                ]
             ]
          }
