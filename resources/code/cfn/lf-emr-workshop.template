@@ -63,6 +63,17 @@
          "ap-northeast-1":{
             "HVM64":"ami-011facbea5ec0363b"
          }
+      },
+      "Suffix":{
+         "auth0SAMLProvider":{
+            "Value":"Auth0"
+         },
+         "oktaSAMLProvider":{
+            "Value":"Okta"
+         },
+         "ADFSSAMLProvider":{
+            "Value":"ADFS"
+         }
       }
    },
    "Parameters":{
@@ -558,7 +569,15 @@
                   "Ref":"EC2KeyPair"
                }
             },
-            "Name":"LF-EMRCluster",
+            "Name": {
+              "Fn::Join":[
+                "-",
+                [
+                  "LF-EMRCluster",
+                  { "Fn::FindInMap" : [ "Suffix", { "Ref" : "SAMLProviderName" }, "Value"]}
+                ]
+              ]
+            },
             "Applications":[
                {
                   "Name":"Hadoop"
