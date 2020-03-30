@@ -639,7 +639,7 @@
           "ActionOnFailure": "CONTINUE",
           "HadoopJarStep": {
             "Args": [
-              "s3://aws-data-analytics-blog/lake-formation-workshop/scripts/copyNotebooks.sh",
+              "s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/copyNotebooks.sh",
               {
                 "Fn::Join":[
                   "",

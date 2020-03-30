@@ -935,28 +935,28 @@
                             [
                                 "#!/bin/bash -ex\n",
                                 "sudo yum -y install mysql\n",
-                                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tripdata.csv ",
+                                "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/sampledata/tripdata.csv ",
                                 "s3://",
                                 {
                                     "Ref": "LFWorkshopBucket"
                                 },
                                 "/glue/nyctaxi/",
                                 "\n",
-                                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py ",
+                                "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py ",
                                 "s3://",
                                 {
                                     "Ref": "LFWorkshopBucket"
                                 },
                                 "/glue/scripts/",
                                 "\n",
-                                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/notebooks/ ",
+                                "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/notebooks/ ",
                                 "s3://",
                                 {
                                     "Ref": "LFWorkshopBucket"
                                 },
                                 "/notebooks/ --recursive",
                                 "\n",
-                                "aws s3 cp s3://aws-data-analytics-blog/lake-formation-workshop/sampledata/tpc.backup /tmp/\n",
+                                "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/sampledata/tpc.backup /tmp/\n",
                                 "gunzip < /tmp/tpc.backup | mysql -h ",
                                 {
                                     "Fn::GetAtt": [
