@@ -1,0 +1,189 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "This template creates a single server installation of Active Directory , Domain Name services, and creates the necessary scripts for AWS Lake Formation integration with Amazon EMR using ADFS as IdP. **WARNING** This template creates Amazon EC2 Windows instance and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+
+    "SourceCidrForRDP" : {
+      "Description" : "IP Cidr from which you are likely to RDP into the instances. You can add rules later by modifying the created security groups e.g. 54.32.98.160/32",
+      "Type" : "String",
+      "MinLength" : "9",
+      "MaxLength" : "18",
+      "AllowedPattern" : "^([0-9]+\\.){3}[0-9]+\\/[0-9]+$"
+    },
+    "VPCPublicSubnet": {
+      "Type": "AWS::EC2::Subnet::Id",
+      "Description": "Public Subnet to be used for Windows AD Server, please choose either LF-Workshop-PublicSubnetOne or LF-Workshop-PublicSubnetTwo",
+      "AllowedPattern" : ".+"
+    },
+    "DomainControllerVPC": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "Please Select the VPC created for this workshop LF-Workshop-VPC",
+      "AllowedPattern" : ".+"
+    }
+  },
+
+  "Mappings" : {
+    "AWSRegion2AMI" : {
+      "us-east-1"        : { "Windows2016r2" :  "ami-0f969b429284d6156" , "Windows2019" :  "ami-00cb4c0d60b9476f4", "Windows2019completeami" : "ami-038e3f8b3b0da47ad"}
+
+    }
+
+  },
+
+  "Resources" : {    
+    "DomainController": {  
+      "Type" : "AWS::EC2::Instance",
+
+      
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegion2AMI", { "Ref" : "AWS::Region" }, "Windows2019completeami" ]},
+        "InstanceType" : "m4.large",
+          "IamInstanceProfile": {
+          "Ref": "WindowsInstanceProfile"
+        },
+
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-ADFS-Windows2019-Server"
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [
+              {
+                "Ref": "DomainControllerSecurityGroup"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "VPCPublicSubnet"
+            }
+          }
+        ]
+      }
+
+    },
+    
+
+    "DomainControllerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Domain Controller",
+        "VpcId": {
+            "Ref": "DomainControllerVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "LF-Workshop-ADDomainController-SecGroup"
+          }
+        ],
+        "SecurityGroupIngress" : [
+
+          {"IpProtocol" : "tcp", "FromPort" : "3389", "ToPort" : "3389", "CidrIp" : { "Ref" : "SourceCidrForRDP" }},
+          {"IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443",  "CidrIp" : { "Ref" : "SourceCidrForRDP" }}
+
+        ]
+      }      
+    }, 
+    
+
+    "WindowsInstanceProfileRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LF-EMR-Windows-InstanceProfile-Policy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::lf-workshop-",
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::lf-workshop-",
+                          {
+                            "Ref": "AWS::AccountId"
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  "Action": [
+                    "s3:*"
+
+                  ]
+                }
+
+              ]
+            }
+          }
+        ],
+        "RoleName": "LF-EMR-Windows-InstanceProfile-Role"
+      }
+    },
+    "WindowsInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "InstanceProfileName": "LakeFormationEMRWindowsInstanceProfileRole",
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "WindowsInstanceProfileRole"
+          }
+        ]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "DomainControllerDNSName" : {
+      "Value" : { "Fn::GetAtt" : [ "DomainController", "PublicDnsName" ] },
+      "Description" : "Public DNS name of Active Directory server for RDP connection"
+    },
+    "DomainControllerPrivateIP" : {
+      "Value" : { "Fn::GetAtt" : [ "DomainController", "PrivateIp" ] },
+      "Description" : "Private IP address of Active Directory server which is also a DNS server"
+    },
+    "DomainControllerPublicIP" : {
+      "Value" : { "Fn::GetAtt" : [ "DomainController", "PublicIp" ] },
+      "Description" : "Public IP address of Active Directory server which is also a DNS server"
+    },
+    "DomainAdmin" : {
+      "Value" : { "Fn::Join" : ["", ["HADOOP", "\\Administrator" ]] },
+      "Description" : "Default domain administrator account"
+    }
+
+  }  
+}

@@ -20,6 +20,8 @@ autoNav = true
         arn:aws:iam::<b style="color:red">account-id</b>:saml-provider/auth0SAMLProvider:user/emr-developer
         <br/><br/><b>For Okta</b><br/>
         arn:aws:iam::<b style="color:red">account-id</b>:saml-provider/oktaSAMLProvider:user/emr-developer
+        <br/><br/><b>For AD FS</b><br/>
+        arn:aws:iam::<b style="color:red">account-id</b>:saml-provider/ADFSSAMLProvider:user/emr-developer
         <br/><br/><b>Note:</b> Replace <b style="color:red">account-id</b> with your AWS account id.</li>
         <li>Choose <b>tpc</b> for the database and select the following two tables with <b>Select</b> as the only Table permissions:
             <ul>
