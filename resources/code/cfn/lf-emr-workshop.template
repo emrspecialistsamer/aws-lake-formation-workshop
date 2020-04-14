@@ -25,9 +25,6 @@
             }
          ],
          "ParameterLabels":{
-            "EC2KeyPair":{
-               "default":"EC2 Key Pair"
-            },
             "ReleaseLabel":{
                "default":"EMR Release Label"
             },
@@ -660,6 +657,34 @@
             "Ref": "EMRCluster"
           }
         }
+      },
+      "EMRCopyKnoxCertificateStep": {
+         "Type": "AWS::EMR::Step",
+         "Properties": {
+            "ActionOnFailure": "CONTINUE",
+            "HadoopJarStep": {
+               "Args": [
+                  "s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/copyknoxpubliccertificate.sh",
+                  {
+                     "Fn::Join":[
+                        "",
+                        [
+                           "lf-workshop-",
+                           {
+                              "Ref": "AWS::AccountId"
+                           }
+                        ]
+                     ]
+                  }
+               ],
+               "Jar": "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
+               "MainClass": ""
+            },
+            "Name": "CopyKnoxPublicCertificate",
+            "JobFlowId": {
+               "Ref": "EMRCluster"
+            }
+         }
       }
    },
    "Outputs":{
