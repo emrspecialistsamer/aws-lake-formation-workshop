@@ -28,14 +28,11 @@ autoNav = true
                 <li>For Auth0/Okta use <b>emr-developer@somecompany.com</b> and password you provided to authenticate</li>
                 <li>For AD FS use <b>emr-developer@hadoop.com</b> and password (Password1!) to authenticate</li>
             </ul>
-
-            <table width="100%" >
-                <tr>
-                    <td><img src="/images/auth0-authenticate.png" alt="" align="left" /></td>
-                    <td><img src="/images/okta-login.png" alt="" align="center" /></td>
-                    <td><img src="/images/adfs-login.png" alt="" align="right"/></td>
-                </tr>
-            </table>
+            <div class="row">
+                <div class="column"><img src="/images/auth0-authenticate.png" style="margin:15px 0px; border:1px solid black"/></div>
+                <div class="column"><img src="/images/okta-login.png" style="margin:15px 0px; border:1px solid black"/></div>
+                <div class="column"><img src="/images/adfs-login.png" style="margin:15px 0px; border:1px solid black"/></div>
+            </div>
         <b>Note:</b> In the case of Okta, you have to choose the forgot password question for the first time. Sometimes Auth0/Okta IPs may be blocked by your VPN, so make sure to turn off VPN.</li>
        <li>Once authenticated, you will be redirected to Jupyter notebook. A notebook for this exercise is already loaded to your Jupyter. Click on the notebook named -  <b>LF-Notebook</b>.<img src="/images/notebookjup2.png" style="margin:15px 0px; border:1px solid black"/> </li>
         <li>You can execute the queries one by one to see different AWS Lake Formation granular-level access patterns.<img src="/images/lf-emr-jupyterlab.png" title="Import Jupyter Notebook" style="margin:15px 0px; border:1px solid black"/></li>

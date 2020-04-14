@@ -23,15 +23,12 @@ autoNav = true
             <li>For Auth0/Okta use <b>emr-developer@somecompany.com</b> and password you provided to authenticate</li>
             <li>For AD FS use <b>emr-developer@hadoop.com</b> and password (Password1!) to authenticate</li>
          </ul>
-         <table width="100%" >
-            <tr>
-               <td><img src="/images/auth0-authenticate.png" alt="" align="left" /></td>
-               <td><img src="/images/okta-login.png" alt="" align="center" /></td>
-               <td><img src="/images/adfs-login.png" alt="" align="right"/></td>
-            </tr>
-         </table>
-
-         <b>Note:</b> In the case of <b>Okta</b>, you have to choose the forgot password question for the first time. It may ask you to provide a <i>forgot password question</i>.
+            <div class="row">
+               <div class="column"><img src="/images/auth0-authenticate.png" style="margin:15px 0px; border:1px solid black"/></div>
+               <div class="column"><img src="/images/okta-login.png" style="margin:15px 0px; border:1px solid black"/></div>
+               <div class="column"><img src="/images/adfs-login.png" style="margin:15px 0px; border:1px solid black"/></div>
+            </div>
+          <b>Note:</b> In the case of <b>Okta</b>, you have to choose the forgot password question for the first time. It may ask you to provide a <i>forgot password question</i>.
       </li>
        <li>Once authenticated, you will be redirected to Zeppelin.<img src="/images/zeppelinnotebook.png" style="margin:15px 0px; border:1px solid black"/></li>
       <li>A notebook for this exercise is already loaded to your Zeppelin. Click on the notebook named -  <b>LakeFormation-EMR-Notebook</b>. Now, from the notebook, you can execute the queries one by one to see different AWS Lake Formation granular-level access patterns.<img src="/images/zeppelin-notebook-sel.png" style="margin:15px 0px; border:1px solid black"/><img src="/images/zeppelinnotebook2.png" style="margin:15px 0px; border:1px solid black"/></li>
