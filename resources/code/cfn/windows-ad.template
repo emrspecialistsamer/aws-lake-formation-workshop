@@ -14,7 +14,7 @@
     },
     "VPCPublicSubnet": {
       "Type": "AWS::EC2::Subnet::Id",
-      "Description": "Public Subnet to be used for Windows AD Server, please choose LF-Workshop-PublicSubnetTwo",
+      "Description": "Public Subnet to be used for Windows AD Server, please choose either LF-Workshop-PublicSubnetOne or LF-Workshop-PublicSubnetTwo",
       "AllowedPattern" : ".+"
     },
     "DomainControllerVPC": {

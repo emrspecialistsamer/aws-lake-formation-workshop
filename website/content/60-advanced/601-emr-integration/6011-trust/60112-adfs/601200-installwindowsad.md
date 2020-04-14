@@ -1,7 +1,7 @@
 +++
 title = "Setup Windows AD"
 chapter = true
-weight = 601200
+weight = 601120
 autoNav = true
 +++
 
@@ -21,11 +21,11 @@ autoNav = true
 
     <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Lake-Formation-EMR-WindowsADFS&templateURL=https://aws-data-analytics-workshops.s3.amazonaws.com/lake-formation-workshop/cfn/windows-ad.template" target="_blank"><img src="/images/LaunchStack.svg" title="Windows Server" width="140" height="60" style="margin:10px 0px"/></a>
        
-    <img src="/images/emr-windows-cfn-parameterinput.png" title="LF Workshop Windows CFN" style="margin:15px 0px; border:1px solid black"/>
+    <img src="/images/emr-windows-cfn-parameterinput.png" title="LF Workshop Windows CFN" style="margin:15px 0px; border:1px solid black" width="100%"/>
     The CloudFormation stack will take less than 5 minutes to complete. Check the CloudFormation console and wait for
     the status <b>CREATE_COMPLETE</b>.
     <br/>
     Once the stack creation is completed, your AWS account will have all the required resources to run this workshop. Capture the Public IP of the Windows Domain Controller  from the output tab and proceed to the next chapter.
-    <img src="/images/windows-cfn-output.png" style="margin:15px 0px; border:1px solid black"/>
+    <img src="/images/windows-cfn-output.png" style="margin:15px 0px; border:1px solid black" width="100%"/>
 
 </div>

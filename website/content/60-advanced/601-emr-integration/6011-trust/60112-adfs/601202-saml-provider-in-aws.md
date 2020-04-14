@@ -1,6 +1,6 @@
 +++
 title = "Creating SAML Idp in AWS "
-weight = 601202
+weight = 601122
 chapter = true
 +++
 

@@ -23,12 +23,14 @@ autoNav = true
             <li>For Auth0/Okta use <b>emr-developer@somecompany.com</b> and password you provided to authenticate</li>
             <li>For AD FS use <b>emr-developer@hadoop.com</b> and password (Password1!) to authenticate</li>
          </ul>
+         <table width="100%" >
+            <tr>
+               <td><img src="/images/auth0-authenticate.png" alt="" align="left" /></td>
+               <td><img src="/images/okta-login.png" alt="" align="center" /></td>
+               <td><img src="/images/adfs-login.png" alt="" align="right"/></td>
+            </tr>
+         </table>
 
-         <div class="row">
-            <div class="column"><img src="/images/auth0-authenticate.png" style="margin:15px 0px; border:1px solid black"/></div>
-            <div class="column"><img src="/images/okta-login.png" style="margin:15px 0px; border:1px solid black"/></div>
-            <div class="column"><img src="/images/adfs-login.png" style="margin:15px 0px; border:1px solid black"/></div>
-         </div>
          <b>Note:</b> In the case of <b>Okta</b>, you have to choose the forgot password question for the first time. It may ask you to provide a <i>forgot password question</i>.
       </li>
        <li>Once authenticated, you will be redirected to Zeppelin.<img src="/images/zeppelinnotebook.png" style="margin:15px 0px; border:1px solid black"/></li>
