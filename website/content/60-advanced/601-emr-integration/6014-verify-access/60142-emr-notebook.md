@@ -25,18 +25,19 @@ autoNav = true
         <li>Once notebook is in ready state, click on either <b>Open In Jupyter</b> or <b>Open in JupyterLab</b> button.<img src="/images/notebookjup1.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>You will be redirected to the Proxy Agent on the Amazon EMR cluster. Once the Proxy Agent’s certificate is accepted, your browser redirects you to your Identity Provider (IdP) login page to authenticate.
             <ul>
-                <li>For Auth0/Okta use <b>emr-developer@somecompany.com</b> and password you provided to authenticate</li>
-                <li>For AD FS use <b>emr-developer@hadoop.com</b> and password (Password1!) to authenticate</li>
+                <li>For Auth0/Okta use <b>emr-developer@somecompany.com</b> and password you provided to authenticate.</li>
+                <div class="row">
+                    <div class="column"><img src="/images/auth0-authenticate.png" style="margin:15px 0px; border:1px solid black"/></div>
+                    <div class="column"><img src="/images/okta-login.png" style="margin:15px 0px; border:1px solid black"/></div>
+                </div>
+                <li>For AD FS use <b>emr-developer@hadoop.com</b> and password (Password1!) to authenticate.<img src="/images/adfs-login.png" height="500" width="450" style="margin:15px; border:1px solid black"/></li>
             </ul>
-            <div class="row">
-                <div class="column"><img src="/images/auth0-authenticate.png" style="margin:15px 0px; border:1px solid black"/></div>
-                <div class="column"><img src="/images/okta-login.png" style="margin:15px 0px; border:1px solid black"/></div>
-                <div class="column"><img src="/images/adfs-login.png" style="margin:15px 0px; border:1px solid black"/></div>
-            </div>
+
         <b>Note:</b> In the case of Okta, you have to choose the forgot password question for the first time. Sometimes Auth0/Okta IPs may be blocked by your VPN, so make sure to turn off VPN.</li>
-       <li>Once authenticated, you will be redirected to Jupyter notebook. A notebook for this exercise is already loaded to your Jupyter. Click on the notebook named -  <b>LF-Notebook</b>.<img src="/images/notebookjup2.png" style="margin:15px 0px; border:1px solid black"/> </li>
-        <li>You can execute the queries one by one to see different AWS Lake Formation granular-level access patterns.<img src="/images/lf-emr-jupyterlab.png" title="Import Jupyter Notebook" style="margin:15px 0px; border:1px solid black"/></li>
-        <li>One query at the end of the notebook is expected to fail due to limited data permission. Now, go back to the AWS Lake Formation Console (on a different browser's tab) and grant <b>SELECT</b> permission to the Auth0 user on the <b>tpc.dl_tpc_item</b> table. Go back to your notebook and re-execute the query which failed with <b>AccessDeniedException</b> error and validate the user's access.</li>
+       <li>Once authenticated, you will be redirected to the Jupyter notebook. Download an existing EMR Notebook script <b>LF-EMR-Jupyter.ipynb</b> from your AWS S3 path (full S3 path can be found in the CloudFormation output with key <b>NotebooksS3Path</b> ) into your local computer. <img src="/images/emr-jupyternotebookins3.png" title="Download Jupyter Notebook" style="margin:15px 0px; border:1px solid black"/></li>
+        <li>Import the LF-EMR-Jupyter.ipynb file to your Jupyter Notebook.<img src="/images/lf-emr-uploadjupyternotebook.png" title="Import Jupyter Notebook" style="margin:15px 0px; border:1px solid black"/></li>
+        <li>Once imported, you can execute the queries one by one to see different AWS Lake Formation granular-level access patterns.<img src="/images/lf-emr-jupyterlab.png" title="Import Jupyter Notebook" style="margin:15px 0px; border:1px solid black"/></li>
+        <li>One query at the end of the notebook is expected to fail due to limited data permission. Now, go back to the AWS Lake Formation Console (on a different browser's tab) and grant <b>SELECT</b> permission to the IdP user on the <b>tpc.dl_tpc_item</b> table. Go back to your notebook and re-execute the query which failed with <b>AccessDeniedException</b> error and validate the user's access.</li>
     </ol>
 </div>
 

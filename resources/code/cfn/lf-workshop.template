@@ -531,7 +531,8 @@
                             "Effect": "Allow",
                             "Principal": {
                                 "Service": [
-                                    "glue.amazonaws.com"
+                                    "glue.amazonaws.com",
+                                    "lakeformation.amazonaws.com"
                                 ]
                             },
                             "Action": "sts:AssumeRole"
