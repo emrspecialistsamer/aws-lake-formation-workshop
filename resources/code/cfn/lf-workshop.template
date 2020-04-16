@@ -20,23 +20,32 @@
                     "Parameters": [
                         "TestUserPassword"
                     ]
+                },
+                {
+                    "Label": {
+                        "default": "Misc Configuration"
+                    },
+                    "Parameters": [ "EC2KeyPair", "LatestAmiId" ]
                 }
             ],
             "ParameterLabels": {
                 "TPCDBName": {
-                    "default": "Database Name"
+                  "default": "Database Name"
                 },
                 "DBMasterUser": {
-                    "default": "Master Username"
+                  "default": "Master Username"
                 },
                 "DBMasterPassword": {
-                    "default": "Master User Password"
+                  "default": "Master User Password"
                 },
                 "TestUserPassword": {
-                    "default": "Test User Password"
+                  "default": "Test User Password"
                 },
                 "EC2KeyPair": {
-                    "default": "EC2 Key Pair"
+                  "default": "EC2 Key Pair"
+                },
+                "LatestAmiId":{
+                  "default": "Latest AMI Id"
                 }
             }
         }
@@ -54,23 +63,6 @@
             },
             "Private": {
                 "CIDR": "10.0.2.0/24"
-            }
-        },
-        "AWSRegionAMI": {
-            "us-east-1": {
-                "HVM64": "ami-0c6b1d09930fac512"
-            },
-            "us-east-2": {
-                "HVM64": "ami-00ceeb607e7372455"
-            },
-            "us-west-2": {
-                "HVM64": "ami-03d1cd80b265afe51"
-            },
-            "eu-west-1": {
-                "HVM64": "ami-007fb32dc0831ae00"
-            },
-            "ap-northeast-1": {
-                "HVM64": "ami-029976583a7442c30"
             }
         }
     },
@@ -102,6 +94,14 @@
             "Description": "Amazon EC2 Key Pair",
             "Type": "AWS::EC2::KeyPair::KeyName",
             "MinLength": 1
+        },
+        "LatestAmiId" : {
+              "Type" : "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+              "Default" : "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2",
+              "AllowedValues": [
+                "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+                ],
+              "Description": "Image ID for the EC2 helper instance. DO NOT change this.",
         }
     },
     "Resources": {
@@ -900,15 +900,7 @@
             "Type": "AWS::EC2::Instance",
             "Properties": {
                 "InstanceType": "t2.small",
-                "ImageId": {
-                    "Fn::FindInMap": [
-                        "AWSRegionAMI",
-                        {
-                            "Ref": "AWS::Region"
-                        },
-                        "HVM64"
-                    ]
-                },
+                "ImageId": { "Ref": "LatestAmiId" },
                 "KeyName": {
                     "Ref": "EC2KeyPair"
                 },
