@@ -566,14 +566,22 @@
                   "Ref":"EC2KeyPair"
                }
             },
-            "Name": {
-              "Fn::Join":[
-                "-",
-                [
-                  "LF-EMRCluster",
-                  { "Fn::FindInMap" : [ "Suffix", { "Ref" : "SAMLProviderName" }, "Value"]}
-                ]
-              ]
+            "Name":{
+               "Fn::Join":[
+                  "-",
+                  [
+                     "LF-EMRCluster",
+                     {
+                        "Fn::FindInMap":[
+                           "Suffix",
+                           {
+                              "Ref":"SAMLProviderName"
+                           },
+                           "Value"
+                        ]
+                     }
+                  ]
+               ]
             },
             "Applications":[
                {
@@ -603,8 +611,8 @@
                "Ref":"LFEMRInstanceProfile"
             },
             "KerberosAttributes":{
-               "KdcAdminPassword": "Password1!",
-               "Realm": "EC2.INTERNAL"
+               "KdcAdminPassword":"Password1!",
+               "Realm":"EC2.INTERNAL"
             },
             "ServiceRole":{
                "Ref":"LakeFormationEMRRole"
@@ -620,50 +628,50 @@
                "Fn::Join":[
                   "",
                   [
-                    "s3://lf-workshop-",
-                    {
-                       "Ref":"AWS::AccountId"
-                    },
-                    "/emrlogs"
+                     "s3://lf-workshop-",
+                     {
+                        "Ref":"AWS::AccountId"
+                     },
+                     "/emrlogs"
                   ]
-                ]
+               ]
             }
          }
       },
-      "EMRCopyNotebooksStep": {
-        "Type": "AWS::EMR::Step",
-        "Properties": {
-          "ActionOnFailure": "CONTINUE",
-          "HadoopJarStep": {
-            "Args": [
-              "s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/copyNotebooks.sh",
-              {
-                "Fn::Join":[
-                  "",
-                  [
-                    "lf-workshop-",
-                    {
-                      "Ref": "AWS::AccountId"
-                    }
-                  ]
-                ]
-             }
-            ],
-            "Jar": "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
-            "MainClass": ""
-          },
-          "Name": "CopyNoteBooks",
-          "JobFlowId": {
-            "Ref": "EMRCluster"
-          }
-        }
+      "EMRCopyNotebooksStep":{
+         "Type":"AWS::EMR::Step",
+         "Properties":{
+            "ActionOnFailure":"CONTINUE",
+            "HadoopJarStep":{
+               "Args":[
+                  "s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/copyNotebooks.sh",
+                  {
+                     "Fn::Join":[
+                        "",
+                        [
+                           "lf-workshop-",
+                           {
+                              "Ref":"AWS::AccountId"
+                           }
+                        ]
+                     ]
+                  }
+               ],
+               "Jar":"s3://elasticmapreduce/libs/script-runner/script-runner.jar",
+               "MainClass":""
+            },
+            "Name":"CopyNoteBooks",
+            "JobFlowId":{
+               "Ref":"EMRCluster"
+            }
+         }
       },
-      "EMRCopyKnoxCertificateStep": {
-         "Type": "AWS::EMR::Step",
-         "Properties": {
-            "ActionOnFailure": "CONTINUE",
-            "HadoopJarStep": {
-               "Args": [
+      "EMRCopyKnoxCertificateStep":{
+         "Type":"AWS::EMR::Step",
+         "Properties":{
+            "ActionOnFailure":"CONTINUE",
+            "HadoopJarStep":{
+               "Args":[
                   "s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/copyknoxpubliccertificate.sh",
                   {
                      "Fn::Join":[
@@ -671,18 +679,18 @@
                         [
                            "lf-workshop-",
                            {
-                              "Ref": "AWS::AccountId"
+                              "Ref":"AWS::AccountId"
                            }
                         ]
                      ]
                   }
                ],
-               "Jar": "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
-               "MainClass": ""
+               "Jar":"s3://elasticmapreduce/libs/script-runner/script-runner.jar",
+               "MainClass":""
             },
-            "Name": "CopyKnoxPublicCertificate",
-            "JobFlowId": {
-               "Ref": "EMRCluster"
+            "Name":"CopyKnoxPublicCertificate",
+            "JobFlowId":{
+               "Ref":"EMRCluster"
             }
          }
       }
@@ -720,7 +728,7 @@
                [
                   "s3://lf-workshop-",
                   {
-                     "Ref": "AWS::AccountId"
+                     "Ref":"AWS::AccountId"
                   },
                   "/notebooks"
                ]
