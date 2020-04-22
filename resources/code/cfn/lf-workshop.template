@@ -933,27 +933,24 @@
                      [
                         "#!/bin/bash -ex\n",
                         "sudo yum -y install mysql\n",
-                        "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/sampledata/tripdata.csv ",
-                        "s3://",
+                        "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/sampledata/tripdata.csv /tmp/\n",
+                        "aws s3 cp /tmp/tripdata.csv s3://",
                         {
                            "Ref":"LFWorkshopBucket"
                         },
-                        "/glue/nyctaxi/",
-                        "\n",
-                        "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py ",
-                        "s3://",
+                        "/glue/nyctaxi/\n",
+                        "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/nyctaxi-csv-to-json.py /tmp/\n",
+                        "aws s3 cp /tmp/nyctaxi-csv-to-json.py s3://",
                         {
                            "Ref":"LFWorkshopBucket"
                         },
-                        "/glue/scripts/",
-                        "\n",
-                        "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/notebooks/ ",
-                        "s3://",
+                        "/glue/scripts/\n",
+                        "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/notebooks/ /tmp/notebooks/ --recursive\n",
+                        "aws s3 cp /tmp/notebooks/ s3://",
                         {
                            "Ref":"LFWorkshopBucket"
                         },
-                        "/notebooks/ --recursive",
-                        "\n",
+                        "/notebooks/ --recursive\n",
                         "aws s3 cp s3://aws-data-analytics-workshops/lake-formation-workshop/sampledata/tpc.backup /tmp/\n",
                         "gunzip < /tmp/tpc.backup | mysql -h ",
                         {
