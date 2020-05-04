@@ -1,10 +1,10 @@
 +++
-title = "Querying real time data"
+title = "Querying Real Time Data"
 chapter = true
-weight = 6033
+weight = 6035
 +++
 
-<center><h3>Querying real time data</h3></center>
+<center><h3>Querying Real Time Data</h3></center>
 
 <div style="text-align: justify">
    

@@ -1,5 +1,5 @@
 +++
-title = "Kinesis Generator"
+title = "Kinesis Data Generator"
 chapter = true
 weight = 6031
 +++
