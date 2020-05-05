@@ -16,7 +16,7 @@ weight = 6035
             <img src="/images/rt_query1.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Make sure you are logged in as a <font size="3" color="red"><b>lf-developer</b></font> 
             <img src="/images/rt_query2.png" style="margin:15px 0px; border:1px solid black"/></li>
-        <li>Select the <b>tpc</b>  database 
+        <li>Please selected the <b>tpc</b> database
             <center><img src="/images/rt_query3.png" style="margin:15px 0px; border:1px solid black"/></center></li>  
         <li>Select the <b>dl_sales_event</b> table and see the columns that were added by the Glue Crawler 
             <center><img src="/images/rt_query4.png" style="margin:15px 0px; border:1px solid black"/></center></li>

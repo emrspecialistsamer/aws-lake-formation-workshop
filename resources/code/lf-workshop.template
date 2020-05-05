@@ -294,9 +294,11 @@ Resources:
             Principal:
               Service:
                 - glue.amazonaws.com
+                - firehose.amazonaws.com
             Action: 'sts:AssumeRole'
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole'
+        - 'arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole' 
+        - 'arn:aws:iam::aws:policy/AmazonKinesisFullAccess'
       Policies:
         - PolicyName: LF-Data-Lake-Storage-Policy
           PolicyDocument:

@@ -9,11 +9,11 @@ weight = 6033
 <div style="text-align: justify">
    
  
-  In this lab, you will generate real time data using the Kinesis Data Generator tool configured previously. <br><br>
+  In this section, you will generate real time data using the Kinesis Data Generator tool configured previously. <br><br>
     
 
     <ol>
-        <li> Go Back to the Kinesis Generator Console and use the username: <i><b>kinesisgen</i></b> and the password: <i><b>kinesisgen1</i></b> 
+        <li> Go Back to the console and use the username: <i><b>kinesisgen</i></b> and the password: <i><b>kinesisgen1</i></b> 
             <img src="/images/kingen7.png" style="margin:15px 0px; border:1px solid black"/></li>
             
     <li>Select the following options:

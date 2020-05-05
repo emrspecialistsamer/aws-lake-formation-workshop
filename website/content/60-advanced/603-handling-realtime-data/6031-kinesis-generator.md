@@ -29,8 +29,10 @@ weight = 6031
             <img src="/images/kingen6.png" style="margin:15px 0px; border:1px solid black"/></li>    
          <li>Go to the URL and use the Username: <i>kinesisgen</i> and the Password: <i>kinesisgen1</i>.  
             <img src="/images/kingen7.png" style="margin:15px 0px; border:1px solid black"/></li> 
-        <li>If you see the Kinesis Data Generator page, you have successfully created KDG, and are ready to ingest data to the AWS Kinesis Firehose. Please proceed to the next lab.  
+        <li>If you see the Kinesis Data Generator page, you have successfully created KDG, and are ready to ingest data to the AWS Kinesis Firehose.  
             <img src="/images/kingen8.png" style="margin:15px 0px; border:1px solid black"/></li>           
     </ol>
+    
+    <li>Now, in the next section, you are going to create sample data stream using this KDG. Please proceed to the next lab.</li>
  </div>
  
