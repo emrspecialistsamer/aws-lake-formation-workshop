@@ -17,8 +17,8 @@ autoNav = true
     Integration between Amazon EMR and AWS Lake Formation supports SAML 2.0-based federation with the following third-party providers:
     <ul>
         <li>Auth0</li>
-        <li>Microsoft Active Directory Federation Services (AD FS)</li>
         <li>Okta</li>
+        <li>Microsoft Active Directory Federation Services (AD FS)</li>
     </ul>
-    In the next section, you will choose one of the 3rd party IdP provider and create an account and then setup trust relationship between your account and AWS.
+    In the next section, you will create an user account in one of the IdP providers and set up a trust relationship between that account and AWS.
 </div>

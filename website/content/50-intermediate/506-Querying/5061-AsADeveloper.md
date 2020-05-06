@@ -9,7 +9,7 @@ weight = 5061
   <ol>
     <li>From the AWS Management console, search for <b>Amazon Athena</b> service <img src="/images/Query-AthenaService-search.png" style="margin:15px 0px; border:1px solid black"/>
     </li>
-    <li>Make sure you are logged in as a lf-developer<img src="/images/Athena-developer-view.png" style="margin:15px 0px; border:1px solid black"/></li>
+    <li>Make sure you are logged in as a <b>lf-developer</b> and select <b>tpc</b> for the Glue database.<img src="/images/Athena-developer-view.png" style="margin:15px 0px; border:1px solid black"/></li>
     <li>As you my have noticed, a developer can only see two tables <b>dl_tpc_web_page</b> and <b>dl_tpc_web_sales</b>.</li>
     <li>If you are first time user, you will notice a message to set up a query result location in S3. Click on the link: <img src="/images/Athena-Query-Location-Msg.png" style="margin:15px 0px; border:1px solid black"/></li>
     <li>Provide the Athena query result S3 path that you collected from the CloudFormation output and save it.<img src="/images/query-result-location.png" style="margin:15px 0px; border:1px solid black"/></li>

@@ -10,7 +10,7 @@ weight = 4013
         <li>Click on the <b>Crawlers</b> option on the left and then click on <b>Add crawler</b> button.<img src="/images/gluecrawler1.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Enter <b>nyctaxi-crawler</b> as the <b>Crawler name</b> and click <b>Next</b>.<img src="/images/gluecrawler12.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Select <b>Data stores</b> as the <b>Crawler source type</b>.<img src="/images/gluecrawler3.png" style="margin:15px 0px; border:1px solid black"/></li>
-        <li>Select <b>S3</b> as a data store and provide the input path which contains <b>tripdata.csv</b> file.<img src="/images/gluecrawler13.png" style="margin:15px 0px; border:1px solid black"/></li>
+        <li>Select <b>S3</b> as a data store and provide the input path which contains <b>tripdata.csv</b> file (s3://lf-workshop-&lt;account-id&gt;/glue/nyctaxi).<img src="/images/gluecrawler13.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>You are going to crawl only one data store, so select <b>No</b> from the option and click <b>Next</b>.<img src="/images/gluecrawler5.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Select IAM role <b>LF-GlueServiceRole</b> from the dropdown list, this IAM role should have access to the S3 file you want to crawl. <img src="/images/gluecrawler17.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Like the last exercise, you will execute this command on demand. Select <b>Run on demand</b> and move next.</li>

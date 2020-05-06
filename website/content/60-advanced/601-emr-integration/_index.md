@@ -33,9 +33,6 @@ autoNav = true
     
    <h4>Before You Begin</h4>
     To launch an Amazon EMR cluster with AWS Lake Formation, you need to complete the following prerequisite:
-   <ul>
-        <li>Configure Trust Relationship Between third-party SAML 2.0 identity provider (IdP) solutions and AWS </li>
- 
-   </ul>
-    Proceed to the next exercise to configure Trust Relationship.
+    <br/><br/><b><i>Configure Trust Relationship Between third-party SAML 2.0 identity provider (IdP) solutions and AWS.</i></b>
+    <br/><br/>Proceed to the next exercise to configure Trust Relationship.
 </div>
