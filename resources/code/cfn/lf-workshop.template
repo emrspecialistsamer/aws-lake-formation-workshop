@@ -535,7 +535,8 @@
               "Principal":{
                 "Service":[
                   "glue.amazonaws.com",
-                  "lakeformation.amazonaws.com"
+                  "lakeformation.amazonaws.com",
+                  "firehose.amazonaws.com"
                 ]
               },
               "Action":"sts:AssumeRole"
@@ -543,7 +544,8 @@
           ]
         },
         "ManagedPolicyArns":[
-          "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+          "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole",
+          "arn:aws:iam::aws:policy/AmazonKinesisFullAccess"
         ],
         "Policies":[
           {
