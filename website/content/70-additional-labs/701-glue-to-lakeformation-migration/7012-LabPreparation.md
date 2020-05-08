@@ -9,7 +9,7 @@ weight = 7012
    
   <ol>
 <li>Run the Cfn template as <strong>lf-admin</strong>, <strong>Password</strong>= Password1!</li>
- <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Lake-Formation-With-EMR-Workshop&templateURL=https://aws-data-analytics-workshops.s3.amazonaws.com/lake-formation-workshop/cfn/lf-emr-workshop.template" target="_blank"><img src="/images/LaunchStack.svg" title="LF Workshop With EMR CFN" width="140" height="60" style="margin:10px 0px"/></a>
+ <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Lake-Formation-Migration&templateURL=https://aws-data-analytics-workshops.s3.amazonaws.com/lake-formation-workshop/cfn/lf-gluetolfmigration.template" target="_blank"><img src="/images/LaunchStack.svg" title="LF Migration" width="140" height="60" style="margin:10px 0px"/></a>
     <b>NOTE:</b> This template is created for the us-east-1 region (N. Virginia) and will not work in other regions.<br/>
     Enter the 3 variables as shown in image below, these were created as part of the beginner lab.
 
