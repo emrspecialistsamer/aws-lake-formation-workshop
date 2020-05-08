@@ -21,7 +21,7 @@
     "Mappings" : {
         "Constants" : {
             "SampleUserPassword" : {
-                "Name" : "Password1"
+                "Name" : "Password1!"
               },
             "ProdDB" : {
                 "Name" : "amazonprod"
