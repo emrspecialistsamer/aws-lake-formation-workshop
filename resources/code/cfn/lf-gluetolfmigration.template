@@ -30,10 +30,10 @@
                 "Name" : "amazontest"
             },
             "ProdTB" : {
-                "Name" : "amazon_reviews_prod1"
+                "Name" : "amazon_reviews_prod"
             },
             "TestTB" : {
-                "Name" : "amazon_reviews_test1"
+                "Name" : "amazon_reviews_test"
             }
               ,
             "EC2InstanceType" : {
