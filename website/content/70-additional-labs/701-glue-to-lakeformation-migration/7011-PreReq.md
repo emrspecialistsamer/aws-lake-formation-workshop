@@ -4,16 +4,12 @@ chapter = true
 weight = 7011
 +++
 
-<div style="text-align: left">
-   This lab has dependencies, please make sure the following Pre-Requisites are in place.
-    <ol>
-      
-<p>&nbsp;</p>
-<ul>
-<li>Beginner lab is completed</li>
-<li><strong>lf-admin</strong> is made data lake admin for LakeFormation service.</li>
+<center><h3>Pre-Requisites</h3></center>
 
-</ul>
-<p><strong>&nbsp;</strong></p>
-    </ol>
+<div style="text-align: left">
+   <b style="color:red !important;">Note:</b> Please make sure to finish the following chapter from the Intermediate Labs section before proceeding.
+    <ul>
+          <li><a href="../../50-intermediate/501-admin-db-creator.html">Admin & Database Creators</a></li>
+
+   </ul>
 </div>

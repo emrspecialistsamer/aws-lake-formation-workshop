@@ -1,73 +1,168 @@
 {
     "Description": "CloudFormation template to create AWS Lake Formation Migration workshop resources",
     "Parameters": {
+
+        "VpcId": {
+            "Type": "AWS::EC2::VPC::Id",
+            "Description": "enter the vpc id of lake formation VPC created in beginner lab",
+            "MinLength": 1
+        },
         "PublicSubnet": {
             "Type": "AWS::EC2::Subnet::Id",
-            "Description": "Select Public Subnet Two created during previous lab. Tag LF-Workshop-PublicSubnetTwo",
+            "Description": "Select Public Subnet One created in beginner lab. Tag LF-Workshop-PublicSubnetOne",
             "MinLength": 1
         },
         "AthenaBucket": {
             "Type": "String",
-            "Description": "This bucket is created during previous lab, format: lf-workshop-AccountID",
+            "Description": "This bucket was created in beginner lab, format: lf-workshop-AccountID",
             "MinLength": 1
-        },
-        "SampleUserPassword": {
-            "Type": "String",
-            "Default": "Password1!",
-            "Description": "Password for all test users."
-        },
-        "ProdDB": {
-            "Type": "String",
-            "Default": "amazonprod",
-            "Description": "DB for prod"
-        },
-        "TestDB": {
-            "Type": "String",
-            "Default": "amazontest",
-            "Description": "DB for test"
-        },
-        "EC2InstanceType": {
-            "Description": "EC2 instance type on which IDE runs",
-            "Type": "String",
-            "Default": "t2.small"
-        },
-        "AutoHibernateTimeout": {
-            "Description": "How many minutes idle before shutting down the IDE. Options, 30min, 1hr, 4hr, 1day, 1week, Never (0)",
-            "Type": "Number",
-            "Default": 30
-        },
-        "Env": {
-            "Description": "Please specify the target Env. Used for tagging and resource names. Mandatory LOWER CASE.",
-            "Type": "String",
-            "Default": "poc"
-        },
-        "User": {
-            "Description": "Please specify the User.",
-            "Type": "String",
-            "Default": "Demo"
         }
+    },
+    "Mappings" : {
+        "Constants" : {
+            "SampleUserPassword" : {
+                "Name" : "Password1"
+              },
+            "ProdDB" : {
+                "Name" : "amazonprod"
+            },
+            "TestDB" : {
+                "Name" : "amazontest"
+            },
+            "ProdTB" : {
+                "Name" : "amazon_reviews_prod1"
+            },
+            "TestTB" : {
+                "Name" : "amazon_reviews_test1"
+            }
+              ,
+            "EC2InstanceType" : {
+                "Name" : "t2.small"
+            }
+              , 
+
+            "AutoHibernateTimeout" : {
+                "Name" : 30
+            },
+
+            "LatestAmiId":{
+                "Name":"ami-0323c3dd2da7fb37d"
+            },
+            "CFNCrawlerNameProd":{
+                "Name":"ami-crawlerprod"
+            },
+            "CFNCrawlerNameTest":{
+                "Name":"crawlertest"
+            }
+            
+            
+            
+            
+          
+       }
     },
     "Resources": {
         "C9IDE": {
             "Type": "AWS::Cloud9::EnvironmentEC2",
             "Properties": {
-                "Name": {
-                    "Fn::Sub": "${User}-${Env}-Cloud9-IDE"
-                },
-                "Description": {
-                    "Fn::Sub": "${User} Cloud9 IDE"
-                },
+                "Name": 
+                    "Demo-poc-Cloud9-IDE"
+                ,
+                "Description": 
+                   "poc Cloud9 IDE"
+                ,
                 "AutomaticStopTimeMinutes": {
-                    "Ref": "AutoHibernateTimeout"
+                  
+                    "Fn::FindInMap" : [ "Constants", "AutoHibernateTimeout", "Name"] 
+                    
                 },
                 "SubnetId": {
                     "Ref": "PublicSubnet"
                 },
                 "InstanceType": {
-                    "Ref": "EC2InstanceType"
+                    "Fn::FindInMap" : [ "Constants", "EC2InstanceType", "Name"] 
+                  
                 }
             }
         },
+        "SSHSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+              "VpcId" : { "Ref" : "VpcId" },
+              "GroupDescription" : "Enable SSH access via port 22",
+              "SecurityGroupIngress" : [ { "IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0" } ]
+            }
+          },
+        
+        "EC2InstanceProfile":{
+            "Type":"AWS::IAM::InstanceProfile",
+            "Properties":{
+               "Path":"/",
+               "Roles":  ["EC2Role"]
+                
+                  
+               
+            }
+         },
+        "CopyDatatoLakeInstance":{
+            "Type":"AWS::EC2::Instance",
+            "Properties":{
+               "InstanceType":"t2.small",
+               "ImageId":{
+                "Fn::FindInMap" : [ "Constants", "LatestAmiId", "Name"] 
+           
+               },
+              
+               "IamInstanceProfile":{
+                  "Ref":"EC2InstanceProfile"
+               },
+               "NetworkInterfaces":[
+                  {
+                     "AssociatePublicIpAddress":"true",
+                     "DeviceIndex":"0",
+                     
+                     "GroupSet":[
+                        {
+                           "Ref":"SSHSecurityGroup"
+                        }
+                     ],
+                    
+                     "SubnetId":{
+                        "Ref":"PublicSubnet"
+                     }
+                  }
+               ],
+               "UserData":{
+                  "Fn::Base64":{
+                     "Fn::Join":[
+                        "",
+                        [
+                           "#!/bin/bash -ex\n",
+                           
+                          
+                           "aws s3 cp s3://amazon-reviews-pds/parquet/product_category=Watches/  s3://",
+                           {
+                              "Ref":"DataLakeBucket"
+                           },
+                           "/amazonprod/amazon-reviews-prod/ --recursive\n",
+                          
+                           "aws s3 cp s3://amazon-reviews-pds/parquet/product_category=Watches/  s3://",
+                           {
+                              "Ref":"DataLakeBucket"
+                           },
+                           "/amazontest/amazon-reviews-test/ --recursive\n"
+                        ]
+                     ]
+                  }
+               },
+               "Tags":[
+                  {
+                     "Key":"Name",
+                     "Value":"EC2-AmazonReviews-Loader"
+                  }
+               ]
+            }
+         },
         "GlueProdDB": {
             "Type": "AWS::Glue::Database",
             "Properties": {
@@ -76,7 +171,7 @@
                 },
                 "DatabaseInput": {
                     "Name": {
-                        "Ref": "ProdDB"
+                        "Fn::FindInMap" : [ "Constants", "ProdDB", "Name"] 
                     },
                     "Description": "Database to hold Prod Tables"
                 }
@@ -90,7 +185,7 @@
                 },
                 "DatabaseInput": {
                     "Name": {
-                        "Ref": "TestDB"
+                        "Fn::FindInMap" : [ "Constants", "TestDB", "Name"] 
                     },
                     "Description": "Database to hold Test Tables"
                 }
@@ -134,7 +229,7 @@
                                                 {
                                                     "Ref": "AWS::AccountId"
                                                 },
-                                                ":user/glueuser1"
+                                                ":user/glue-admin"
                                             ]
                                         ]
                                     },
@@ -147,7 +242,7 @@
                                                 {
                                                     "Ref": "AWS::AccountId"
                                                 },
-                                                ":user/glueuser2"
+                                                ":user/glue-dev-user"
                                             ]
                                         ]
                                     },
@@ -234,7 +329,7 @@
                                                 {
                                                     "Ref": "AWS::AccountId"
                                                 },
-                                                ":user/glueuser1"
+                                                ":user/glue-admin"
                                             ]
                                         ]
                                     },
@@ -247,7 +342,7 @@
                                                 {
                                                     "Ref": "AWS::AccountId"
                                                 },
-                                                ":user/glueuser2"
+                                                ":user/glue-dev-user"
                                             ]
                                         ]
                                     },
@@ -424,7 +519,7 @@
                                             },
                                             ":database/",
                                             {
-                                                "Ref": "ProdDB"
+                                                "Fn::FindInMap" : [ "Constants", "ProdDB", "Name"] 
                                             },
                                             "*"
                                         ]
@@ -441,7 +536,7 @@
                                             },
                                             ":table/",
                                             {
-                                                "Ref": "ProdDB"
+                                                "Fn::FindInMap" : [ "Constants", "ProdDB", "Name"] 
                                             },
                                             "/*"
                                         ]
@@ -498,7 +593,7 @@
                                             },
                                             ":database/",
                                             {
-                                                "Ref": "TestDB"
+                                                "Fn::FindInMap" : [ "Constants", "TestDB", "Name"] 
                                             },
                                             "*"
                                         ]
@@ -515,7 +610,7 @@
                                             },
                                             ":table/",
                                             {
-                                                "Ref": "TestDB"
+                                                "Fn::FindInMap" : [ "Constants", "TestDB", "Name"] 
                                             },
                                             "/*"
                                         ]
@@ -612,11 +707,11 @@
                 "Path": "/",
                 "LoginProfile": {
                     "Password": {
-                        "Ref": "SampleUserPassword"
+                        "Fn::FindInMap" : [ "Constants", "SampleUserPassword", "Name"] 
                     },
                     "PasswordResetRequired": false
                 },
-                "UserName": "glueuser1"
+                "UserName": "glue-admin"
             }
         },
         "GlueUser2": {
@@ -625,11 +720,11 @@
                 "Path": "/",
                 "LoginProfile": {
                     "Password": {
-                        "Ref": "SampleUserPassword"
+                        "Fn::FindInMap" : [ "Constants", "SampleUserPassword", "Name"] 
                     },
                     "PasswordResetRequired": false
                 },
-                "UserName": "glueuser2"
+                "UserName": "glue-dev-user"
             }
         },
         "DataLakeBucket": {
@@ -648,11 +743,75 @@
                 }
             }
         },
+        
+        "ProdCrawler": {
+            "Type": "AWS::Glue::Crawler",
+            "Properties": {
+                "Name": "prodcrawler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "GlueServiceRole",
+                        "Arn"
+                    ]
+                },
+                "Description": "AWS Glue crawler to crawl flights data",
+                "Schedule": {
+                    "ScheduleExpression": "cron(0/5 * * * ? *)"
+                },
+                "DatabaseName": "amazonprod",
+                "Targets": {
+                    "S3Targets": [
+                        {
+                            "Path":  { "Fn::Join" : [ "", [ "s3://lf-data-lake-bucket-glue-lf-migration-",{"Ref": "AWS::AccountId"},"/amazonprod/amazon-reviews-prod"] ] }
+                            
+                        }
+                    ]
+                },
+                
+                "SchemaChangePolicy": {
+                    "UpdateBehavior": "UPDATE_IN_DATABASE",
+                    "DeleteBehavior": "LOG"
+                },
+                "Configuration": "{\"Version\":1.0,\"CrawlerOutput\":{\"Partitions\":{\"AddOrUpdateBehavior\":\"InheritFromTable\"},\"Tables\":{\"AddOrUpdateBehavior\":\"MergeNewColumns\"}}}"
+            }
+        },
+        "DevCrawler": {
+            "Type": "AWS::Glue::Crawler",
+            "Properties": {
+                "Name": "devcrawler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "GlueServiceRole",
+                        "Arn"
+                    ]
+                },
+                "Description": "AWS Glue crawler to crawl flights data",
+                "Schedule": {
+                    "ScheduleExpression": "cron(0/5 * * * ? *)"
+                },
+                "DatabaseName": "amazontest",
+                "Targets": {
+                    "S3Targets": [
+                        {
+                            "Path":  { "Fn::Join" : [ "", [ "s3://lf-data-lake-bucket-glue-lf-migration-",{"Ref": "AWS::AccountId"},"/amazontest/amazon-reviews-test"] ] }
+                            
+                        }
+                    ]
+                },
+                
+                "SchemaChangePolicy": {
+                    "UpdateBehavior": "UPDATE_IN_DATABASE",
+                    "DeleteBehavior": "LOG"
+                },
+                "Configuration": "{\"Version\":1.0,\"CrawlerOutput\":{\"Partitions\":{\"AddOrUpdateBehavior\":\"InheritFromTable\"},\"Tables\":{\"AddOrUpdateBehavior\":\"MergeNewColumns\"}}}"
+            }
+        },
+      
         "AthenaProdQuery": {
             "Type": "AWS::Athena::NamedQuery",
             "Properties": {
                 "Database": {
-                    "Ref": "ProdDB"
+                    "Fn::FindInMap" : [ "Constants", "ProdDB", "Name"] 
                 },
                 "Description": "A developer query on web page and web sales data.",
                 "Name": "Prod-Query",
@@ -663,7 +822,7 @@
             "Type": "AWS::Athena::NamedQuery",
             "Properties": {
                 "Database": {
-                    "Ref": "TestDB"
+                    "Fn::FindInMap" : [ "Constants", "TestDB", "Name"] 
                 },
                 "Description": "A developer query on web page and web sales data.",
                 "Name": "Test-Query",
