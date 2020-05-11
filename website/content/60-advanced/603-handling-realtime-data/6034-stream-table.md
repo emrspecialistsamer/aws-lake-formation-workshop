@@ -7,7 +7,7 @@ weight = 6034
 <center><h3>Create Stream Table</h3></center>
 
 <div style="text-align: left">
-    In this lab, you will create a new table on Lake Formation that is going to show the real time data that comes from the Firehose delivery stream created in the previous lab.
+    In this section, you will create a new table on Lake Formation that is going to show the real time data that comes from the Firehose delivery stream created in the previous section.
     <ol>
         <li>Go to <b>Services</b> and search for <b>Lake Formation</b> 
             <img src="../../images/rt_table1.png" style="margin:15px 0px; border:1px solid black"/></li>
@@ -15,7 +15,7 @@ weight = 6034
             <img src="../../images/rt_table2.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>This is going to open a new Glue Crawler Tab, Select <b>Add Crawler</b> 
             <img src="../../images/rt_table3.png" style="margin:15px 0px; border:1px solid black"/></li>  
-        <li>Add <b><i>sales_events</b></i> as the crawler name
+        <li>Add <b><i>tpc_sales_events</b></i> as the crawler name
             <img src="../../images/rt_table4.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Select the <b>Data stores</b> Option  
             <img src="../../images/rt_table5.png" style="margin:15px 0px; border:1px solid black"/></li>
@@ -24,7 +24,7 @@ weight = 6034
             <ul>
             	<li>Choose a data store:<b>S3</b></li>
             	<li>Crawl Data in: <b>Specified path in my account</b></li>
-            	<li>Include Path: Select the sales-event folder in your data lake bucket <b><i>s3://lf-data-lake-bucket-youraaccountnumber/sales-event</b></i></li>
+            	<li>Include Path: Select the sales-event folder in your data lake bucket <b><i>s3://lf-data-lake-bucket-youraaccountnumber/dl_tpc_sales_event</b></i></li>
             </ul><br>
             And then select <b>Next</b>
             <img src="../../images/rt_table6.png" style="margin:15px 0px; border:1px solid black"/></li>  
@@ -49,7 +49,6 @@ weight = 6034
             <li>Configure the crawler's output:
             <ul>
             	<li>Database: Select <b>tpc</b></li>
-            	<li>Prefix added to tables: <i><b>dl_</b></i></li>
             	<li>Grouping behavior for S3 data: Check <b>Create a single schema for each S3 path”</b></li>
             </ul><br>
             And then select <b>Next</b>
@@ -63,7 +62,7 @@ weight = 6034
         <li> Click on <b>Run it now?</b>  
             <img src="../../images/rt_table12.png" style="margin:15px 0px; border:1px solid black"/></li>
             
-        <li> This process takes 4 minutes, wait until you see status <b>Ready</b> and <b>1</b> table added and close the Browser Tab.  
+        <li> This process takes 4 minutes, wait until you see the <b>Completed</b> status  and that <b>1</b> table was created and then close the browser Tab.  
             <img src="../../images/rt_table13.png" style="margin:15px 0px; border:1px solid black"/></li> 
             
         <li> Go back to the Lake Formation console, click on <b>Data permissions</b> section on the left-hand side.  
@@ -72,12 +71,13 @@ weight = 6034
         <li> Then click on <b>Grant</b> button .  
             <img src="../../images/rt_table16.png" style="margin:15px 0px; border:1px solid black"/></li>
             
-         <li> On the window that pops up, fill out IAM users and roles as <b>lf-developer</b>, choose tpc for the database and select <i><b>dl_sales_event</b></i> as the table with <b>Select</b> as the <font size="3" color="red"><b>only Table permission</b></font>.<br><br>
+         <li> On the window that pops up, fill out IAM users and roles as <b>lf-developer</b>, choose tpc for the database and select <i><b>dl_tpc_sales_event</b></i> as the table with <b>Select</b> as the <font size="3" color="red"><b>only Table permission</b></font>.<br><br>
               Leave the <b>Grantable permissions</b> unselected and click on the <b>Grant</b> button.  
             <img src="../../images/rt_table17.png" style="margin:15px 0px; border:1px solid black"/></li>   
          
-         <li> You can go to the next Lab</li>   
+           
                       
     </ol>
+    <li> Now, in the next section, you are going to query the real time data. Please proceed to the next part</li>
 </div>
  

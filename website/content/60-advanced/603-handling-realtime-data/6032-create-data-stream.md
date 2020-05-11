@@ -9,17 +9,15 @@ weight = 6032
 <div style="text-align: justify">
    
  
-  In this lab, you will create a Firehose delivery stream from the AWS Management Console, configure it with a few clicks to store incoming stream data into S3, and start sending data to the stream Kinesis Data Generator (created in the previous Lab) as data source. <br><br>
+  In this Section, you will create a Firehose delivery stream from the AWS Management Console, configure it with a few clicks to store incoming stream data into S3, and start sending data to the stream Kinesis Data Generator (created in the previous section) as data source. <br><br>
     Amazon Kinesis Firehose is a serverless service used to reliably load streaming data into data stores and analytics tools. It can capture, transform, and load streaming data into Amazon S3, Amazon Redshift, Amazon Elasticsearch Service, and 3rd Party services (e.g. Splunk), enabling near real-time analytics. 
 
     <ol>
         <li>Login as the <b><i>lf-admin</i></b> user and select the <b><font size="3" color="red">N. Virginia Region.</font></b><br><br></li>
         <li>In the AWS Management Console go to <b>Find Services</b> and look for the <b>Kinesis</b> service.
             <img src="/images/firehose1.png" style="margin:15px 0px; border:1px solid black"/></li>
-        <li>In the Kinesis home page Select <b>Get Started</b> 
+        <li>In the Kinesis home page, under the <b>Get Started</b> section, select the <b>Kinesis Firehose</b> option and then select <b>Create delivery stream</b>
             <img src="/images/firehose18.png" style="margin:15px 0px; border:1px solid black"/></li>
-        <li>Click on <b>Create Delivery Stream</b> Button in the  <b>Kinesis Firehose</b> Section
-            <img src="/images/firehose19.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Add a new delivery stream and configure as follows:
             <ul>
             	<li>Delivery stream name: <b><i>lf-kinesis-fh</i></b></li>
@@ -35,8 +33,8 @@ weight = 6032
         <li>Configure the destination as follows::
             <ul>
             	<li>S3 bucket: Select the name of the bucket created by CloudFormation <b><i>lf -data-lake-bucket-youraccountid</i></b></li>
-            	<li>S3 prefix: <b><i>sales-event/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/</i></b></li>
-            	<li>S3 error prefix: <b><i>sales-event-errors/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/!{firehose:error-output-type}</b></i></li>
+            	<li>S3 prefix: <b><i>dl_tpc_sales_event/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/</i></b></li>
+            	<li>S3 error prefix: <b><i>dl_tpc_sales_event_errors/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/!{firehose:error-output-type}</b></i></li>
             </ul><br>
             And then select <b>Next</b>
             <img src="/images/firehose7.png" style="margin:15px 0px; border:1px solid black"/></li>  
@@ -64,8 +62,8 @@ weight = 6032
          
          <li>Configure the Role Summary section as follows:
             <ul>
-            	<li>IMA Role: <b><i>LF-GlueServiceRole</i></b></li>
-            	<li>Policy Name : <b><i>LF-Data-Lake-Storage-Policy</i></b></li>
+            	<li>IMA Role: <b><i>LF-KinesisServiceRole</i></b></li>
+            	<li>Policy Name : <b><i>LF-Stream-Data-Storage-Policy</i></b></li>
             </ul><br>
             And then select <b>Allow</b>  
             <img src="/images/firehose12.png" style="margin:15px 0px; border:1px solid black"/></li>     
@@ -78,11 +76,11 @@ weight = 6032
             
        <li> Wait until you see the <i><b>Successfully created delivery stream lf-kinesis-fh</b></i> message 
             <img src="/images/firehose15.png" style="margin:15px 0px; border:1px solid black"/></li>  
-            
-       <li> Go to the next part of the lab</li>
+        </ol>    
+       <li> Now, in the next section, you are going to generate real time data. Please proceed to the next part</li>
             
                                      
                            
-    </ol>
+    
  </div>
  

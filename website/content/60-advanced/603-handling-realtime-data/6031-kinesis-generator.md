@@ -12,7 +12,7 @@ weight = 6031
  You will deploy an open-source serverless real-time data generator tool to simulate data in real-time and ingest into AWS Kinesis Firehose. We will simulate product catalogue data with random values.
     <ol>
         <li>Login as the <b><i>lf-admin</i></b> user (default password: Password1!).</li>
-        <li>Create the CloudFormation stack by clicking the button below. It will take you to the AWS CloudFormation console in the <b><font size="3" color="red">Oregon Region</font></b> <b>(this region is going to be used just for this component of the lab)</b> and start the stack creation wizard. 
+        <li>Create the CloudFormation stack by clicking the button below. It will take you to the AWS CloudFormation console in the <b><font size="3" color="red">Oregon Region</font></b> <b>(this region is going to be used just for this section)</b> and start the stack creation wizard. 
             <a href="https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Kinesis-Data-Generator-Cognito-User&templateURL=https://aws-kdg-tools.s3.us-west-2.amazonaws.com/cognito-setup.json" target="_blank"><img src="../../images/LaunchStack.svg" title="KG Tool CFN" width="140" height="60" style="margin:10px 0px"/></a></li>
         <li>Accept the defaults and select <b>Next</b> 
             <img src="/images/kinegen1.png" style="margin:15px 0px; border:1px solid black"/></li>
@@ -33,6 +33,6 @@ weight = 6031
             <img src="/images/kingen8.png" style="margin:15px 0px; border:1px solid black"/></li>           
     </ol>
     
-    <li>Now, in the next section, you are going to create sample data stream using this KDG. Please proceed to the next lab.</li>
+    <li>Now, in the next section, you are going to create sample data stream using KDG. Please proceed to the next part.</li>
  </div>
  

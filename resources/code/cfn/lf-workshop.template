@@ -674,6 +674,70 @@
         "RoleName":"LF-GlueServiceRole"
       }
     },
+    "AmazonKinesisFirehoseFullAccess":{
+      "Type":"AWS::IAM::Role",
+      "Properties":{
+        "AssumeRolePolicyDocument":{
+          "Version":"2012-10-17",
+          "Statement":[
+            {
+              "Effect":"Allow",
+              "Principal":{
+                "Service":[
+                  "firehose.amazonaws.com"
+                ]
+              },
+              "Action":"sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns":[
+          "arn:aws:iam::aws:policy/AmazonKinesisFirehoseFullAccess"
+        ],
+        "Policies":[
+          {
+            "PolicyName":"LF-Stream-Data-Storage-Policy",
+            "PolicyDocument":{
+              "Version":"2012-10-17",
+              "Statement":[
+                {
+                  "Effect":"Allow",
+                  "Action":[
+                    "s3:*"
+                  ],
+                  "Resource":[
+                    {
+                      "Fn::Join":[
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref":"DataLakeBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join":[
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref":"DataLakeBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }      
+        ],
+        "RoleName":"LF-KinesisServiceRole"
+      }
+    },    
     "DataLakeBucket":{
       "Type":"AWS::S3::Bucket",
       "Properties":{

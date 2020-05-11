@@ -50,7 +50,7 @@ weight = 6033
     <li>You will see a message similar to this::
             <img src="../../images/kg3.png" style="margin:15px 0px; border:1px solid black"/><br>
             
-            <b>Hint:</b> Don’t stop sending events from KDG. Let it run while you are working on the other labs.<br><br> 
+            <b>Hint:</b> Don’t stop sending events from KDG. Let it run while you are working on the other sections.<br><br> 
             </li>  
             
       <li>To verify that the Data Stream is working go back to the <b>Kinesis Firehose</b> console and select <b><i>lf-kinesis-fh</b></i>
@@ -60,5 +60,6 @@ weight = 6033
             <img src="../../images/firehose17.png" style="margin:15px 0px; border:1px solid black"/></li>                                             
                            
     </ol>
+    <li> Now, in the next section, you are going to create a table for the real time data. Please proceed to the next part</li>
  </div>
  
