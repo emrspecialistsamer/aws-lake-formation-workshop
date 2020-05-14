@@ -10,6 +10,7 @@ chapter = true
     <ul>
         <li>Lake-Formation-Workshop</li>
         <li>Lake-Formation-With-EMR-Workshop & Lake-Formation-EMR-WindowsADFS (if you completed Advanced labs)</li>
+        <li>Kinesis-Data-Generator-Cognito-User <font size="3" color="red">us-west-2 (Oregon Region) </b></font></li>
     </ul>
     Click here to know more about how to <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/delete-bucket.html">delete the Amazon S3 bucket</a>.
 </div>
