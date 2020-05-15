@@ -1,10 +1,8 @@
 +++
 title = "Creating SAML IdP in AWS "
 weight = 601102
-chapter = true
+chapter = false
 +++
-
-<center><h3>Create SAML IdP In AWS</h3></center>
 
 <div style="text-align: justify">
    In this section, you will create an Identity provider in your AWS account to integrate with Auth0. Follow these steps:

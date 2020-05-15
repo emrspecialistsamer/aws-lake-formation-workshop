@@ -8,5 +8,5 @@ autoNav = true
 <center><h3>Integration with Amazon Redshift Spectrum (WIP)</h3></center>
 
 <div style="text-align: justify">
-    
+    Work in Progress..
 </div>

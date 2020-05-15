@@ -22,7 +22,7 @@ autoNav = true
         <li>Use EMR Notebooks or Apache Zeppelin to access data managed by AWS Glue and Lake Formation.</li>
         <li>Define and manage permissions in Lake Formation to access databases, tables, and columns in AWS Glue Data Catalog. For more information, see AWS Lake Formation.</li>
     </ul>
-    To learn more about AWS Lake Formation & Amazon EMR Integration, please visit: <a href="https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-lake-formation.html">https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-lake-formation.html</a>
+    To learn more about AWS Lake Formation & Amazon EMR Integration, please visit: <a href="https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-lake-formation.html" target="_blank">Integrating Amazon EMR with AWS Lake Formation (Beta)</a></left>
     <h4>Supported Applications</h4>
     The integration between Amazon EMR and AWS Lake Formation supports the following applications:
     <ul>

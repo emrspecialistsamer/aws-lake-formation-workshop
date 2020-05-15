@@ -1,14 +1,13 @@
 +++
 title = "AWS Event"
-chapter = true
+chapter = false
 weight = 302
 +++
 
-<center><h3>AWS Event</h3></center>
-
 <div style="text-align: justify">
-  Only complete this section if you are at an AWS hosted event (such as re:Invent, AWS Summits, Immersion Day, or any other event hosted by an AWS employee).
-  <br/><br/>
+  {{% notice info %}}
+  Only follow this section if you are at an AWS hosted event (such as re:Invent, AWS Summits, Immersion Day, or any other event hosted by an AWS employee).
+  {{% /notice %}}
   You will be provided to an AWS Account to run this workshop. The temporary account is being created using Event Engine. You will be provided a participant hash key to login to your temporary account.<br/><br/>
 </div>
 <div style="text-align: left">
