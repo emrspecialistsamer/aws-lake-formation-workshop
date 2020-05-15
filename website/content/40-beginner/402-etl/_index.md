@@ -11,7 +11,7 @@ weight = 402
   <br/><br/>Using the metadata in the Data Catalog, AWS Glue can autogenerate Scala or PySpark (the Python API for Apache Spark) scripts with AWS Glue extensions that you can use and modify to perform various ETL operations. For example, you can extract, clean, and transform raw data, and then store the result in a different repository, where it can be queried and analyzed.
   <br/><br/>A job is the business logic that performs the extract, transform, and load (ETL) work in AWS Glue. When you start a job, AWS Glue runs a script that extracts data from sources, transforms the data, and loads it into targets. You can create jobs in the ETL section of the AWS Glue console.
   <br/><br/>The following diagram summarizes the basic workflow and steps involved in authoring a job in AWS Glue:
-  <img src="/images/AuthorJob-overview.png" align="middle" style="margin:15px 0px; border:1px solid black"/>
+  <center><img src="/images/AuthorJob-overview.png" align="middle" style="margin:15px 0px; border:1px solid black"/></center>
   The following describes an overall process of authoring jobs in the AWS Glue console:
   <ol>
     <li>You choose a data source for your job. The tables that represent your data source must already be defined in your Data Catalog. If the source requires a connection, the connection is also referenced in your job. If your job requires multiple data sources, you can add them later by editing the script.</li>

@@ -1,14 +1,13 @@
 +++
 title = "Before You Access Data"
-chapter = true
+chapter = false
 weight = 6013
 autoNav = true
 +++
 
-<center><h3>Before you access the data </h3></center>
-
 <div style="text-align: justify">
-    <b style="color:red !important;">Note:</b> Please make sure to finish the following chapters from the Intermediate Labs section before proceeding.
+    {{% notice note %}}Please make sure to finish the following chapters from the Intermediate Labs section before proceeding.
+    {{% /notice %}}
     <ul>
           <li><a href="../../50-intermediate/501-admin-db-creator.html">Admin & Database Creators</a></li>
           <li><a href="../../50-intermediate/502-databases.html">Databases</a></li>

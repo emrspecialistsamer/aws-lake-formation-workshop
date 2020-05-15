@@ -23,7 +23,8 @@ weight = 4023
         <li>The default SageMaker notebook comes with a few Glue Examples. In this exercise, you will create a new notebook to explore the data that you crawled in the previous exercise.<img src="/images/devend12.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>Click <b>New</b> on the right corner and select Sparkmagic (PySpark). It will open a new notebook, give a name for your notebook.<img src="/images/devend13.png" style="margin:15px 0px; border:1px solid black"/></li>
         <li>In the new notebook, you will create two sections - section (1) will initialize Spark and Glue context and section (2) to query NYC taxi data using an existing catalog.<img src="/images/devend14.png" style="margin:15px 0px; border:1px solid black"/><img src="/images/devend15.png" style="margin:15px 0px; border:1px solid black"/></li>
-        <li>You can download the sample script by <a href="https://aws-data-analytics-workshops.s3.amazonaws.com/lake-formation-workshop/scripts/glue-sample.txt" download>clicking here</a> and open it in notepad to use the script.</li>
+        <li>You can download the above sample script from the following attachment section.</li>
         <li>By running a few PySpark blocks, now you learn how to use Glue endpoint to develop your Glue ETL scripts and debug them interactively.</li>
     </ol>
+    {{%attachments style="blue" /%}}
 </div>
