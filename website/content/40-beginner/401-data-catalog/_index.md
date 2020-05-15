@@ -8,7 +8,6 @@ weight = 401
 
 <div style="text-align: justify">
   The AWS Glue Data Catalog is a managed service that lets you store, annotate, and share metadata in the AWS Cloud in the same way you would in an Apache Hive metastore. Each AWS account has one AWS Glue Data Catalog per AWS region. It provides a uniform repository where disparate systems can store and find metadata to keep track of data in data silos and use that metadata to query and transform the data.
-
   <br/><br/>In addition, it has the following few extensions:
   <ul>
     <li><b>Search</b> - To search over metadata for data discovery</li>

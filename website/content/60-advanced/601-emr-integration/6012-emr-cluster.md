@@ -1,10 +1,8 @@
 +++
 title = "Create Amazon EMR Cluster"
-chapter = true
+chapter = false
 weight = 6012
 +++
-
-<center><h3>Create Amazon EMR Cluster</h3></center>
 
 <div style="text-align: justify">
     Now that we finished setting up Identity Provider Trust, it's time to create an Amazon EMR cluster integrating with AWS Lake Formation. Upon successful completion of the CloudFormation template below, it will create the following IAM resources:
@@ -15,7 +13,8 @@ weight = 6012
    </ul>
     Log out and log back into AWS console using TeamRole (if hashcode is given, use chapter <a href="/30-howtostart/302-aws-event.html"> AWS Event</a> to login) or as Administrator, which you used for the <a href="/30-howtostart/301-self-paced.html"> Self Paced Labs</a>.
     <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Lake-Formation-With-EMR-Workshop&templateURL=https://aws-data-analytics-workshops.s3.amazonaws.com/lake-formation-workshop/cfn/lf-emr-workshop.template" target="_blank"><img src="/images/LaunchStack.svg" title="LF Workshop With EMR CFN" width="140" height="60" style="margin:10px 0px"/></a>
-    <b>NOTE:</b> This template is created for the us-east-1 region (N. Virginia) and will not work in other regions.<br/>
+    {{% notice info %}}This template is created for us-east-1 region (N.Virginia) and will not work in other regions.
+    {{% /notice %}}
     <h5>Executing the CloudFormation template</h5>
     Follow these steps to get to know more about this CloudFormation template and execute the template.
     <ul>
