@@ -25,7 +25,7 @@
       "us-east-1":{
         "Windows2016r2":"ami-0f969b429284d6156",
         "Windows2019":"ami-00cb4c0d60b9476f4",
-        "Windows2019completeami":"ami-0ea4a7652bd9280bc"
+        "Windows2019completeami":"ami-00c06ec50d1b36d42"
       }
     }
   },
