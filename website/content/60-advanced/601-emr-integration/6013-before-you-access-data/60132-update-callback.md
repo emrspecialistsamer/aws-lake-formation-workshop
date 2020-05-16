@@ -5,8 +5,6 @@ weight = 60132
 autoNav = true
 +++
 
-<center><h3>Update Callback URL</h3></center>
-
 <div style="text-align: justify">
     In this exercise, you will make your IdP callback URL to reflect Amazon EMR master DNS. Depending on which IdP you configured, follow the corresponding steps to update the settings.
     <br/><br/>First, take a note for the value <b>EMRMasterNodeDNS</b> from the CloudFormation stack <b>Lake-Formation-With-EMR</b> output.
@@ -22,14 +20,14 @@ autoNav = true
     </ol>
     <h4>For AD FS </h4>
     <ol>
-      <li>Login into Windows Server 2019 you connected in the previous chapter, Open PowerShell and execute the following commands after making the required changes. You can use a Text editor to make these changes. <br/><br/> Here we are downloading Knox public certificate from S3 bucket ( As part of Step function inside EMR cluster creation we have extracted Knox public certificate and uploaded to your S3 bucket) and updating Relying Party Trust with Knox certificate, Claim Rules as well as SAML endpoint URL with Amazon EMR cluster's master DNS.
-        {{% notice note %}} Please make sure to replace <b style="color:red">account-id</b> with your AWS AccountId and <b style="color:red">public-dns</b> with EMR cluster's Master Public DNS. You can find the value in CloudFormation stack output <b>EMRMasterNodeDNS</b>.
+      <li>Login into Windows Server 2019 you connected in the previous chapter, Open PowerShell and execute the following commands after making the required changes. You can use a Text editor to make these changes. <br/><br/> Here we are downloading Knox public certificate from S3 bucket (as part of EMR Step during EMR cluster creation we have extracted Knox public certificate and uploaded to your S3 bucket) and updating Relying Party Trust with Knox certificate, Claim Rules as well as SAML endpoint URL with Amazon EMR cluster's master DNS. You can download this script {{% button href="https://aws-data-analytics-workshops.s3.amazonaws.com/lake-formation-workshop/scripts/update-callback.bat" icon="fas fa-download" icon-position="right" %}}update-callback.bat{{% /button %}} here.
+          {{% notice note %}} Please make sure to replace <b style="color:red">account-id</b> with your AWS AccountId and <b style="color:red">public-dns</b> with EMR cluster's Master Public DNS. You can find the value in CloudFormation stack output <b>EMRMasterNodeDNS</b>.
         {{% /notice %}}
-        {{< highlight powershell >}}Copy-S3Object -BucketName lf-workshop-<b style="color:red">account-id</b> -Key metadata/knox.cer -LocalFile C:\\cfn\knox.cer
+        <pre>Copy-S3Object -BucketName lf-workshop-<b style="color:red">account-id</b> -Key metadata/knox.cer -LocalFile C:\\cfn\knox.cer
 
-        $KnoxCert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+    $KnoxCert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
 
-        $KnoxCert.Import("c:/cfn/knox.cer")
+    $KnoxCert.Import("c:/cfn/knox.cer")
 
         $EP = New-AdfsSamlEndpoint -Binding "POST" -Protocol "SAMLAssertionConsumer" -Uri "https://<b style="color:red">public-dns</b>:8442/gateway/knoxsso/api/v1/websso?pac4jCallback=true&client_name=SAML2Client“
 
@@ -38,7 +36,7 @@ autoNav = true
         => issue(store = "Active Directory", types = ("https://aws.amazon.com/SAML/Attributes/RoleSessionName"), query = ";sAMAccountName;{0}", param = c.Value);','c:[Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname", Issuer == "AD AUTHORITY"]
         => issue(store = "Active Directory", types = ("https://lakeformation.amazon.com/SAML/Attributes/Username"), query = ";sAMAccountName;{0}", param = c.Value);','=> issue(Type = "https://aws.amazon.com/SAML/Attributes/Role", Value = "arn:aws:iam::<b style="color:red">account-id</b>:role/LF-SAML-Role,arn:aws:iam::<b style="color:red">account-id</b>:saml-provider/ADFSSAMLProvider");')
 
-        Set-AdfsRelyingPartyTrust -TargetIdentifier urn:amazon:webservices -RequestSigningCertificate $KnoxCert -SamlEndpoint $EP  -IssuanceTransformRules $RuleSetAll.ClaimRulesString{{< /highlight >}}
+          Set-AdfsRelyingPartyTrust -TargetIdentifier urn:amazon:webservices -RequestSigningCertificate $KnoxCert -SamlEndpoint $EP  -IssuanceTransformRules $RuleSetAll.ClaimRulesString</pre>
         <img src="/images/adfs-updatecallbackurl.png" title="Update ADFS Callback URL" style="margin:15px 0px; border:1px solid black"/> </li>
     </ol>
 </div>

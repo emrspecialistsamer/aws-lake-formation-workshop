@@ -181,11 +181,11 @@
             }
           }
         ],
-        "RoleName": {
-          "Fn::Join": [
+        "RoleName":{
+          "Fn::Join":[
             "-",
             [
-              "LF-SAML-Role-",
+              "LF-SAML-Role",
               {
                 "Fn::FindInMap":[
                   "Suffix",
@@ -195,8 +195,9 @@
                   "Value"
                 ]
               }
-            ]]
-         }
+            ]
+          ]
+        }
       }
     },
     "LakeFormationEMRRole":{
@@ -303,19 +304,20 @@
         ],
         "RoleName":{
           "Fn::Join":[
-           "-",
-           [
-             "LF-EMR-Role-",
-             {
-               "Fn::FindInMap":[
-                 "Suffix",
-                 {
-                   "Ref":"SAMLProviderName"
-                 },
-                 "Value"
-               ]
-             }
-           ]]
+            "-",
+            [
+              "LF-EMR-Role",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
         }
       }
     },
@@ -479,7 +481,15 @@
                           "Ref":"AWS::AccountId"
                         },
                         ":role/LF-SAML-Role-",
-                        { "Fn::FindInMap" : [ "Suffix", { "Ref" : "SAMLProviderName" }, "Value"]}
+                        {
+                          "Fn::FindInMap":[
+                            "Suffix",
+                            {
+                              "Ref":"SAMLProviderName"
+                            },
+                            "Value"
+                          ]
+                        }
                       ]
                     ]
                   }
@@ -496,7 +506,15 @@
                           "Ref":"AWS::AccountId"
                         },
                         ":role/LF-EMR-Role-",
-                        { "Fn::FindInMap" : [ "Suffix", { "Ref" : "SAMLProviderName" }, "Value"]}
+                        {
+                          "Fn::FindInMap":[
+                            "Suffix",
+                            {
+                              "Ref":"SAMLProviderName"
+                            },
+                            "Value"
+                          ]
+                        }
                       ]
                     ]
                   }
@@ -517,26 +535,43 @@
         ],
         "RoleName":{
           "Fn::Join":[
-           "-",
-           [
-             "LF-EMR-InstanceProfile-Role-",
-             {
-               "Fn::FindInMap":[
-                 "Suffix",
-                 {
-                   "Ref":"SAMLProviderName"
-                 },
-                 "Value"
-               ]
-             }
-           ]]
+            "-",
+            [
+              "LF-EMR-InstanceProfile-Role",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
         }
       }
     },
     "LFEMRInstanceProfile":{
       "Type":"AWS::IAM::InstanceProfile",
       "Properties":{
-        "InstanceProfileName":"LakeFormationEMRInstanceProfileRole",
+        "InstanceProfileName":{
+          "Fn::Join":[
+            "-",
+            [
+              "LakeFormationEMRInstanceProfileRole",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
+        },
         "Path":"/",
         "Roles":[
           {
@@ -551,21 +586,22 @@
         "LakeFormationSAMLRole"
       ],
       "Properties":{
-        "Name": {
+        "Name":{
           "Fn::Join":[
-           "-",
-           [
-             "LF-EMR-SecurityConfiguration-",
-             {
-               "Fn::FindInMap":[
-                 "Suffix",
-                 {
-                   "Ref":"SAMLProviderName"
-                 },
-                 "Value"
-               ]
-             }
-           ]]
+            "-",
+            [
+              "LF-EMR-SecurityConfiguration",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
         },
         "SecurityConfiguration":{
           "LakeFormationConfiguration":{
@@ -661,9 +697,9 @@
         ],
         "BootstrapActions":[
           {
-            "Name": "Downgrade JDK",
-            "ScriptBootstrapAction": {
-              "Path": "s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/downgradeJDK.sh"
+            "Name":"Downgrade JDK",
+            "ScriptBootstrapAction":{
+              "Path":"s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/downgradeJDK.sh"
             }
           }
         ],
