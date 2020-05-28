@@ -19,7 +19,7 @@ weight = 7014
 
 
 <ol start="1" >
-<h4>List Users' and Roles' Existing Permissions</h4>
+<h4>Step 1: List Users' and Roles' Existing Permissions</h4>
 <li>Login  as <strong>lf-admin</strong></li>
 <li>Use Cloud9 to run the following command for both the users(<b>glue-admin and glue-dev-user</b>), whose permissions are being upgraded.</li>
 <div class="highlight">
@@ -36,7 +36,7 @@ weight = 7014
 </ol>
 
 <ol start="1">
-<h4>Set Up Equivalent Lake Formation Permissions</h4>
+<h4>Step 2: Set Up Equivalent Lake Formation Permissions</h4>
 <li>In the navigation pane, choose&nbsp;<strong>Data permissions</strong>.</li>
 <li>Choose&nbsp;<strong>Grant</strong>.</li>
 <li>In the&nbsp;<strong>Grant permissions</strong>&nbsp;dialog box, provide the following information:
@@ -54,7 +54,7 @@ weight = 7014
 
 <ol start="1">
 
-<h4>Give Users IAM Permissions to Use Lake Formation</h4>
+<h4>Step 3: Give Users IAM Permissions to Use Lake Formation</h4>
 Now, give the two users permissions to use Lake Formation via the IAM policies created. Attach <strong>LakeFormationDataAccess</strong> policy to the  two users: <b>glue-admin and glue-dev-user</b>. At this point in workshop, user policy list should look like:
 
 
@@ -62,7 +62,7 @@ Now, give the two users permissions to use Lake Formation via the IAM policies c
 </ol>
 
 <ol start="1">
-<h4>Switch Your Data Stores to the Lake Formation Permissions Model</h4>
+<h4>Step 4: Switch Your Data Stores to the Lake Formation Permissions Model</h4>
 <li>Now, we will make switch to lake formation access model. <strong>It is recommended</strong> to upgrade to new model, one S3 bucket location at time. Repeat the process for each bucket that are referenced by your data catalog. Before registering a location, perform a verification step to ensure that the correct principals have the required Lake Formation permissions. For this, log in as admin to Cloud9 console you created. We will need to create an <b>admin</b> profile so will have to disable AWS managed temporary credentials as in image below. Use AWS Cloud9-->Preferences-->AWS Settings</li>
 
 <img src="/images/gluemigration020.png" style="margin:15px 0px; border:1px solid black" />
@@ -129,7 +129,7 @@ Now, give the two users permissions to use Lake Formation via the IAM policies c
 </ol>
 
 <ol start="1">
-<h4>Secure New Data Catalog Resources</h4>
+<h4>Step 5: Secure New Data Catalog Resources</h4>
 <li>Next, secure all new Data Catalog resources by changing the default <strong>DataCatalog</strong></li>
 <ol>
 <li>In the navigation pane, choose&nbsp;<strong>Settings</strong>.</li>
@@ -139,13 +139,13 @@ Now, give the two users permissions to use Lake Formation via the IAM policies c
 </ol>
 
 <ol start="1">
-<h4>Give Users a New IAM Policy for Future Data Lake Access</h4>
+<h4>Step 6: Give Users a New IAM Policy for Future Data Lake Access</h4>
 Grant users access to additional databases or tables in the future by adding policy <strong>GlueFullReadAccess</strong> with each user. It will look like
 <img src="/images/gluemigration030.png" style="margin:15px 0px; border:1px solid black" />
 
 </ol>
 <ol start="1">
-<h4>Clean Up Existing IAM Policies</h4>
+<h4>Step 7: Clean Up Existing IAM Policies</h4>
 <li>As last step, clean up existing IAM policies.</li>
 <li>Remove <strong>GlueProdPolicy</strong> from glue-admin and <strong>GlueTestPolicy</strong> from glue-dev-user</li>
 <li>Remove Bucket Policies permission for <strong>glue-admin</strong> and <strong>glue-dev-user</strong></li>
