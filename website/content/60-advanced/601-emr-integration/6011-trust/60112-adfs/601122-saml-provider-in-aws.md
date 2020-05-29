@@ -1,10 +1,8 @@
 +++
 title = "Creating SAML Idp in AWS "
 weight = 601122
-chapter = true
+chapter = false
 +++
-
-<center><h3>Create SAML IDP In AWS</h3></center>
 
 <div style="text-align: justify">
 

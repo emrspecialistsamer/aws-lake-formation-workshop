@@ -1,11 +1,9 @@
 +++
 title = "Grant Permissions"
-chapter = true
+chapter = false
 weight = 60131
 autoNav = true
 +++
-
-<center><h3>Grant Permission to IdP User</h3></center>
 
 <div style="text-align: justify">
     As part of this exercise, we will treat <b>emr-developer</b> (the account you created in the Auth0/Okta account) as a developer, who has access to only a few tables and columns. You can create additional users in Auth0/Okta and define different permissions in AWS Lake Formation
@@ -23,6 +21,8 @@ autoNav = true
         <br/><br/><b>For AD FS</b><br/>
         arn:aws:iam::<b style="color:red">account-id</b>:saml-provider/ADFSSAMLProvider:user/emr-developer
         <br/><br/><b>Note:</b> Replace <b style="color:red">account-id</b> with your AWS account id.</li>
+        {{% notice info %}}Replace account-id with your AWS account id..
+        {{% /notice %}}
         <li>Choose <b>tpc</b> for the database and select the following two tables with <b>Select</b> as the only Table permissions:
             <ul>
                 <li>dl_tpc_web_page</li>

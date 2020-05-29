@@ -181,7 +181,23 @@
             }
           }
         ],
-        "RoleName":"LF-SAML-Role"
+        "RoleName":{
+          "Fn::Join":[
+            "-",
+            [
+              "LF-SAML-Role",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
+        }
       }
     },
     "LakeFormationEMRRole":{
@@ -286,7 +302,23 @@
             }
           }
         ],
-        "RoleName":"LF-EMR-Role"
+        "RoleName":{
+          "Fn::Join":[
+            "-",
+            [
+              "LF-EMR-Role",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
+        }
       }
     },
     "LakeFormationEMRInstanceProfileRole":{
@@ -448,7 +480,16 @@
                         {
                           "Ref":"AWS::AccountId"
                         },
-                        ":role/LF-SAML-Role"
+                        ":role/LF-SAML-Role-",
+                        {
+                          "Fn::FindInMap":[
+                            "Suffix",
+                            {
+                              "Ref":"SAMLProviderName"
+                            },
+                            "Value"
+                          ]
+                        }
                       ]
                     ]
                   }
@@ -464,7 +505,16 @@
                         {
                           "Ref":"AWS::AccountId"
                         },
-                        ":role/LF-EMR-Role"
+                        ":role/LF-EMR-Role-",
+                        {
+                          "Fn::FindInMap":[
+                            "Suffix",
+                            {
+                              "Ref":"SAMLProviderName"
+                            },
+                            "Value"
+                          ]
+                        }
                       ]
                     ]
                   }
@@ -483,13 +533,45 @@
             }
           }
         ],
-        "RoleName":"LF-EMR-InstanceProfile-Role"
+        "RoleName":{
+          "Fn::Join":[
+            "-",
+            [
+              "LF-EMR-InstanceProfile-Role",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
+        }
       }
     },
     "LFEMRInstanceProfile":{
       "Type":"AWS::IAM::InstanceProfile",
       "Properties":{
-        "InstanceProfileName":"LakeFormationEMRInstanceProfileRole",
+        "InstanceProfileName":{
+          "Fn::Join":[
+            "-",
+            [
+              "LakeFormationEMRInstanceProfileRole",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
+        },
         "Path":"/",
         "Roles":[
           {
@@ -504,7 +586,23 @@
         "LakeFormationSAMLRole"
       ],
       "Properties":{
-        "Name":"LF-EMR-SecurityConfiguration",
+        "Name":{
+          "Fn::Join":[
+            "-",
+            [
+              "LF-EMR-SecurityConfiguration",
+              {
+                "Fn::FindInMap":[
+                  "Suffix",
+                  {
+                    "Ref":"SAMLProviderName"
+                  },
+                  "Value"
+                ]
+              }
+            ]
+          ]
+        },
         "SecurityConfiguration":{
           "LakeFormationConfiguration":{
             "IdpMetadataS3Path":{
@@ -595,6 +693,14 @@
           },
           {
             "Name":"Zeppelin"
+          }
+        ],
+        "BootstrapActions":[
+          {
+            "Name":"Downgrade JDK",
+            "ScriptBootstrapAction":{
+              "Path":"s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/downgradeJDK.sh"
+            }
           }
         ],
         "Configurations":[
