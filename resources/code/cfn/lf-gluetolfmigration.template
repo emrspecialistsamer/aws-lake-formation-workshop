@@ -11,11 +11,6 @@
             "Type": "AWS::EC2::Subnet::Id",
             "Description": "Select Public Subnet One created in beginner lab. Tag LF-Workshop-PublicSubnetOne",
             "MinLength": 1
-        },
-        "AthenaBucket": {
-            "Type": "String",
-            "Description": "This bucket was created in beginner lab, format: lf-workshop-AccountID",
-            "MinLength": 1
         }
     },
     "Mappings" : {
@@ -291,11 +286,11 @@
                 }
             }
         },
-        "AthenaQueryBucketPolicy": {
+        "UsersAthenaBucketPolicy": {
             "Type": "AWS::S3::BucketPolicy",
             "Properties": {
                 "Bucket": {
-                    "Ref": "AthenaBucket"
+                    "Ref": "AthenaResultsBucket"
                 },
                 "PolicyDocument": {
                     "Version": "2012-10-17",
@@ -368,7 +363,7 @@
                                         [
                                             "arn:aws:s3:::",
                                             {
-                                                "Ref": "AthenaBucket"
+                                                "Ref": "AthenaResultsBucket"
                                             },
                                             "/*"
                                         ]
@@ -380,7 +375,7 @@
                                         [
                                             "arn:aws:s3:::",
                                             {
-                                                "Ref": "AthenaBucket"
+                                                "Ref": "AthenaResultsBucket"
                                             }
                                         ]
                                     ]
@@ -391,6 +386,7 @@
                 }
             }
         },
+        
         "AthenaAccessPolicy": {
             "Type": "AWS::IAM::Policy",
             "Properties": {
@@ -735,6 +731,23 @@
                         "-",
                         [
                             "lf-data-lake-bucket-glue-lf-migration",
+                            {
+                                "Ref": "AWS::AccountId"
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "AthenaResultsBucket": {
+            "Type": "AWS::S3::Bucket",
+            "DependsOn":"DataLakeBucket",
+            "Properties": {
+                "BucketName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            "lf-data-lake-bucket-athenaresults",
                             {
                                 "Ref": "AWS::AccountId"
                             }

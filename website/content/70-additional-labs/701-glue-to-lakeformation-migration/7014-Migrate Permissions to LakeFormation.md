@@ -55,7 +55,7 @@ weight = 7014
 <ol start="1">
 
 <h4>Step 3: Give Users IAM Permissions to Use Lake Formation</h4>
-Now, give the two users permissions to use Lake Formation via the IAM policies created. Attach <strong>LakeFormationDataAccess</strong> policy to the  two users: <b>glue-admin and glue-dev-user</b>. At this point in workshop, user policy list should look like:
+Now, give the two users permissions to use Lake Formation via the IAM policies created. Attach <strong>LakeFormationDataAccess</strong> policy to the  two users: <b>glue-admin and glue-dev-user</b>. At this point in workshop, user policy list will look somewhat like the image below :
 
 
 <img src="/images/gluemigration019.png" style="margin:15px 0px; border:1px solid black" />
@@ -87,7 +87,7 @@ Now, give the two users permissions to use Lake Formation via the IAM policies c
 
 
 
-<li>Output will be a json file that gives list of IAM principles with access to that S3 location.Now revoke <b>IAMAllowedPrincipals</b> on each table and database that you identified for the location </li>
+<li>Output will be a json file that gives list of IAM principles with access to that S3 location.Now revoke ""Super" permission from <b>IAMAllowedPrincipals</b> on each table and database that you identified for the location </li>
 
 <li>In the navigation pane, choose&nbsp;<strong>Tables</strong></li>
 <ol>
@@ -140,7 +140,7 @@ Now, give the two users permissions to use Lake Formation via the IAM policies c
 
 <ol start="1">
 <h4>Step 6: Give Users a New IAM Policy for Future Data Lake Access</h4>
-Grant users access to additional databases or tables in the future by adding policy <strong>GlueFullReadAccess</strong> with each user. It will look like
+Grant users access to additional databases or tables in the future by adding policy <strong>GlueFullReadAccess</strong> with each user. It will look somewhat like the image below:
 <img src="/images/gluemigration030.png" style="margin:15px 0px; border:1px solid black" />
 
 </ol>

@@ -11,7 +11,7 @@ weight = 7013
 We will now use glue model to access data from Athena
 
 <li>Login as <b>glue-admin</b> in Athena, this user can only see Prod database and table</li>
-<li>Configure S3 bucket (<strong>lf-workshop-[AccountID]</strong>) for Athena query</li>
+<li>Configure S3 bucket (<strong>lf-data-lake-bucket-athenaresults-[AccountID]</strong>) for Athena query</li>
 <img src="/images/gluemigration013.png" style="margin:15px 0px; border:1px solid black" width="700" height="400"/>
 </ol>
 
