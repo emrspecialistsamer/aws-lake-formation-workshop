@@ -155,7 +155,7 @@ Grant users access to additional databases or tables in the future by adding pol
 
 <li>Log In as <strong>glue-admin</strong> and run Athena query. Do same for <strong>glue-dev-user.</strong> You will notice that even after removing bucket policies and glue catalogue permissions, user can run Athena. It is because LakeFormation is controlling the access now. <b>You have successfully migrated from Glue to LakeFormation security model.</b> </li>
 
-<li>Final state of <strong>glue-admin</strong> and <strong>glue-dev-user</strong> will be similar to
+<li>Final state of <strong>glue-admin</strong> and <strong>glue-dev-user</strong> will be similar to image below:
 <img src="/images/gluemigration032.png" style="margin:15px 0px; border:1px solid black" 
 /></li>
 </ol>
