@@ -1,0 +1,864 @@
+{
+    "Description": "CloudFormation template to create AWS Lake Formation Migration workshop resources",
+    "Parameters": {
+
+        "VpcId": {
+            "Type": "AWS::EC2::VPC::Id",
+            "Description": "enter the vpc id of lake formation VPC created in beginner lab",
+            "MinLength": 1
+        },
+        "PublicSubnet": {
+            "Type": "AWS::EC2::Subnet::Id",
+            "Description": "Select Public Subnet One created in beginner lab. Tag LF-Workshop-PublicSubnetOne",
+            "MinLength": 1
+        }
+    },
+    "Mappings" : {
+        "Constants" : {
+            "SampleUserPassword" : {
+                "Name" : "Password1!"
+              },
+            "ProdDB" : {
+                "Name" : "amazonprod"
+            },
+            "TestDB" : {
+                "Name" : "amazontest"
+            },
+            "ProdTB" : {
+                "Name" : "amazon_reviews_prod"
+            },
+            "TestTB" : {
+                "Name" : "amazon_reviews_test"
+            }
+              ,
+            "EC2InstanceType" : {
+                "Name" : "t2.small"
+            }
+              , 
+
+            "AutoHibernateTimeout" : {
+                "Name" : 30
+            },
+
+            "LatestAmiId":{
+                "Name":"ami-0323c3dd2da7fb37d"
+            },
+            "CFNCrawlerNameProd":{
+                "Name":"ami-crawlerprod"
+            },
+            "CFNCrawlerNameTest":{
+                "Name":"crawlertest"
+            }
+            
+            
+            
+            
+          
+       }
+    },
+    "Resources": {
+        "C9IDE": {
+            "Type": "AWS::Cloud9::EnvironmentEC2",
+            "Properties": {
+                "Name": 
+                    "Demo-poc-Cloud9-IDE"
+                ,
+                "Description": 
+                   "poc Cloud9 IDE"
+                ,
+                "AutomaticStopTimeMinutes": {
+                  
+                    "Fn::FindInMap" : [ "Constants", "AutoHibernateTimeout", "Name"] 
+                    
+                },
+                "SubnetId": {
+                    "Ref": "PublicSubnet"
+                },
+                "InstanceType": {
+                    "Fn::FindInMap" : [ "Constants", "EC2InstanceType", "Name"] 
+                  
+                }
+            }
+        },
+        "SSHSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+              "VpcId" : { "Ref" : "VpcId" },
+              "GroupDescription" : "Enable SSH access via port 22",
+              "SecurityGroupIngress" : [ { "IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0" } ]
+            }
+          },
+        
+        "EC2InstanceProfile":{
+            "Type":"AWS::IAM::InstanceProfile",
+            "Properties":{
+               "Path":"/",
+               "Roles":  ["EC2Role"]
+                
+                  
+               
+            }
+         },
+        "CopyDatatoLakeInstance":{
+            "Type":"AWS::EC2::Instance",
+            "Properties":{
+               "InstanceType":"t2.small",
+               "ImageId":{
+                "Fn::FindInMap" : [ "Constants", "LatestAmiId", "Name"] 
+           
+               },
+              
+               "IamInstanceProfile":{
+                  "Ref":"EC2InstanceProfile"
+               },
+               "NetworkInterfaces":[
+                  {
+                     "AssociatePublicIpAddress":"true",
+                     "DeviceIndex":"0",
+                     
+                     "GroupSet":[
+                        {
+                           "Ref":"SSHSecurityGroup"
+                        }
+                     ],
+                    
+                     "SubnetId":{
+                        "Ref":"PublicSubnet"
+                     }
+                  }
+               ],
+               "UserData":{
+                  "Fn::Base64":{
+                     "Fn::Join":[
+                        "",
+                        [
+                           "#!/bin/bash -ex\n",
+                           
+                          
+                           "aws s3 cp s3://amazon-reviews-pds/parquet/product_category=Watches/  s3://",
+                           {
+                              "Ref":"DataLakeBucket"
+                           },
+                           "/amazonprod/amazon-reviews-prod/ --recursive\n",
+                          
+                           "aws s3 cp s3://amazon-reviews-pds/parquet/product_category=Watches/  s3://",
+                           {
+                              "Ref":"DataLakeBucket"
+                           },
+                           "/amazontest/amazon-reviews-test/ --recursive\n"
+                        ]
+                     ]
+                  }
+               },
+               "Tags":[
+                  {
+                     "Key":"Name",
+                     "Value":"EC2-AmazonReviews-Loader"
+                  }
+               ]
+            }
+         },
+        "GlueProdDB": {
+            "Type": "AWS::Glue::Database",
+            "Properties": {
+                "CatalogId": {
+                    "Ref": "AWS::AccountId"
+                },
+                "DatabaseInput": {
+                    "Name": {
+                        "Fn::FindInMap" : [ "Constants", "ProdDB", "Name"] 
+                    },
+                    "Description": "Database to hold Prod Tables"
+                }
+            }
+        },
+        "GlueTestDB": {
+            "Type": "AWS::Glue::Database",
+            "Properties": {
+                "CatalogId": {
+                    "Ref": "AWS::AccountId"
+                },
+                "DatabaseInput": {
+                    "Name": {
+                        "Fn::FindInMap" : [ "Constants", "TestDB", "Name"] 
+                    },
+                    "Description": "Database to hold Test Tables"
+                }
+            }
+        },
+        "UsersBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+                "Bucket": {
+                    "Ref": "DataLakeBucket"
+                },
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:*"
+                            ],
+                            "Principal": {
+                                "AWS": [
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:iam:",
+                                                ":",
+                                                {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                ":user/lf-admin"
+                                            ]
+                                        ]
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:iam:",
+                                                ":",
+                                                {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                ":user/glue-admin"
+                                            ]
+                                        ]
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:iam:",
+                                                ":",
+                                                {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                ":user/glue-dev-user"
+                                            ]
+                                        ]
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:iam:",
+                                                ":",
+                                                {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                ":role/AWSGlueServiceRole-gluedemo"
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            },
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Ref": "DataLakeBucket"
+                                            },
+                                            "/*"
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Ref": "DataLakeBucket"
+                                            }
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "UsersAthenaBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+                "Bucket": {
+                    "Ref": "AthenaResultsBucket"
+                },
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:*"
+                            ],
+                            "Principal": {
+                                "AWS": [
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:iam:",
+                                                ":",
+                                                {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                ":user/lf-admin"
+                                            ]
+                                        ]
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:iam:",
+                                                ":",
+                                                {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                ":user/glue-admin"
+                                            ]
+                                        ]
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:iam:",
+                                                ":",
+                                                {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                ":user/glue-dev-user"
+                                            ]
+                                        ]
+                                    },
+                                    {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "arn:aws:iam:",
+                                                ":",
+                                                {
+                                                    "Ref": "AWS::AccountId"
+                                                },
+                                                ":role/AWSGlueServiceRole-gluedemo"
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            },
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Ref": "AthenaResultsBucket"
+                                            },
+                                            "/*"
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Ref": "AthenaResultsBucket"
+                                            }
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        
+        "AthenaAccessPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "AthenaAccessPolicy",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "athena:*"
+                            ],
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:athena:us-east-1",
+                                            ":",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":workgroup/primary"
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "Users": [
+                    {
+                        "Ref": "GlueUser1"
+                    },
+                    {
+                        "Ref": "GlueUser2"
+                    }
+                ]
+            }
+        },
+        "LakeFormationDataAccess": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "Description": "Attach it to every user who needs access to your data lake",
+                "Path": "/",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "lakeformation:GetDataAccess"
+                            ],
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "GlueFullReadAccess": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "Description": "To grant your users access to additional Data Catalog databases or tables in the future",
+                "Path": "/",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "lakeformation:GetDataAccess",
+                                "glue:GetTable",
+                                "glue:GetTables",
+                                "glue:SearchTables",
+                                "glue:GetDatabase",
+                                "glue:GetDatabases",
+                                "glue:GetPartitions"
+                            ],
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "GlueProdPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "GlueProdPolicy",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "glue:GetTables",
+                                "glue:GetTable",
+                                "glue:GetDatabases",
+                                "glue:GetPartitions"
+                            ],
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:glue:us-east-1",
+                                            ":",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":catalog"
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:glue:us-east-1",
+                                            ":",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":database/",
+                                            {
+                                                "Fn::FindInMap" : [ "Constants", "ProdDB", "Name"] 
+                                            },
+                                            "*"
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:glue:us-east-1",
+                                            ":",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":table/",
+                                            {
+                                                "Fn::FindInMap" : [ "Constants", "ProdDB", "Name"] 
+                                            },
+                                            "/*"
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "Users": [
+                    {
+                        "Ref": "GlueUser1"
+                    }
+                ]
+            }
+        },
+        "GlueTestPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "GlueTestPolicy",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "glue:GetTables",
+                                "glue:GetTable",
+                                "glue:GetDatabases",
+                                "glue:GetPartitions"
+                            ],
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:glue:us-east-1",
+                                            ":",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":catalog"
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:glue:us-east-1",
+                                            ":",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":database/",
+                                            {
+                                                "Fn::FindInMap" : [ "Constants", "TestDB", "Name"] 
+                                            },
+                                            "*"
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:glue:us-east-1",
+                                            ":",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":table/",
+                                            {
+                                                "Fn::FindInMap" : [ "Constants", "TestDB", "Name"] 
+                                            },
+                                            "/*"
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "Users": [
+                    {
+                        "Ref": "GlueUser2"
+                    }
+                ]
+            }
+        },
+        "GlueCrawlerPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "GlueCrawlerPolicy",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:PutObject"
+                            ],
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::lf-data-lake-bucket-glue-lf-migration",
+                                            "-",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            "/amazonprod/amazon-reviews*"
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::lf-data-lake-bucket-glue-lf-migration",
+                                            "-",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            "/amazontest/amazon-reviews*"
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "Roles": [
+                    {
+                        "Ref": "GlueServiceRole"
+                    }
+                ]
+            }
+        },
+        "GlueServiceRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "glue.amazonaws.com"
+                                ]
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "ManagedPolicyArns": [
+                    "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+                ],
+                "RoleName": "AWSGlueServiceRole-gluedemo"
+            }
+        },
+        "GlueUser1": {
+            "Type": "AWS::IAM::User",
+            "Properties": {
+                "Path": "/",
+                "LoginProfile": {
+                    "Password": {
+                        "Fn::FindInMap" : [ "Constants", "SampleUserPassword", "Name"] 
+                    },
+                    "PasswordResetRequired": false
+                },
+                "UserName": "glue-admin"
+            }
+        },
+        "GlueUser2": {
+            "Type": "AWS::IAM::User",
+            "Properties": {
+                "Path": "/",
+                "LoginProfile": {
+                    "Password": {
+                        "Fn::FindInMap" : [ "Constants", "SampleUserPassword", "Name"] 
+                    },
+                    "PasswordResetRequired": false
+                },
+                "UserName": "glue-dev-user"
+            }
+        },
+        "DataLakeBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "BucketName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            "lf-data-lake-bucket-glue-lf-migration",
+                            {
+                                "Ref": "AWS::AccountId"
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "AthenaResultsBucket": {
+            "Type": "AWS::S3::Bucket",
+            "DependsOn":"DataLakeBucket",
+            "Properties": {
+                "BucketName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            "lf-data-lake-bucket-athenaresults",
+                            {
+                                "Ref": "AWS::AccountId"
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        
+        "ProdCrawler": {
+            "Type": "AWS::Glue::Crawler",
+            "Properties": {
+                "Name": "prodcrawler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "GlueServiceRole",
+                        "Arn"
+                    ]
+                },
+                "Description": "AWS Glue crawler to crawl flights data",
+                "Schedule": {
+                    "ScheduleExpression": "cron(0/5 * * * ? *)"
+                },
+                "DatabaseName": "amazonprod",
+                "Targets": {
+                    "S3Targets": [
+                        {
+                            "Path":  { "Fn::Join" : [ "", [ "s3://lf-data-lake-bucket-glue-lf-migration-",{"Ref": "AWS::AccountId"},"/amazonprod/amazon-reviews-prod"] ] }
+                            
+                        }
+                    ]
+                },
+                
+                "SchemaChangePolicy": {
+                    "UpdateBehavior": "UPDATE_IN_DATABASE",
+                    "DeleteBehavior": "LOG"
+                },
+                "Configuration": "{\"Version\":1.0,\"CrawlerOutput\":{\"Partitions\":{\"AddOrUpdateBehavior\":\"InheritFromTable\"},\"Tables\":{\"AddOrUpdateBehavior\":\"MergeNewColumns\"}}}"
+            }
+        },
+        "DevCrawler": {
+            "Type": "AWS::Glue::Crawler",
+            "Properties": {
+                "Name": "devcrawler",
+                "Role": {
+                    "Fn::GetAtt": [
+                        "GlueServiceRole",
+                        "Arn"
+                    ]
+                },
+                "Description": "AWS Glue crawler to crawl flights data",
+                "Schedule": {
+                    "ScheduleExpression": "cron(0/5 * * * ? *)"
+                },
+                "DatabaseName": "amazontest",
+                "Targets": {
+                    "S3Targets": [
+                        {
+                            "Path":  { "Fn::Join" : [ "", [ "s3://lf-data-lake-bucket-glue-lf-migration-",{"Ref": "AWS::AccountId"},"/amazontest/amazon-reviews-test"] ] }
+                            
+                        }
+                    ]
+                },
+                
+                "SchemaChangePolicy": {
+                    "UpdateBehavior": "UPDATE_IN_DATABASE",
+                    "DeleteBehavior": "LOG"
+                },
+                "Configuration": "{\"Version\":1.0,\"CrawlerOutput\":{\"Partitions\":{\"AddOrUpdateBehavior\":\"InheritFromTable\"},\"Tables\":{\"AddOrUpdateBehavior\":\"MergeNewColumns\"}}}"
+            }
+        },
+      
+        "AthenaProdQuery": {
+            "Type": "AWS::Athena::NamedQuery",
+            "Properties": {
+                "Database": {
+                    "Fn::FindInMap" : [ "Constants", "ProdDB", "Name"] 
+                },
+                "Description": "A developer query on web page and web sales data.",
+                "Name": "Prod-Query",
+                "QueryString": "/*\n * Prod User can only see prod tables\n*/\n\nSELECT * FROM \"amazon_reviews_prod\" LIMIT 10; \n"
+            }
+        },
+        "AthenaDevQuery": {
+            "Type": "AWS::Athena::NamedQuery",
+            "Properties": {
+                "Database": {
+                    "Fn::FindInMap" : [ "Constants", "TestDB", "Name"] 
+                },
+                "Description": "A developer query on web page and web sales data.",
+                "Name": "Test-Query",
+                "QueryString": "/*\n * Prod User can only see prod tables\n*/\n\nSELECT * FROM \"amazon_reviews_test\" LIMIT 10;                  \n"
+            }
+        }
+    },
+    "Outputs": {
+        "Cloud9URL": {
+            "Description": "Cloud9 Environment",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        {
+                            "Fn::Sub": "https://${AWS::Region}.console.aws.amazon.com/cloud9/ide/"
+                        },
+                        {
+                            "Ref": "C9IDE"
+                        }
+                    ]
+                ]
+            }
+        }
+    }
+}
