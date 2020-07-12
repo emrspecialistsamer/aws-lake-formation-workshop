@@ -13,9 +13,9 @@ chapter = true
         <li>Kinesis-Data-Generator-Cognito-User in <font size="3" color="red">us-west-2</b></font> region (if you completed "Handling Real-Time Data" lab).</li>
         <li>Lake-Formation-Migration (if you completed Glue to Lake Formation Migration).</li>
     </ul>
+    For more details:
     <ul>
-    Click here to know more about how to <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/delete-bucket.html">Delete the Amazon S3 bucket</a>.  
-    <br/>
-     Click here to know more about how to <a href="https://docs.amazonaws.cn/en_us/IAM/latest/UserGuide/id_users_change-permissions.html#users_change_permissions-remove-policy-console">Removing a Permissions Policy from a User</a>.
-     </ul>
+        <li>Click here to know more about how to <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/delete-bucket.html">Delete the Amazon S3 bucket</a>.</li>
+        <li>Click here to know more about how to <a href="https://docs.amazonaws.cn/en_us/IAM/latest/UserGuide/id_users_change-permissions.html#users_change_permissions-remove-policy-console">Removing a Permissions Policy from a User</a>.</li>
+    </ul>
 </div>
