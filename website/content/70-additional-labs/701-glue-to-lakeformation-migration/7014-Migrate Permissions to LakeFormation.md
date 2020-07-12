@@ -101,6 +101,6 @@ weight = 7014
         <li>Remove <strong>GlueProdPolicy</strong> from glue-admin and <strong>GlueTestPolicy</strong> from glue-dev-user</li>
         <li>Remove Bucket Policies permission for <strong>glue-admin</strong> and <strong>glue-dev-user</strong><img src="/images/gluemigration031.png" style="margin:15px 0px; border:1px solid black" /></li>
         <li>Log In as <strong>glue-admin</strong> and run Athena query. Do same for <strong>glue-dev-user.</strong> You will notice that even after removing bucket policies and glue catalogue permissions, user can run Athena. It is because LakeFormation is controlling the access now. <b>You have successfully migrated from Glue to LakeFormation security model.</b> </li>
-        <li>Final state of <strong>glue-admin</strong> and <strong>glue-dev-user</strong> will be similar to<img src="/images/gluemigration032.png" style="margin:15px 0px; border:1px solid black"/></li>
+        <li>Final state of <strong>glue-admin</strong> and <strong>glue-dev-user</strong> will be similar to image below:<img src="/images/gluemigration032.png" style="margin:15px 0px; border:1px solid black"/></li>
     </ol>
 </div>
