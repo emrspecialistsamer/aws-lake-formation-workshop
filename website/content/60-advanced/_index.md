@@ -1,5 +1,5 @@
 +++
-title = "Labs - Advanced"
+title = "Advanced - Labs"
 chapter = true
 weight = 60
 autoNav = true
