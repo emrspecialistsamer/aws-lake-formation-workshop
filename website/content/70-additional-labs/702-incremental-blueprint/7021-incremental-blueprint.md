@@ -29,7 +29,7 @@ weight = 7021
         <img src="/images/incrementalblueprint3.png" style="margin:15px 0px; border:1px solid black"/>
         </li>
         <li>Under <b>Import target</b> section, choose <b>tpc</b> as the target database. For the <b>Target storage location</b>, choose the S3 path which you used in the <b>Data Lake Locations</b> section. For Data format, choose <b>Parquet</b> as the format in which the data is written.
-        <img src="/images/incrementalblueprint4.png" style="margin:15px 0px; border:1px solid black"/>
+        <img src="/images/blueprint4.png" style="margin:15px 0px; border:1px solid black"/>
         </li>
         <li>Now move to <b>Import options</b>, enter a workflow name <b>tpc-increment</b>. Choose <b>LF-GlueServiceRole</b> for the IAM role and enter "il" as the <b>Table prefix</b>. Leave the rest of the fields as default.
         <img src="/images/incrementalblueprint5.png" style="margin:15px 0px; border:1px solid black"/>
@@ -56,12 +56,12 @@ weight = 7021
         VALUES("Dr.",29999936,"Jill","Thomas");
         {{< /highlight >}}
         </li>       
-        <li>Now move back to Lakeformation workflow console and start the workflow 
+        <li>Now move back to Lake Formation workflow console and start the workflow
         <b>tpc-increment</b> again by selecting <b>Start</b> option from the <b>Actions</b> 
         drop-down.
         <img src="/images/incrementalblueprint9.png" style="margin:15px 0px; border:1px solid black"/>
         </li>
-        <li>Once workflow is succesfully completed move back to <b>Athena</b> console, query the <b>tpc</b> database <b>customer</b> table. You will see new records got added into table.
+        <li>Once workflow is successfully completed move back to <b>Athena</b> console, query the <b>tpc</b> database <b>customer</b> table. You will see new records got added into table.
         <img src="/images/incrementalblueprint10.png" style="margin:15px 0px; border:1px solid black"/>
         </li>
     </ol>
