@@ -1,5 +1,5 @@
 +++
-title = "Labs - Beginner"
+title = "Beginner - Labs"
 chapter = true
 weight = 40
 autoNav = true
