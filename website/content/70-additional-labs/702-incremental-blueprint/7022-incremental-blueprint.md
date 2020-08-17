@@ -1,7 +1,7 @@
 +++
-title = "Incremental Blueprints"
+title = "Incremental Blueprints Lab"
 chapter = false
-weight = 7021
+weight = 7022
 +++
 
 <div style="text-align: justify">
