@@ -1,7 +1,7 @@
 +++
 title = "Handling Real-Time Data"
 chapter = true
-weight = 603
+weight = 602
 autoNav = true
 +++
 
