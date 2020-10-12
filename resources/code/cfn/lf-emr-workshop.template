@@ -97,12 +97,9 @@
     },
     "ReleaseLabel":{
       "Type":"String",
-      "Default":"emr-5.29.0",
+      "Default":"emr-5.31.0",
       "AllowedValues":[
-        "emr-5.26.0",
-        "emr-5.27.0",
-        "emr-5.28.0",
-        "emr-5.29.0"
+        "emr-5.31.0"
       ],
       "Description":"Amazon EMR Version"
     },

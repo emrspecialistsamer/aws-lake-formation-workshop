@@ -8,9 +8,8 @@ autoNav = true
 <center><h3>Integration with Amazon EMR</h3></center>
 
 <div style="text-align: justify">
-    Beginning with Amazon EMR 5.26.0, you can launch a cluster that integrates with AWS Lake Formation. This feature is available in public beta (as of 02/10).
-    <br/><br/>
-    Integrating Amazon EMR with AWS Lake Formation provides the following key benefits:
+    Beginning with Amazon EMR 5.31.0, you can launch a cluster that integrates with AWS Lake Formation. Integrating
+ Amazon EMR with AWS Lake Formation provides the following key benefits:
     <ul>
         <li>Provides fine-grained, column-level access to databases and tables in the AWS Glue Data Catalog.</li>
         <li>Enables federated single sign-on to EMR Notebooks or Apache Zeppelin from your enterprise identity system that is compatible with Security Assertion Markup Language (SAML) 2.0.</li>
@@ -22,13 +21,15 @@ autoNav = true
         <li>Use EMR Notebooks or Apache Zeppelin to access data managed by AWS Glue and Lake Formation.</li>
         <li>Define and manage permissions in Lake Formation to access databases, tables, and columns in AWS Glue Data Catalog. For more information, see AWS Lake Formation.</li>
     </ul>
-    To learn more about AWS Lake Formation & Amazon EMR Integration, please visit: <a href="https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-lake-formation.html" target="_blank">Integrating Amazon EMR with AWS Lake Formation (Beta)</a></left>
+    To learn more about AWS Lake Formation & Amazon EMR Integration, please visit: <a href="https://docs.aws.amazon
+    .com/emr/latest/ManagementGuide/emr-lake-formation.html" target="_blank">Integrating Amazon EMR with AWS Lake
+     Formation.</a></left>
     <h4>Supported Applications</h4>
     The integration between Amazon EMR and AWS Lake Formation supports the following applications:
     <ul>
-        <li>Apache Spark</li>
-        <li>Apache Zeppelin</li>
         <li>Amazon EMR notebooks</li>
+        <li>Apache Zeppelin</li>
+        <li>Apache Spark through Amazon EMR notebooks</li>
     </ul>
     
    <h4>Before You Begin</h4>
