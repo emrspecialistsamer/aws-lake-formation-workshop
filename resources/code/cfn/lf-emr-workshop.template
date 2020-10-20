@@ -692,14 +692,6 @@
             "Name":"Zeppelin"
           }
         ],
-        "BootstrapActions":[
-          {
-            "Name":"Downgrade JDK",
-            "ScriptBootstrapAction":{
-              "Path":"s3://aws-data-analytics-workshops/lake-formation-workshop/scripts/downgradeJDK.sh"
-            }
-          }
-        ],
         "Configurations":[
           {
             "Classification":"spark-hive-site",
