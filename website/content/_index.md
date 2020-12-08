@@ -5,7 +5,6 @@ weight=1
 +++
 
 <center><h2> AWS Lake Formation Workshop </h2></center>
-![](./images/lf-logo.png)
 
-In this workshop, we will explore how to use AWS Lake Formation to build, secure, and manage data lake on AWS.
-
+<b><i>AWS Lake Formation Workshop has been migrated to a new domain. Please use: <a href="https://lakeformation
+.workshop.aws/">https://lakeformation.workshop.aws/</a></b></i>.
